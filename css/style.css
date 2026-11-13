@@ -224,3 +224,15 @@ body.rot {
   transform-origin: top left;
   transform: rotate(90deg) translateY(-100%);
 }
+
+/* the hidden code box, just above the pause button: invisible, but a tap opens the keyboard */
+#code-box {
+  position: absolute; top: calc(var(--u) * 14); right: calc(var(--u) * 5);
+  width: calc(var(--u) * 18); height: calc(var(--u) * 18);
+  margin: 0; padding: 0; border: 0; outline: 0;
+  background: transparent; color: transparent; caret-color: transparent;
+  font-size: 16px;                       /* 16px or more: iPhone would otherwise zoom the page */
+  opacity: 0.01;
+  -webkit-user-select: text; user-select: text;
+  pointer-events: auto;
+}

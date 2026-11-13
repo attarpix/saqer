@@ -148,9 +148,16 @@ function loop(t) {
 
 /* ---------------- test cheat ----------------
    Type  attar10x  while playing: Saqer cannot be hurt, and a fall puts him back
-   on the last ground he stood on. Type it again to switch it off. */
+   on the last ground he stood on. Type it again to switch it off.
+   On a phone: tap the invisible box just above the pause button and type it there. */
+function toggleGod() {
+  G.god = !G.god;
+  G.banner = { lines: [G.god ? 'ATTAR10X: UNKILLABLE' : 'ATTAR10X: OFF', G.god ? 'NOTHING CAN HURT SAQER NOW.' : 'BACK TO NORMAL.'], t: 200 };
+}
+const codeBox = document.getElementById('code-box');
 let typed = '';
 window.addEventListener('keydown', e => {
+  if (e.target === codeBox) return;            // the phone box reads its own text (below)
   // read the physical keys (e.code), so it works whatever language the keyboard is set to (Arabic too)
   const m = /^Key([A-Z])$/.exec(e.code) || /^(?:Digit|Numpad)(\d)$/.exec(e.code);
   if (!m || e.repeat) return;
@@ -159,6 +166,15 @@ window.addEventListener('keydown', e => {
   typed = (typed + ch).slice(-8);
   if (typed !== 'attar10x') return;
   typed = '';
-  G.god = !G.god;
-  G.banner = { lines: [G.god ? 'ATTAR10X: UNKILLABLE' : 'ATTAR10X: OFF', G.god ? 'NOTHING CAN HURT SAQER NOW.' : 'BACK TO NORMAL.'], t: 200 };
+  toggleGod();
 }, true);
+if (codeBox) {
+  codeBox.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') codeBox.blur(); });   // letters must not move Saqer
+  codeBox.addEventListener('keyup', e => e.stopPropagation());
+  codeBox.addEventListener('input', () => {
+    if (!codeBox.value.toLowerCase().replace(/\s/g, '').includes('attar10x')) return;
+    codeBox.value = ''; codeBox.blur();
+    toggleGod();
+  });
+  codeBox.addEventListener('blur', () => { codeBox.value = ''; });
+}
