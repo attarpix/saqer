@@ -11,7 +11,7 @@ export function unlockAudio() {
       ctx = new (window.AudioContext || window.webkitAudioContext)();
       master = ctx.createGain(); master.gain.value = muted ? 0 : 1; master.connect(ctx.destination);
       musicBus = ctx.createGain(); musicBus.gain.value = 0.55; musicBus.connect(master);
-    } catch { ctx = null; }
+    } catch (_e) { ctx = null; }
   }
   if (ctx && ctx.state === 'suspended') ctx.resume().catch(() => {});
 }
@@ -210,7 +210,7 @@ function droneOff() {
   if (!drone) return;
   const d = drone; drone = null;
   d.g.gain.setTargetAtTime(0, ctx.currentTime, 0.15);
-  setTimeout(() => d.os.forEach(o => { try { o.stop(); } catch {} }), 900);
+  setTimeout(() => d.os.forEach(o => { try { o.stop(); } catch (_e) {} }), 900);
 }
 
 /* ---- the player ---- */
@@ -351,7 +351,7 @@ export const crowd = {
   stopClap() {
     wantClap = false;
     if (!clapSrc) return;
-    try { clapSrc.stop(); } catch {}
+    try { clapSrc.stop(); } catch (_e) {}
     clapSrc = null; clapGain = null;
   },
 };

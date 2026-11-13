@@ -63,7 +63,7 @@ export function initInput() {
       b.addEventListener('pointerdown', e => {
         unlockAudio();
         held.set(e.pointerId, b);
-        try { b.setPointerCapture(e.pointerId); } catch { /* pointer already gone */ }
+        try { b.setPointerCapture(e.pointerId); } catch (_e) { /* pointer already gone */ }
         update(); e.preventDefault();
       });
       const end = e => { if (held.get(e.pointerId) === b) { held.delete(e.pointerId); update(); } };

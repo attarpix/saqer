@@ -97,6 +97,17 @@
   <span class="tbtn pause" data-action="pause">❚❚</span>
 </div>
 
+<!-- old or limited browsers (some cars, old phones): say what went wrong instead of sitting on LOADING… -->
+<script>
+(function () {
+  function say(t) { var m = document.getElementById('load-msg'); if (m) { m.textContent = t; m.style.fontSize = '10px'; m.style.lineHeight = '1.8'; } }
+  var old = 'THE GAME CANNOT START HERE. THIS BROWSER IS PROBABLY TOO OLD. ' + navigator.userAgent;
+  window.addEventListener('error', function (e) { if (!window.__saqerUp) say('ERROR: ' + (e.message || 'script failed') + ' · ' + navigator.userAgent); });
+  setTimeout(function () { if (!window.__saqerUp) say(old); }, 12000);
+  window.__saqerOld = function () { say(old); };
+})();
+</script>
+<script nomodule>window.__saqerOld();</script>
 <script type="module" src="js/main.js"></script>
 </body>
 </html>

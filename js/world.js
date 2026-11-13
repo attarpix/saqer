@@ -114,10 +114,10 @@ function makeEntity(s) {
   const foe = { type: 'naughty', active: true, awake: false, vy: 0, onGround: false, anim: 0, squash: 0, flipped: false };
   switch (s.type) {
     case 'scorpion':
-      return { ...foe, kind: 'scorpion', x: s.x * TILE + 1, y: (s.y + 1) * TILE - 9, w: 14, h: 9, vx: -0.85 };
+      return Object.assign({}, foe, { kind: 'scorpion', x: s.x * TILE + 1, y: (s.y + 1) * TILE - 9, w: 14, h: 9, vx: -0.85 });
     case 'flyer': {
       const x = s.x * TILE + 1, y = s.y * TILE + 3;
-      return { ...foe, kind: 'flyer', x, y, w: 13, h: 9, vx: -0.7, homeX: x, baseY: y, range: (s.range || 0) * TILE, t: (s.x * 37) % 90 };
+      return Object.assign({}, foe, { kind: 'flyer', x, y, w: 13, h: 9, vx: -0.7, homeX: x, baseY: y, range: (s.range || 0) * TILE, t: (s.x * 37) % 90 });
     }
     case 'plat': {
       const x = s.x * TILE, y = s.y * TILE;
@@ -125,7 +125,7 @@ function makeEntity(s) {
         dx: s.dx * TILE, dy: s.dy * TILE, period: s.period, t: Math.round(s.phase * s.period), locked: s.lock || null };
     }
     default:
-      return { ...foe, kind: 'walker', x: s.x * TILE + 2, y: (s.y + 1) * TILE - 15, w: 12, h: 15, vx: -0.55 };
+      return Object.assign({}, foe, { kind: 'walker', x: s.x * TILE + 2, y: (s.y + 1) * TILE - 15, w: 12, h: 15, vx: -0.55 });
   }
 }
 export function spawnLevelEntities() {

@@ -87,7 +87,7 @@ export function hurtPlayer() {
 export function killPlayer(kind) {
   if (G.state !== 'play') return;
   if (G.god) {                          // the attar10X cheat: put him back on the last solid ground he stood on
-    player.x = player.safeX ?? player.x; player.y = (player.safeY ?? 100) - 1; player.vx = 0; player.vy = 0; player.invuln = 40;
+    player.x = (player.safeX != null ? player.safeX : player.x); player.y = (player.safeY != null ? player.safeY : 100) - 1; player.vx = 0; player.vy = 0; player.invuln = 40;
     return;
   }
   G.state = 'dying'; G.stateTimer = 0;

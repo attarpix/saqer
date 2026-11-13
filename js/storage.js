@@ -5,8 +5,8 @@
 const KEY = 'saqer.save.v1';
 
 export function loadSave() {
-  try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; }
+  try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (_e) { return {}; }
 }
 export function writeSave(patch) {
-  try { localStorage.setItem(KEY, JSON.stringify({ ...loadSave(), ...patch })); } catch { /* ignore */ }
+  try { localStorage.setItem(KEY, JSON.stringify(Object.assign({}, loadSave(), patch))); } catch (_e) { /* ignore */ }
 }

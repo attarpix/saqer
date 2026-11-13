@@ -16,6 +16,7 @@ import { ART } from './art.js';
 // open the game with ?debug to inspect state from the console: __saqer.G, __saqer.player …
 // __saqer.step(n) advances n frames by hand (handy when the tab is in the background)
 // __saqer.stage(2) jumps straight to the third stage
+window.__saqerUp = true;   // index.html shows a 'too old' message if this never runs
 const DEBUG = new URLSearchParams(location.search).has('debug');
 if (DEBUG) {
   window.__saqer = {
@@ -82,7 +83,7 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
 async function tryFullscreen() {
   const el = document.documentElement;
   if (document.fullscreenElement || !el.requestFullscreen || !document.body.classList.contains('touch')) return;
-  try { await el.requestFullscreen({ navigationUI: 'hide' }); await screen.orientation?.lock?.('landscape'); } catch { /* optional */ }
+  try { await el.requestFullscreen({ navigationUI: 'hide' }); if (screen.orientation && screen.orientation.lock) await screen.orientation.lock('landscape'); } catch (_e) { /* optional */ }
 }
 
 /* ---------------- start ---------------- */

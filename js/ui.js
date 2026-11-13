@@ -70,7 +70,7 @@ const fill = (s, vars) => (s || '').replace(/\{(\w+)\}/g, (m, k) => (k in vars ?
 export function showStory(pages, done, vars = {}, flags = {}) {
   const list = (pages || [])
     .filter(p => !p.when || flags[p.when])
-    .map(p => ({ ...p, text: fill(p.text, vars), ar: fill(p.ar, vars) }));
+    .map(p => Object.assign({}, p, { text: fill(p.text, vars), ar: fill(p.ar, vars) }));
   if (!list.length) { done(); return; }
   // bg / cast / tent carry forward from the page that set them
   let bg = 'amman', cast = [], tent = false;
