@@ -18,6 +18,8 @@ import { ART } from './art.js';
 // __saqer.stage(2) jumps straight to the third stage
 window.__saqerUp = true;   // index.html shows a 'too old' message if this never runs
 const DEBUG = new URLSearchParams(location.search).has('debug');
+const INFO = new URLSearchParams(location.search).has('info');
+const NOROT = new URLSearchParams(location.search).has('flat');   // ?flat never turns the game
 if (DEBUG) {
   window.__saqer = {
     G, W, player, level, keys, IMG, ART, update, render,
@@ -40,7 +42,10 @@ function fit() {
   let aw = vv ? vv.width : window.innerWidth;
   let ah = vv ? vv.height : window.innerHeight;
   // a phone held upright: turn the whole game on its side (css body.rot), so it is always landscape
-  const rot = document.body.classList.contains('touch') && ah > aw;
+  // only a screen that is itself upright (a phone held straight): car screens and tablets on a stand can
+  // report a tall browser window although the screen is wide, and must never be turned
+  const upright = !window.screen || !screen.width || screen.height > screen.width;
+  const rot = !NOROT && document.body.classList.contains('touch') && ah > aw && upright;
   document.body.classList.toggle('rot', rot);
   if (rot) [aw, ah] = [ah, aw];
   // touch: keep a column free on each side for the buttons, so they never cover the game
@@ -59,6 +64,26 @@ function fit() {
   frame.style.width = cssW + 'px';
   frame.style.height = cssH + 'px';
   document.documentElement.style.setProperty('--u', (cssW / VW) + 'px');
+  if (INFO) showInfo(rot, cssW, cssH);
+}
+
+/* open the game with ?info to see what this screen reports (for car screens and odd browsers) */
+function showInfo(rot, cssW, cssH) {
+  let box = document.getElementById('info');
+  if (!box) {
+    box = document.createElement('pre'); box.id = 'info';
+    box.style.cssText = 'position:fixed;top:0;left:0;z-index:99;margin:0;padding:8px;background:rgba(0,0,0,.8);color:#ffe08a;font:14px/1.5 monospace;white-space:pre-wrap;pointer-events:none;max-width:100%';
+    document.body.appendChild(box);
+  }
+  const vv = window.visualViewport, r = n => Math.round(n);
+  box.textContent = [
+    'window ' + r(window.innerWidth) + ' x ' + r(window.innerHeight),
+    'visual ' + (vv ? r(vv.width) + ' x ' + r(vv.height) + ' scale ' + vv.scale : 'none'),
+    'screen ' + screen.width + ' x ' + screen.height + '  dpr ' + window.devicePixelRatio,
+    'page   ' + document.documentElement.clientWidth + ' x ' + document.documentElement.clientHeight,
+    'game   ' + r(cssW) + ' x ' + r(cssH) + '  turned ' + rot + '  touch ' + document.body.classList.contains('touch'),
+    navigator.userAgent,
+  ].join('\n');
 }
 window.addEventListener('resize', fit);
 window.visualViewport && window.visualViewport.addEventListener('resize', fit);
