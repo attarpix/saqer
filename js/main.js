@@ -51,7 +51,9 @@ function fit() {
   const dpr = window.devicePixelRatio || 1;
   const cw = canvas.width, ch = canvas.height;
   let s = Math.min((aw * dpr) / cw, (ah * dpr) / ch);
-  if (s >= 1 && Math.floor(s) / s >= 0.85) s = Math.floor(s);
+  // snap to whole pixels only on a computer screen; on phones and cars use every bit of the screen
+  // (on a sharp phone the snap used to throw away about 15% of the height)
+  if (!document.body.classList.contains('touch') && s >= 1 && Math.floor(s) / s >= 0.85) s = Math.floor(s);
   const cssW = (cw * s) / dpr, cssH = (ch * s) / dpr;
   frame.style.width = cssW + 'px';
   frame.style.height = cssH + 'px';

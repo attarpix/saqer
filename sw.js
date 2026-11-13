@@ -2,7 +2,7 @@
    SERVICE WORKER — offline play
    Bump VERSION whenever you ship changed files so players get them.
    ============================================================ */
-const VERSION = 'saqer-v23';
+const VERSION = 'saqer-v25';
 const CORE = [
   './',
   'index.html',
@@ -60,7 +60,8 @@ self.addEventListener('fetch', e => {
   if (isAsset) {
     e.respondWith(caches.match(req).then(hit => hit || fetch(req).then(r => keep(req, r))));
   } else {
-    e.respondWith(fetch(req).then(r => keep(req, r))
+    // ask the server every time (no-cache): the browser may otherwise reuse a copy up to 10 minutes old
+    e.respondWith(fetch(req.url, { cache: 'no-cache', credentials: 'same-origin' }).then(r => keep(req, r))
       .catch(() => caches.match(req).then(hit => hit || (req.mode === 'navigate' ? caches.match('index.html') : undefined))));
   }
 });
