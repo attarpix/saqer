@@ -2,7 +2,7 @@
    SERVICE WORKER — offline play
    Bump VERSION whenever you ship changed files so players get them.
    ============================================================ */
-const VERSION = 'saqer-v16';
+const VERSION = 'saqer-v17';
 const CORE = [
   './',
   'index.html',
