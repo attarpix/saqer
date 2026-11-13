@@ -2,7 +2,7 @@
    SERVICE WORKER — offline play
    Bump VERSION whenever you ship changed files so players get them.
    ============================================================ */
-const VERSION = 'saqer-v32';
+const VERSION = 'saqer-v33';
 const CORE = [
   './',
   'index.html',
@@ -11,7 +11,7 @@ const CORE = [
   'js/main.js', 'js/config.js', 'js/state.js', 'js/tiles.js', 'js/level.js', 'js/levels.js',
   'js/story.js', 'js/physics.js', 'js/world.js', 'js/player.js', 'js/render.js', 'js/art.js',
   'js/assets.js', 'js/audio.js', 'js/input.js', 'js/ui.js', 'js/game.js', 'js/storage.js',
-  'js/pix.js', 'js/lang.js', 'js/saqer.js', 'js/sheets.js', 'js/quest.js', 'js/boss.js', 'js/scenery.js',
+  'js/pix.js', 'js/lang.js', 'js/stats.js', 'js/saqer.js', 'js/sheets.js', 'js/quest.js', 'js/boss.js', 'js/scenery.js',
   'assets/bg/title_theater.png', 'assets/bg/amman_sunset.jpg', 'assets/bg/philadelphia.jpg',
   'assets/bg/theater_calm.jpg', 'assets/bg/theater_cheer.jpg', 'assets/bg/theater_cheer2.jpg', 'assets/sfx/crowd_roar.mp3', 'assets/sfx/crowd_clap.mp3',
   ...Array.from({ length: 9 }, (_, i) => ['clap', 'cheer'].map(k => 'assets/bg/crowd/' + k + '_' + String(i + 1).padStart(2, '0') + '.jpg')).flat(),

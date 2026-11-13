@@ -5,9 +5,10 @@ import { VW, VH, RES, STEP } from './config.js';
 import { loadAssets } from './assets.js';
 import { initRender, render } from './render.js';
 import { initInput } from './input.js';
-import { initUI, setHidden } from './ui.js';
+import { initUI, setHidden, showScreen } from './ui.js';
 import { boot, update, newGame, pause, resume, restartStage, toggleSound, toTitle, continueGame, debugStage, refreshMenus } from './game.js';
 import { applyLang, toggleLang } from './lang.js';
+import { initStats, stat } from './stats.js';
 import { G, W, player } from './state.js';
 import { level } from './level.js';
 import { keys } from './input.js';
@@ -21,6 +22,7 @@ window.__saqerUp = true;   // index.html shows a 'too old' message if this never
 const DEBUG = new URLSearchParams(location.search).has('debug');
 const INFO = new URLSearchParams(location.search).has('info');
 const NOROT = new URLSearchParams(location.search).has('flat');   // ?flat never turns the game
+if (new URLSearchParams(location.search).has('share')) document.body.classList.add('share');   // tools: the link-preview picture
 if (DEBUG) {
   window.__saqer = {
     G, W, player, level, keys, IMG, ART, update, render,
@@ -110,10 +112,11 @@ async function tryFullscreen() {
 
 /* ---------------- start ---------------- */
 applyLang();                                   // Arabic by default (js/lang.js)
+initStats();                                   // the play counter, once it has its code (js/stats.js)
 initRender(canvas);
 initInput();
 initUI({
-  start: () => { tryFullscreen(); newGame(); },
+  start: () => { tryFullscreen(); stat('start'); newGame(); },
   sound: toggleSound,
   install: async () => { if (!installEvt) return; installEvt.prompt(); await installEvt.userChoice; installEvt = null; setHidden('#btn-install', true); },
   resume,
@@ -121,6 +124,8 @@ initUI({
   quit: toTitle,
   retry: continueGame,
   lang: () => { toggleLang(); refreshMenus(); },
+  info: () => showScreen('info'),
+  back: () => showScreen('title'),
 });
 
 const bar = document.getElementById('load-bar');

@@ -22,6 +22,7 @@ import { spawnBoss, updateBoss } from './boss.js';
 import { loadSave, writeSave } from './storage.js';
 import { clamp } from './physics.js';
 import { tSound, tBest, tScore } from './lang.js';
+import { stat } from './stats.js';
 import { showScreen, hideScreens, uiOpen, uiScreen, uiConfirm, uiMove, showStory, setText } from './ui.js';
 
 export const TOTALS = { liras: 0, dinars: 0, stages: [] };
@@ -330,7 +331,7 @@ export const clockSeconds = () => Math.floor(G.clock / 60);
 export const timeBonus = () => Math.max(0, 900 - clockSeconds()) * 20;     // quicker than 15 minutes earns a bonus
 
 function victory() {
-  G.state = 'victory'; G.stateTimer = 0;
+  G.state = 'victory'; G.stateTimer = 0; stat('hercules');
   music.stop();
   sfx.goal(); sfx.cheer();
   G.bonus = timeBonus();
@@ -377,7 +378,7 @@ function updateGoal() {
     c.white = Math.min(1, Math.max(0, (t - 82) / 18));                // a short flash at the very end
     if (t > 100) {                                   // full white: swap the world
       const big = player.big, x = player.x;
-      G.era = 'past';
+      G.era = 'past'; stat('philadelphia');
       enterArea(PAST_AREA, FLAG_COL + 1, 'ground');
       music.stop();                                  // (the change keeps playing: only the area's own tune is held back)
       G.state = 'goal';

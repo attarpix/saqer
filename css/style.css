@@ -248,3 +248,20 @@ body.ar .screen h2 { font-size: calc(var(--u) * 16); }
 body.ar .px-panel.story { direction: rtl; text-align: right; }
 body.ar .story-text { font-family: var(--font-ar); font-size: calc(var(--u) * 11); line-height: 1.6; min-height: calc(var(--u) * 30); }
 body.ar .speaker { font-size: calc(var(--u) * 10); }
+
+/* ---------------- info screen and credit (branding) ---------------- */
+.px-panel.info { width: calc(var(--u) * 250); }
+.info-text { font-size: calc(var(--u) * 6); line-height: 1.9; margin: 0 0 calc(var(--u) * 8) !important; color: #fff; }
+body.ar .info-text { font-size: calc(var(--u) * 10); line-height: 1.7; direction: rtl; }
+a.px-btn { display: block; text-decoration: none; text-align: center; }
+a.px-btn.ig { font-family: var(--font) !important; font-size: calc(var(--u) * 7) !important; padding: calc(var(--u) * 5) calc(var(--u) * 8); }
+.credit {
+  position: absolute; left: calc(var(--u) * 5); top: calc(var(--u) * 4);
+  font-size: calc(var(--u) * 6.5); color: #ffe08a; text-decoration: none; margin: 0 !important;
+  text-shadow: var(--px) var(--px) 0 var(--ink);
+}
+body.ar .credit span { font-family: var(--font-ar); font-size: calc(var(--u) * 9); color: #fff; }
+/* ?share: the title screen as a clean picture for link previews (assets/share.png) */
+body.share .menu, body.share .hint { display: none !important; }
+body.share #screen-title { justify-content: center; padding-top: 0; }
+body.share .credit { font-size: calc(var(--u) * 7); }
