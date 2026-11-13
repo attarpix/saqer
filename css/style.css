@@ -176,43 +176,43 @@ body.touch .hint.keys { display: none; }
 .story-foot { display: flex; justify-content: space-between; align-items: center; margin-top: calc(var(--u) * 4); }
 .story-foot .px-btn { margin-left: calc(var(--u) * 4); }
 
-/* ---------------- touch pad ---------------- */
+/* ---------------- touch pad ----------------
+   The buttons sit inside the game picture, over its bottom corners (#touch is inside #frame),
+   sized in game units (--u) so they scale with the game. Plain top/left/right/bottom only:
+   old car browsers drop inset and env(). */
 #touch { display: none; }
 body.touch #touch {
   display: block;
-  position: fixed; top: 0; right: 0; bottom: 0; left: 0;
+  position: absolute; top: 0; right: 0; bottom: 0; left: 0;
   z-index: 5;
   pointer-events: none;
 }
 body.touch.menu-open #touch { display: none; }
-/* buttons in the two side columns (main.js keeps the game out of them, --side wide), nearer the bottom */
 #touch .pad {
-  position: absolute; bottom: 18px; bottom: calc(env(safe-area-inset-bottom) + 18px);   /* plain value first: old car browsers drop env() */
-  width: var(--side, 140px);
-  display: flex; flex-wrap: wrap; justify-content: center; align-content: flex-end;
+  position: absolute; bottom: calc(var(--u) * 5);
   pointer-events: auto;
 }
-#touch .pad-left  { left: 0; left: env(safe-area-inset-left); flex-direction: column; flex-wrap: nowrap; align-items: center; }
-#touch .pad-right { right: 0; right: env(safe-area-inset-right); }
-#touch .pad .tbtn { width: var(--btn, 60px); height: var(--btn, 60px); }
-#touch .pad-left .tbtn + .tbtn { margin-top: 8px; }
-#touch .pad-right .tbtn + .tbtn { margin-left: 8px; }
+#touch .pad-left  { left: calc(var(--u) * 5); }
+#touch .pad-right { right: calc(var(--u) * 5); }
+#touch .pad .tbtn { width: calc(var(--u) * 30); height: calc(var(--u) * 30); font-size: calc(var(--u) * 9); }
+#touch .pad-left .tbtn + .tbtn { margin-top: calc(var(--u) * 5); }
+#touch .pad-right .tbtn { float: left; }
+#touch .pad-right .tbtn + .tbtn { margin-left: calc(var(--u) * 5); }
 .tbtn {
-  display: grid; place-items: center;
-  width: 64px; height: 64px;
+  display: block; text-align: center;
+  width: 64px; height: 64px; line-height: calc(var(--u) * 30);
   font-family: var(--font); font-size: 20px;
   color: var(--sand);
-  background: rgba(43, 26, 74, .55);
-  box-shadow: 0 -4px 0 0 rgba(20,13,28,.8), 0 4px 0 0 rgba(20,13,28,.8), -4px 0 0 0 rgba(20,13,28,.8), 4px 0 0 0 rgba(20,13,28,.8), inset 0 4px 0 0 rgba(255,255,255,.12);
+  background: rgba(43, 26, 74, .45);
+  box-shadow: 0 -3px 0 0 rgba(20,13,28,.7), 0 3px 0 0 rgba(20,13,28,.7), -3px 0 0 0 rgba(20,13,28,.7), 3px 0 0 0 rgba(20,13,28,.7), inset 0 3px 0 0 rgba(255,255,255,.12);
   touch-action: none;
 }
-.tbtn.round { width: 70px; height: 70px; }
-.tbtn.a { background: rgba(206, 17, 38, .6); margin-bottom: 26px; }
-.tbtn.b { background: rgba(0, 122, 61, .6); }
 .tbtn.down { transform: translateY(3px); filter: brightness(1.4); background: rgba(242, 182, 50, .55); }
-.tbtn.pause {
-  position: absolute; top: 10px; right: 10px; top: calc(env(safe-area-inset-top) + 10px); right: calc(env(safe-area-inset-right) + 10px);
-  width: 44px; height: 44px; font-size: 12px; pointer-events: auto;
+/* pause: top-right of the picture, just under the TIME label of the HUD */
+#touch .tbtn.pause {
+  position: absolute; top: calc(var(--u) * 26); right: calc(var(--u) * 5);
+  width: calc(var(--u) * 18); height: calc(var(--u) * 18); line-height: calc(var(--u) * 18);
+  font-size: calc(var(--u) * 6); pointer-events: auto;
 }
 
 /* a phone held upright: the whole game is turned on its side, so it always plays in landscape

@@ -86,16 +86,17 @@
         </nav>
       </div>
     </section>
+
+    <!-- on-screen controls (touch devices), over the bottom corners of the game picture -->
+    <div id="touch" aria-hidden="true">
+      <!-- left side: up (jump, like Space) and down. right side: back and forward. Hold a button to keep going. -->
+      <div class="pad pad-left"><span class="tbtn" data-key="jump">▲</span><span class="tbtn" data-key="down">▼</span></div>
+      <div class="pad pad-right"><span class="tbtn" data-key="left">◀</span><span class="tbtn" data-key="right">▶</span></div>
+      <span class="tbtn pause" data-action="pause">❚❚</span>
+    </div>
   </div>
 </main>
 
-<!-- on-screen controls (touch devices) -->
-<div id="touch" aria-hidden="true">
-  <!-- left side: up (jump, like Space) and down. right side: back and forward. Hold a button to keep going. -->
-  <div class="pad pad-left"><span class="tbtn" data-key="jump">▲</span><span class="tbtn" data-key="down">▼</span></div>
-  <div class="pad pad-right"><span class="tbtn" data-key="left">◀</span><span class="tbtn" data-key="right">▶</span></div>
-  <span class="tbtn pause" data-action="pause">❚❚</span>
-</div>
 
 <!-- old or limited browsers (some cars, old phones): say what went wrong instead of sitting on LOADING… -->
 <script>

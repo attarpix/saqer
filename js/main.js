@@ -48,14 +48,6 @@ function fit() {
   const rot = !NOROT && document.body.classList.contains('touch') && ah > aw && upright;
   document.body.classList.toggle('rot', rot);
   if (rot) [aw, ah] = [ah, aw];
-  // touch: keep a column free on each side for the buttons, so they never cover the game
-  if (document.body.classList.contains('touch')) {
-    const btn = Math.round(Math.max(46, Math.min(68, ah * 0.15)));
-    const side = Math.max(btn * 2 + 20, Math.round((aw - ah * 4 / 3) / 2));   // two buttons side by side, or what is left anyway
-    aw = Math.max(200, aw - side * 2);
-    document.documentElement.style.setProperty('--side', side + 'px');
-    document.documentElement.style.setProperty('--btn', btn + 'px');
-  }
   const dpr = window.devicePixelRatio || 1;
   const cw = canvas.width, ch = canvas.height;
   let s = Math.min((aw * dpr) / cw, (ah * dpr) / ch);
