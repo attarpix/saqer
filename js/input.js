@@ -52,7 +52,7 @@ export function initInput() {
   const pad = document.getElementById('touch');
   if (pad) {
     const sticks = [...pad.querySelectorAll('.stick')].map(el => ({ el, base: el.querySelector('.stick-base'), knob: el.querySelector('.stick-knob'), axis: el.dataset.stick, ptr: null, gx: 0, gy: 0 }));
-    const DEAD = 0.32, RUN = 0.85;
+    const DEAD = 0.18, REACH = 0.42;   // a short throw: the stick is fully on after 42% of its ring, and starts at 18% of that
     const update = () => {
       const t = {};
       for (const s of sticks) {
@@ -61,8 +61,8 @@ export function initInput() {
           if (s.gx > DEAD) t.right = true;
 
         } else {
-          if (s.gy < -0.45) t.jump = true;                         // up = jump
-          const dn = s.gy > 0.45;
+          if (s.gy < -0.5) t.jump = true;                          // up = jump
+          const dn = s.gy > 0.5;
           if (dn && !s.dnHeld) actions.add('down');
           s.dnHeld = dn;
           if (t.jump && !s.upHeld) actions.add('up');
@@ -74,13 +74,13 @@ export function initInput() {
     };
     const move = (s, e) => {
       const r = s.base.getBoundingClientRect();
-      const rad = Math.max(r.width, r.height) / 2;
+      const rad = Math.max(r.width, r.height) / 2 * REACH;
       let dx = (e.clientX - (r.left + r.width / 2)) / rad, dy = (e.clientY - (r.top + r.height / 2)) / rad;
       if (document.body.classList.contains('rot')) [dx, dy] = [dy, -dx];     // the game is turned on its side
       const m = Math.hypot(dx, dy); if (m > 1) { dx /= m; dy /= m; }
       if (s.axis === 'h') dy = 0; else dx = 0;                              // each stick moves on one line only
       s.gx = dx; s.gy = dy;
-      s.knob.style.transform = `translate(${dx * 40}px, ${dy * 40}px)`;
+      s.knob.style.transform = `translate(${dx * 22}px, ${dy * 22}px)`;
       update();
     };
     const release = s => { s.ptr = null; s.gx = s.gy = 0; s.knob.style.transform = ''; update(); };

@@ -121,11 +121,13 @@ export function updatePlayer() {
   if (keys.jump && player.onGround && !player.jumpHeld) {
     player.vy = PHYS.jumpVel - Math.abs(player.vx) * 0.12;   // a little extra height at speed
     player.onGround = false; player.jumping = true; player.jumpHeld = true;
+    player.fullJump = true;                                   // every jump goes to its full height, however short the tap
     player.big ? sfx.bigJump() : sfx.jump();
   }
   if (!keys.jump) { player.jumpHeld = false; player.jumping = false; }
 
-  const g = player.vy < 0 && player.jumping && keys.jump ? PHYS.gravityHeld : PHYS.gravity;
+  if (player.vy >= 0) player.fullJump = false;
+  const g = player.vy < 0 && (player.fullJump || (player.jumping && keys.jump)) ? PHYS.gravityHeld : PHYS.gravity;
   player.vy = Math.min(player.vy + g, PHYS.maxFall);
 
   const wasAir = !player.onGround, fallSpeed = player.vy;
