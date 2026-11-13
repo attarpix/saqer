@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="description" content="Saqer: a Jordanian pixel-art platformer. Collect Dana's mahr across Amman, Petra and Wadi Rum.">
+<meta name="theme-color" content="#2b1a4a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Saqer">
+<title>Saqer · صقر</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Reem+Kufi+Fun:wght@600&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<main id="stage">
+  <div id="frame">
+    <canvas id="game" aria-label="Saqer game screen"></canvas>
+
+    <!-- loading -->
+    <div id="loading" class="screen open">
+      <div class="px-panel">
+        <p class="logo-sm">SAQER</p>
+        <div class="load-track"><div id="load-bar"></div></div>
+        <p id="load-msg" class="hint">LOADING…</p>
+      </div>
+    </div>
+
+    <!-- title -->
+    <section id="screen-title" class="screen" aria-label="Title">
+      <h1 class="logo"><span class="logo-en">SAQER</span><span class="logo-ar" lang="ar" dir="rtl">صقر</span></h1>
+      <p class="tagline">A MAHR ACROSS JORDAN</p>
+      <nav class="menu">
+        <button class="px-btn primary" data-act="start">START</button>
+        <button class="px-btn" data-act="sound">SOUND: ON</button>
+        <button class="px-btn" id="btn-install" data-act="install" hidden>INSTALL</button>
+      </nav>
+      <p id="hi-score" class="hint">BEST 000000</p>
+      <p class="hint keys">←→ MOVE · Z JUMP · X RUN · P PAUSE · M SOUND</p>
+    </section>
+
+    <!-- story -->
+    <section id="screen-story" class="screen" aria-label="Story">
+      <div class="px-panel story">
+        <p id="story-speaker" class="speaker"></p>
+        <p id="story-text" class="story-text"></p>
+        <p id="story-ar" class="story-ar" lang="ar" dir="rtl" hidden></p>
+        <div class="story-foot">
+          <span id="story-page" class="hint"></span>
+          <span>
+            <button class="px-btn small" data-act="story-skip">SKIP</button>
+            <button class="px-btn small primary" data-act="story-next">NEXT ▶</button>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- pause -->
+    <section id="screen-pause" class="screen dim" aria-label="Paused">
+      <div class="px-panel">
+        <h2>PAUSED</h2>
+        <nav class="menu">
+          <button class="px-btn primary" data-act="resume">RESUME</button>
+          <button class="px-btn" data-act="restart">RESTART STAGE</button>
+          <button class="px-btn" data-act="sound">SOUND: ON</button>
+          <button class="px-btn" data-act="quit">QUIT TO TITLE</button>
+        </nav>
+      </div>
+    </section>
+
+    <!-- game over -->
+    <section id="screen-over" class="screen" aria-label="Game over">
+      <div class="px-panel">
+        <h2 class="red">GAME OVER</h2>
+        <p id="over-score">SCORE 000000</p>
+        <p id="over-hi" class="hint">BEST 000000</p>
+        <nav class="menu">
+          <button class="px-btn primary" data-act="retry">TRY THIS STAGE AGAIN</button>
+          <button class="px-btn" data-act="quit">TITLE</button>
+        </nav>
+      </div>
+    </section>
+  </div>
+</main>
+
+<!-- on-screen controls (touch devices) -->
+<div id="touch" aria-hidden="true">
+  <!-- left stick: up / down (down = jump, like Space). right stick: back / forward (pushed all the way = run) -->
+  <div class="stick stick-left" data-stick="v"><div class="stick-base"><span class="arrow up">▲</span><span class="arrow dn">▼</span><div class="stick-knob"></div></div></div>
+  <div class="stick stick-right" data-stick="h"><div class="stick-base"><span class="arrow lt">◀</span><span class="arrow rt">▶</span><div class="stick-knob"></div></div></div>
+  <span class="tbtn pause" data-action="pause">❚❚</span>
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

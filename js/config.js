@@ -1,0 +1,40 @@
+/* ============================================================
+   CONFIG — world units, physics, tuning
+   The world is simulated in 16-unit tiles but every tile/sprite is
+   drawn from 32×32 art at SCALE 2, so one world unit = 2 canvas px.
+   ============================================================ */
+export const TILE  = 16;          // world units per tile
+export const SCALE = 2;           // art pixels per world unit for the tiles (32-px art)
+export const RES   = 4;           // canvas pixels per world unit: 1280 × 960, so the painted sprites keep their detail
+export const VW = 320;            // viewport width  (world units) → 640 px canvas (4:3)
+export const VH = 240;            // viewport height (world units) → 480 px canvas
+export const LH = 15;             // level height in tiles
+export const GROUND_TOP = 13;     // first ground row
+export const STEP = 1000 / 60;    // fixed simulation step (ms)
+
+export const START_LIVES = 3;
+export const MAX_HP      = 3;     // hits Saqer can take once he has the golden jameed
+export const BOSS_HP     = 6;     // stomps it takes to bring Hercules down
+export const TIME_TICKS  = 24;    // frames per in-game second
+
+/* ---- the story's numbers ---- */
+/* The four stages hold 220 dinars and 12 gold liras (worth 10 each): 340 in all.
+   200 means: collect most of the dinars AND find a few of the secrets. */
+export const MAHR_GOAL  = 200;    // dinars Dana asks for. Lower = easier ending, higher = harder.
+export const LIRA_VALUE = 10;     // dinars each hidden gold lira adds to the mahr
+
+export const PHYS = {
+  walkMax: 1.6,  runMax: 2.6,
+  walkAcc: 0.10, runAcc: 0.14,
+  friction: 0.09,
+  jumpVel: -7.5,                  // apex ≈ 84 units, clears 4-tall columns
+  stompVel: -5.5, stompVelHeld: -7.5,
+  gravity: 0.62, gravityHeld: 0.32,
+  maxFall: 9,
+};
+
+/* Hit-boxes (world units). Sprites are drawn bottom-centred on these. */
+export const PLAYER_SIZE = {
+  small: { w: 10, h: 16 },
+  big:   { w: 13, h: 26 },
+};

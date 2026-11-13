@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Saqer music test</title>
+<style>
+  body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+    background: #140d1c; color: #efe0bf; font: 15px/1.6 system-ui, sans-serif; padding: 24px; text-align: center; }
+  h1 { margin: 0; color: #f2b632; font-size: 26px; }
+  p { margin: 0; max-width: 54ch; opacity: .75; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+  button { border: 0; border-radius: 8px; padding: 12px 20px; font: 600 15px system-ui; cursor: pointer; background: #44296f; color: #efe0bf; }
+  button.on { background: #f2b632; color: #140d1c; }
+  #meter { width: min(420px, 80vw); height: 10px; background: #2b1a4a; border-radius: 5px; overflow: hidden; }
+  #meter div { height: 100%; width: 0; background: linear-gradient(90deg, #1f8a8a, #f2b632, #ce1126); }
+</style>
+</head>
+<body>
+<h1>Saqer · the music</h1>
+<p>The game's own music, played by the game's sound code. One original tune: in Amman it is chiptune in C major;
+   the time travel bends it into maqam Hijaz on C, the chip voices turn into an oud, the drone and darbuka come in,
+   and a short taqsim leads into the past.</p>
+<div class="row">
+  <button data-play="now">Amman today</button>
+  <button data-play="travel">The time travel</button>
+  <button data-play="past">Philadelphia</button>
+  <button data-play="boss">Hercules fight</button>
+  <button data-play="stop">Stop</button>
+</div>
+<div id="meter"><div></div></div>
+<script type="module">
+import { unlockAudio, music, audioOut } from '../js/audio.js';
+let an = null;
+const bar = document.querySelector('#meter div');
+function meter() {
+  if (an) { const d = new Float32Array(an.fftSize); an.getFloatTimeDomainData(d); let p = 0; for (const v of d) p = Math.max(p, Math.abs(v)); bar.style.width = Math.min(100, p * 100) + '%'; }
+  requestAnimationFrame(meter);
+}
+document.querySelectorAll('[data-play]').forEach(b => b.addEventListener('click', () => {
+  unlockAudio();
+  const out = audioOut();
+  if (out && !an) { an = out.context.createAnalyser(); an.fftSize = 2048; out.connect(an); meter(); }
+  document.querySelectorAll('[data-play]').forEach(x => x.classList.toggle('on', x === b && b.dataset.play !== 'stop'));
+  const k = b.dataset.play;
+  music.stop(true);
+  if (k === 'now') music.start(false, 'amman');
+  else if (k === 'travel') { music.travel(); music.start(false, 'south'); }     // the change, then the past's tune
+  else if (k === 'past') music.start(false, 'south');
+  else if (k === 'boss') music.start(true, 'south');
+}));
+</script>
+</body>
+</html>

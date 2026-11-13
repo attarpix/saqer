@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Saqer · stage map</title>
+<style>
+  html, body { margin: 0; background: #17121d; }
+  canvas { display: block; image-rendering: pixelated; }
+  iframe { position: absolute; left: -9999px; top: 0; width: 640px; height: 480px; border: 0; }
+</style>
+</head>
+<body>
+<!--
+  Draws a whole stage as one picture, using the game's own drawing code.
+
+    /tools/map.html?stage=1            stage 1-1 with a ruler, grid and the secrets marked
+    /tools/map.html?stage=3&clean      stage 1-3, the art only (good for painting over)
+
+  Right-click the picture → "Save image as…".
+-->
+<canvas id="map"></canvas>
+<iframe id="game" src="../index.html?debug"></iframe>
+<script>
+const q = new URLSearchParams(location.search);
+const STAGE = Math.max(1, parseInt(q.get('stage') || '1', 10)) - 1;
+const CLEAN = q.has('clean');
+const TILE = 16, VW = 320, VH = 240, K = 2;          // K = picture pixels per game unit
+const TOP = CLEAN ? 0 : 44, BOTTOM = CLEAN ? 0 : 64;  // ruler above, legend below
+
+const frame = document.getElementById('game');
+const wait = ms => new Promise(r => setTimeout(r, ms));
+
+(async function () {
+  let S;
+  for (;;) {                                           // wait until the game has loaded its art
+    S = frame.contentWindow && frame.contentWindow.__saqer;
+    if (S && S.ART && S.ART.themes && S.IMG && S.IMG.skyDay && S.G.state === 'title') break;
+    await wait(50);
+  }
+  S.hold = true;
+  S.stage(STAGE);
+  S.G.state = 'play';
+  S.G.mapShot = true;
+
+  const level = S.level, W = level.w * TILE;
+  const out = document.getElementById('map');
+  out.width = W * K; out.height = TOP + VH * K + BOTTOM;
+  const g = out.getContext('2d');
+  g.imageSmoothingEnabled = false;
+  g.fillStyle = '#17121d'; g.fillRect(0, 0, out.width, out.height);
+
+  const src = frame.contentDocument.getElementById('game');
+  for (let cam = 0; cam < W; cam += VW) {              // one screen at a time
+    const c = Math.min(cam, W - VW);
+    S.G.camX = c;
+    S.render();
+    g.drawImage(src, 0, 0, src.width, src.height, c * K, TOP, VW * K, VH * K);
+  }
+
+  if (!CLEAN) annotate(g, S, W);
+  document.title = 'map ready';
+  document.body.dataset.ready = '1';
+})();
+
+function annotate(g, S, W) {
+  const level = S.level, T = K * TILE;
+  const label = (s, x, y, col = '#fff', size = 12, align = 'center') => {
+    g.font = 'bold ' + size + 'px Consolas, monospace'; g.textAlign = align; g.textBaseline = 'middle';
+    g.lineWidth = 3; g.strokeStyle = 'rgba(0,0,0,0.85)'; g.strokeText(s, x, y);
+    g.fillStyle = col; g.fillText(s, x, y);
+  };
+
+  // grid: a faint line every tile, a stronger one every 5
+  for (let x = 0; x <= level.w; x++) {
+    g.fillStyle = x % 5 === 0 ? 'rgba(0,0,0,0.30)' : 'rgba(0,0,0,0.10)';
+    g.fillRect(x * T, TOP, 1, VH * K);
+  }
+  for (let y = 0; y <= 15; y++) {
+    g.fillStyle = 'rgba(0,0,0,0.10)';
+    g.fillRect(0, TOP + y * T, W * K, 1);
+  }
+
+  // ruler: column numbers
+  g.fillStyle = '#241b30'; g.fillRect(0, 0, W * K, TOP);
+  for (let x = 0; x < level.w; x += 5) {
+    g.fillStyle = '#8f7fb0'; g.fillRect(x * T, TOP - 10, 1, 10);
+    label(String(x), x * T + 4, 16, '#ffe9a8', 16, 'left');
+  }
+  // row numbers at the left of every screen
+  for (let sx = 0; sx < level.w; sx += 20) {
+    for (let y = 0; y < 15; y++) label(String(y), sx * T + 3, TOP + y * T + T / 2, 'rgba(255,255,255,0.75)', 10, 'left');
+  }
+
+  // what you can't see in the game: secrets and what each block holds
+  const NAMES = { 3: '', 4: 'J', 11: 'M', 12: '$', 14: 'C', 15: 'G' };
+  for (let y = 0; y < 15; y++) for (let x = 0; x < level.w; x++) {
+    const t = level.tiles[y][x];
+    if (!(t in NAMES)) continue;
+    const px = x * T, py = TOP + y * T;
+    if (t === 14 || t === 15) {                         // hidden block
+      g.setLineDash([4, 3]); g.lineWidth = 2;
+      g.strokeStyle = t === 15 ? '#ffd23c' : '#ffffff';
+      g.strokeRect(px + 2, py + 2, T - 4, T - 4);
+      g.setLineDash([]);
+    }
+    if (NAMES[t]) label(NAMES[t], px + T / 2, py + T / 2, t === 15 ? '#ffd23c' : '#fff', 15);
+  }
+  label('START', level.startX * T + T / 2, TOP + 12 * T - 30, '#9dff9d', 13);
+  label('FLAG', level.flagX * T + T / 2, TOP + 2 * T, '#9dff9d', 13);
+
+  // legend
+  const y0 = TOP + VH * K;
+  g.fillStyle = '#241b30'; g.fillRect(0, y0, W * K, BOTTOM);
+  const lines = [
+    'SAQER  stage ' + level.def.id + '  ' + (level.def.name || '') + '    ' + level.w + ' columns x 15 rows   (1 square = 1 tile, numbers on top = column, numbers at the left = row)',
+    'J = jameed inside (makes Saqer big)    M = mansaf inside (extra life)    $ = brick with several dinars    dashed C = invisible block with a dinar    dashed gold G = invisible block with a GOLD LIRA',
+  ];
+  for (let x = 0; x < W * K; x += 1920) {             // repeated so it is readable wherever you zoom in
+    label(lines[0], x + 10, y0 + 20, '#ffe9a8', 14, 'left');
+    label(lines[1], x + 10, y0 + 44, '#ffffff', 12, 'left');
+  }
+}
+</script>
+</body>
+</html>

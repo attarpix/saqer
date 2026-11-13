@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Saqer · character sheet</title>
+<style>
+  body { margin: 0; padding: 16px; background: #1c1030; color: #efe0bf; font: 12px ui-monospace, monospace; }
+  h2 { font-size: 13px; margin: 18px 0 6px; color: #f2b632; }
+  .strip { display: flex; flex-wrap: wrap; gap: 0; align-items: flex-end; padding: 10px; margin-bottom: 4px; }
+  .day { background: #8cc4ee; } .dusk { background: #7a4a8c; } .night { background: #241640; } .rose { background: #d99a84; }
+  canvas { image-rendering: pixelated; }
+</style>
+</head>
+<body>
+<p>Every frame of Saqer and Dana, on the four kinds of backdrop in the game. Open through the local server:
+   <code>/tools/characters.html</code></p>
+<div id="out"></div>
+<script type="module">
+  import { buildCharacters } from '../js/saqer.js';
+  const { img, sprites } = buildCharacters();
+  const out = document.getElementById('out');
+  const Z = 4;
+  function show(title, sheet, frames) {
+    const h = document.createElement('h2'); h.textContent = title; out.appendChild(h);
+    for (const bg of ['day', 'dusk', 'night', 'rose']) {
+      const d = document.createElement('div'); d.className = 'strip ' + bg;
+      for (const name in frames) for (const [x, y, w, hh] of frames[name]) {
+        const c = document.createElement('canvas'); c.width = w * Z; c.height = hh * Z; c.title = name;
+        const g = c.getContext('2d'); g.imageSmoothingEnabled = false;
+        g.drawImage(sheet, x, y, w, hh, 0, 0, w * Z, hh * Z);
+        d.appendChild(c);
+      }
+      out.appendChild(d);
+    }
+  }
+  show('Saqer (small)', img.saqerSmall, sprites.small.frames);
+  show('Saqer (after jameed)', img.saqerBig, sprites.big.frames);
+  show('Grow', img.saqerGrow, { grow: sprites.transform.frames.grow });
+  show('Dana', img.dana, sprites.dana.frames);
+</script>
+</body>
+</html>
