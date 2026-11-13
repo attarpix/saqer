@@ -7,7 +7,7 @@
      hercules      someone beat Hercules
    Nothing is counted on localhost or with ?debug, so testing does not add to the numbers.
    ============================================================ */
-export const GOATCOUNTER = '';
+export const GOATCOUNTER = 'attarpix';
 
 const on = () => GOATCOUNTER && !['localhost', '127.0.0.1'].includes(location.hostname) && !/[?&]debug/.test(location.search);
 
