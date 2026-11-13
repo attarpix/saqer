@@ -241,8 +241,7 @@ function playStep(s, t, k, dur) {
   const bs = BASS_STEP[inBar];
   if (chipV > 0.05 && bs !== null) tri(t, dur * 0.8, bend(root + bs, k), 0.075 * chipV);
   if (oudV > 0.05 && (inBar === 0 || inBar === 4)) oud(t, bend(root, k), 0.06 * oudV);
-  // rhythm: a ticking hat today, the maqsum in the past
-  if (chipV > 0.05 && inBar % 2 === 1) hat(t, 0.012 * chipV);
+  // rhythm: the maqsum in the past (the hi-hat that ticked behind the modern tune is gone)
   if (oudV > 0.05) {
     const p = MAQSUM[inBar];
     if (p === 'D') dum(t, 0.16 * oudV);
