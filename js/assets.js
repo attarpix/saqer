@@ -59,7 +59,7 @@ export async function loadAssets(onProgress = () => {}) {
 
   const imgs = entries.map(([k, src]) => loadImage(src).then(im => { IMG[k] = im; tick(); }));
   const font = (document.fonts ? Promise.race([
-    Promise.all([document.fonts.load('8px "Press Start 2P"'), document.fonts.load('16px "Reem Kufi Fun"')]),
+    Promise.all([document.fonts.load('8px "Press Start 2P"'), document.fonts.load('700 16px "Changa"')]),
     new Promise(r => setTimeout(r, 2500)),           // offline first run: fall back to monospace
   ]) : Promise.resolve()).catch(() => {}).then(tick);
 

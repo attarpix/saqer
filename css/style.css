@@ -19,7 +19,7 @@
   --green: #007a3d;
   --teal: #1f8a8a;
   --font: 'Press Start 2P', ui-monospace, monospace;
-  --font-ar: 'Reem Kufi Fun', 'Noto Kufi Arabic', 'Segoe UI', sans-serif;
+  --font-ar: 'Changa', 'Noto Kufi Arabic', 'Segoe UI', sans-serif;   /* also AR_FONT in js/lang.js */
 }
 
 * { box-sizing: border-box; }
@@ -236,3 +236,15 @@ body.rot {
   -webkit-user-select: text; user-select: text;
   pointer-events: auto;
 }
+
+/* ---------------- Arabic (js/lang.js sets body.ar) ----------------
+   The pixel font has no Arabic letters: menus switch to the Arabic font, a size up, right to left. */
+body.ar .screen { font-family: var(--font-ar); font-weight: 700; }
+body.ar .px-btn { font-family: var(--font-ar); font-weight: 700; font-size: calc(var(--u) * 10); padding-top: calc(var(--u) * 3); padding-bottom: calc(var(--u) * 3); }
+body.ar .px-btn[data-act="lang"] { font-family: var(--font); font-size: calc(var(--u) * 7); padding: calc(var(--u) * 5) calc(var(--u) * 10); }
+body.ar .tagline { font-size: calc(var(--u) * 11); }
+body.ar .hint { font-size: calc(var(--u) * 8); }
+body.ar .screen h2 { font-size: calc(var(--u) * 16); }
+body.ar .px-panel.story { direction: rtl; text-align: right; }
+body.ar .story-text { font-family: var(--font-ar); font-size: calc(var(--u) * 11); line-height: 1.6; min-height: calc(var(--u) * 30); }
+body.ar .speaker { font-size: calc(var(--u) * 10); }

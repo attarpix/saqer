@@ -14,6 +14,7 @@ import { IMG, SPRITES } from './assets.js';
 import { ART } from './art.js';
 import { MORPH_FRAMES } from './player.js';
 import { storyView } from './ui.js';
+import { t, isAr, AR_FONT, AR_WEIGHT, tStage, tLiras, tVictory } from './lang.js';
 
 let ctx;
 /* touch screens (phones, the car): the play view is zoomed in 10%, so the art reads bigger.
@@ -567,11 +568,17 @@ function drawDana(cx, groundY, k, talking) {
 
 /* ---------------- text / HUD ---------------- */
 const FONT = '"Press Start 2P", ui-monospace, monospace';
+const ARABIC = /[؀-ۿ]/;
 function text(s, x, y, col = '#fff', size = 8, align = 'left') {
-  ctx.font = `${size}px ${FONT}`;
+  s = t(String(s));
+  if (ARABIC.test(s)) {                    // the pixel font has no Arabic: the Arabic font, a size up
+    ctx.font = `${AR_WEIGHT} ${Math.round(size * 1.45)}px ${AR_FONT}`;
+    ctx.direction = 'rtl'; y -= size * 0.45;
+  } else ctx.font = `${size}px ${FONT}`;
   ctx.textAlign = align; ctx.textBaseline = 'top';
   ctx.fillStyle = '#140d1c'; ctx.fillText(s, x + 1, y + 1);
   ctx.fillStyle = col; ctx.fillText(s, x, y);
+  ctx.direction = 'ltr';
 }
 function centerText(s, y, col, size) { text(s, VW / 2, y, col, size, 'center'); }
 const pad = (n, l) => String(Math.max(0, Math.floor(n))).padStart(l, '0');
@@ -641,11 +648,11 @@ function drawOverlays() {
   const bn = G.banner;
   if (bn && (G.state !== 'goal' || G.goalPhase === 4)) {
     const a = Math.min(1, bn.t / 20);
-    const h = 12 + bn.lines.length * 11;
+    const lh = isAr() ? 14 : 11, h = 12 + bn.lines.length * lh + (isAr() ? 4 : 0);   // Arabic letters are taller
     ctx.globalAlpha = a;
     ctx.fillStyle = 'rgba(20,13,28,0.78)'; ctx.fillRect(0, 50, VW, h);
     ctx.fillStyle = '#ffd166'; ctx.fillRect(0, 50, VW, 1); ctx.fillRect(0, 50 + h - 1, VW, 1);
-    bn.lines.forEach((s, i) => centerText(s, 57 + i * 11, i === 0 ? '#ffd166' : '#ffffff', i === 0 ? 8 : 6));
+    bn.lines.forEach((s, i) => centerText(s, 57 + (isAr() ? 4 : 0) + i * lh, i === 0 ? '#ffd166' : '#ffffff', i === 0 ? 8 : 6));
     ctx.globalAlpha = 1;
   }
 }
@@ -656,9 +663,10 @@ function drawVictory() {
   ctx.fillRect(40, 56, 240, 96);
   centerText('HERCULES YIELDS!', 66, '#ffd166', 12);
   const s = clockSeconds();
-  centerText('TIME  ' + Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0') + '   BONUS ' + (G.bonus || 0), 90, '#ffffff', 6);
-  centerText('DINARS  ' + G.mahr + '    GOLD LIRAS  ' + G.liras, 104, '#efe0bf', 6);
-  centerText('SCORE  ' + pad(G.score, 6), 120, '#7dff8a', 8);
+  const v = tVictory(Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'), G.bonus || 0, G.mahr, G.liras, pad(G.score, 6));
+  centerText(v[0], 90, '#ffffff', 6);
+  centerText(v[1], 104, '#efe0bf', 6);
+  centerText(v[2], 120, '#7dff8a', 8);
   if (G.stateTimer > 120 && Math.floor(G.tick / 30) % 2) centerText('PRESS JUMP', 138, '#ffffff', 6);
 }
 
@@ -676,17 +684,18 @@ function drawIntroCard() {
   ctx.fillStyle = '#140d1c'; ctx.fillRect(0, 0, VW, VH);
   drawHUD();
   const def = level.def;
-  centerText('STAGE ' + def.id, 62, '#ffd166', 8);
-  centerText(def.name, 80, '#ffffff', 8);
-  ctx.font = '16px "Reem Kufi Fun", "Noto Kufi Arabic", sans-serif';
+  centerText(tStage(def.id), 62, '#ffd166', 8);
+  if (isAr()) centerText(def.nameAr || def.name, 82, '#ffffff', 11);
+  else centerText(def.name, 80, '#ffffff', 8);
+  ctx.font = AR_WEIGHT + ' 14px ' + AR_FONT;
   ctx.textAlign = 'center'; ctx.textBaseline = 'top'; ctx.direction = 'rtl';
-  ctx.fillStyle = '#efe0bf'; ctx.fillText(def.nameAr || '', VW / 2, 94);
+  if (!isAr()) { ctx.fillStyle = '#efe0bf'; ctx.fillText(def.nameAr || '', VW / 2, 94); }
   ctx.direction = 'ltr';
   drawSprite(SPRITES.saqer.small.idle[0], VW / 2 - 18, 158, 1, false);
   text('x  ' + G.lives, VW / 2 - 4, 143, '#ffffff', 8);
   if (level.liraTotal) {
     ctx.drawImage(ART.lira[0], VW / 2 - 82, 176, 12, 12);
-    text(level.liraTotal + ' GOLD LIRAS HIDDEN HERE', VW / 2 - 66, 179, '#cbb7e8', 6);
+    text(tLiras(level.liraTotal), VW / 2 - 66, 179, '#cbb7e8', 6);
   }
 }
 
@@ -803,8 +812,8 @@ function drawYear() {
   if (a <= 0) return;
   ctx.globalAlpha = a;
   ctx.font = '24px ' + FONT; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-  ctx.fillStyle = 'rgba(255,250,235,0.9)'; ctx.fillText('AD ' + year, VW / 2 + 1, 101);
-  ctx.fillStyle = '#3a1a06'; ctx.fillText('AD ' + year, VW / 2, 100);
+  ctx.fillStyle = 'rgba(255,250,235,0.9)'; ctx.fillText((isAr() ? year + ' م' : 'AD ' + year), VW / 2 + 1, 101);
+  ctx.fillStyle = '#3a1a06'; ctx.fillText((isAr() ? year + ' م' : 'AD ' + year), VW / 2, 100);
   // rewinding clock hands
   const cx = VW / 2, cy = 76, ang = -G.stateTimer * 0.35;
   ctx.strokeStyle = '#3a1a06'; ctx.lineWidth = 1.5;

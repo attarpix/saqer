@@ -4,6 +4,7 @@
    (RTL) text and scale with the pixel frame via the --u variable.
    ============================================================ */
 import { sfx, playVO, stopVO, voPlaying } from './audio.js';
+import { isAr, t } from './lang.js';
 
 const $ = s => document.querySelector(s);
 let openName = null;
@@ -70,7 +71,9 @@ const fill = (s, vars) => (s || '').replace(/\{(\w+)\}/g, (m, k) => (k in vars ?
 export function showStory(pages, done, vars = {}, flags = {}) {
   const list = (pages || [])
     .filter(p => !p.when || flags[p.when])
-    .map(p => Object.assign({}, p, { text: fill(p.text, vars), ar: fill(p.ar, vars) }));
+    .map(p => isAr()                                  // in Arabic the Arabic line is the line itself
+      ? Object.assign({}, p, { text: fill(p.ar || p.text, vars), ar: '' })
+      : Object.assign({}, p, { text: fill(p.text, vars), ar: fill(p.ar, vars) }));
   if (!list.length) { done(); return; }
   // bg / cast / tent carry forward from the page that set them
   let bg = 'amman', cast = [], tent = false;
@@ -92,7 +95,7 @@ export function storyView() {
 
 function renderPage() {
   const p = story.pages[story.i];
-  setText('#story-speaker', p.speaker || '');
+  setText('#story-speaker', t(p.speaker || ''));
   setHidden('#story-speaker', !p.speaker);
   const ar = $('#story-ar');
   ar.textContent = p.ar || ''; ar.hidden = !p.ar;

@@ -135,11 +135,13 @@ STORY.beforeBoss = [
   { bg: 'theater', cast: ['saqer', 'hercules'], speaker: '',
     text: 'PHILADELPHIA. THE THEATRE IS FULL: SIX THOUSAND SEATS, AND EVERY ONE TAKEN.',
     ar: 'فيلادلفيا. المدرّج مليان: ستة آلاف مقعد.' },
-  { speaker: 'HERCULES', text: 'A STRANGER IN MY CITY. THEY BUILT ME A TEMPLE ON THAT HILL. WHAT DID THEY BUILD FOR YOU?' },
+  { speaker: 'HERCULES', text: 'A STRANGER IN MY CITY. THEY BUILT ME A TEMPLE ON THAT HILL. WHAT DID THEY BUILD FOR YOU?',
+    ar: 'غريب بمدينتي. بنولي معبد على هذاك الجبل. وإنت شو بنولك؟' },
   { speaker: 'SAQER', text: 'NOTHING YET. GIVE ME A MINUTE.', ar: 'ولا إشي لسّا. أعطيني دقيقة.' },
 ];
 STORY.afterBoss = [
   { bg: 'theater', cast: ['saqer', 'hercules'], speaker: 'HERCULES',
-    text: 'ENOUGH. THE CROWD HAS CHOSEN. THE CITY IS YOURS TO WALK, SAQER OF AMMAN.' },
-  { speaker: '', text: 'TO BE CONTINUED …' },
+    text: 'ENOUGH. THE CROWD HAS CHOSEN. THE CITY IS YOURS TO WALK, SAQER OF AMMAN.',
+    ar: 'بكفّي. الناس اختاروا. المدينة إلك تمشي فيها يا صقر عمّان.' },
+  { speaker: '', text: 'TO BE CONTINUED …', ar: 'يتبع …' },
 ];

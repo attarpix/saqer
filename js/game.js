@@ -21,6 +21,7 @@ import { updateEntities, updateEffects, spawnLevelEntities, addScore, say, heal,
 import { spawnBoss, updateBoss } from './boss.js';
 import { loadSave, writeSave } from './storage.js';
 import { clamp } from './physics.js';
+import { tSound, tBest, tScore } from './lang.js';
 import { showScreen, hideScreens, uiOpen, uiScreen, uiConfirm, uiMove, showStory, setText } from './ui.js';
 
 export const TOTALS = { liras: 0, dinars: 0, stages: [] };
@@ -47,7 +48,7 @@ export function toTitle() {
   music.stop();
   level.def = null;
   G.state = 'title'; G.boss = null; G.cut = null; G.banner = null;
-  setText('#hi-score', 'BEST ' + String(G.hiScore).padStart(6, '0'));
+  setText('#hi-score', tBest(String(G.hiScore).padStart(6, '0')));
   refreshSoundLabel();
   showScreen('title');
 }
@@ -177,8 +178,8 @@ function gameOver() {
   saveHi();
   G.state = 'gameover';
   music.stop();
-  setText('#over-score', 'SCORE ' + String(G.score).padStart(6, '0'));
-  setText('#over-hi', 'BEST  ' + String(G.hiScore).padStart(6, '0'));
+  setText('#over-score', tScore(String(G.score).padStart(6, '0')));
+  setText('#over-hi', tBest(String(G.hiScore).padStart(6, '0')));
   showScreen('over');
 }
 
@@ -228,7 +229,7 @@ export function toggleSound() {
   refreshSoundLabel();
 }
 function refreshSoundLabel() {
-  document.querySelectorAll('[data-act="sound"]').forEach(b => { b.textContent = 'SOUND: ' + (G.muted ? 'OFF' : 'ON'); });
+  document.querySelectorAll('[data-act="sound"]').forEach(b => { b.textContent = tSound(G.muted); });
 }
 
 /* ---------------- per-frame update ---------------- */
@@ -429,3 +430,9 @@ function updateGoal() {
 }
 
 export { W };
+
+/* the title / pause / game-over labels built from numbers, after a language switch */
+export function refreshMenus() {
+  setText('#hi-score', tBest(String(G.hiScore).padStart(6, '0')));
+  refreshSoundLabel();
+}

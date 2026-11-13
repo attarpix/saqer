@@ -6,7 +6,8 @@ import { loadAssets } from './assets.js';
 import { initRender, render } from './render.js';
 import { initInput } from './input.js';
 import { initUI, setHidden } from './ui.js';
-import { boot, update, newGame, pause, resume, restartStage, toggleSound, toTitle, continueGame, debugStage } from './game.js';
+import { boot, update, newGame, pause, resume, restartStage, toggleSound, toTitle, continueGame, debugStage, refreshMenus } from './game.js';
+import { applyLang, toggleLang } from './lang.js';
 import { G, W, player } from './state.js';
 import { level } from './level.js';
 import { keys } from './input.js';
@@ -108,6 +109,7 @@ async function tryFullscreen() {
 }
 
 /* ---------------- start ---------------- */
+applyLang();                                   // Arabic by default (js/lang.js)
 initRender(canvas);
 initInput();
 initUI({
@@ -118,6 +120,7 @@ initUI({
   restart: restartStage,
   quit: toTitle,
   retry: continueGame,
+  lang: () => { toggleLang(); refreshMenus(); },
 });
 
 const bar = document.getElementById('load-bar');
