@@ -154,8 +154,8 @@ STORY.afterBoss = [
    ============================================================ */
 STORY.philadelphia = [
   { bg: 'phila', cast: ['saqer'], speaker: '',
-    text: 'PHILADELPHIA, 150 AD. THE ROMAN CITY THAT WILL ONE DAY BE AMMAN.',
-    ar: 'فيلادلفيا، سنة 150 م. المدينة الرومانية اللي رح تصير يوم من الأيام عمّان.' },
+    text: 'PHILADELPHIA, 150 AD. THE ROMAN CITY AT THE HEART OF WHAT WILL ONE DAY BE AMMAN.',
+    ar: 'فيلادلفيا، سنة 150 م. المدينة الرومانية اللي رح تصير قلب عمّان القديم.' },
   { speaker: '',
     text: 'IT TOOK ITS NAME FROM KING PTOLEMY II PHILADELPHUS, AND IT IS ONE OF THE TEN CITIES OF THE DECAPOLIS.',
     ar: 'أخذت اسمها من الملك بطليموس الثاني فيلادلفوس، وهي وحدة من المدن العشر، الديكابوليس.' },
