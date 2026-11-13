@@ -826,7 +826,7 @@ THEMES.sky = {                                                  // white marble 
   top: ['#fffaf0', '#c9b894', '#efe4cc'], tuft: null,
 };
 
-function goldJameed() {
+export function goldJameed() {
   const src = ART.jameed, [c, g] = cv(src.width, src.height);
   g.drawImage(src, 0, 0);
   g.globalCompositeOperation = 'source-atop';

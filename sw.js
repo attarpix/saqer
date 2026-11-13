@@ -2,7 +2,7 @@
    SERVICE WORKER — offline play
    Bump VERSION whenever you ship changed files so players get them.
    ============================================================ */
-const VERSION = 'saqer-v25';
+const VERSION = 'saqer-v26';
 const CORE = [
   './',
   'index.html',
@@ -15,7 +15,7 @@ const CORE = [
   'assets/bg/title_theater.png', 'assets/bg/amman_sunset.jpg', 'assets/bg/philadelphia.jpg',
   'assets/bg/theater_calm.jpg', 'assets/bg/theater_cheer.jpg', 'assets/bg/theater_cheer2.jpg', 'assets/sfx/crowd_roar.mp3', 'assets/sfx/crowd_clap.mp3',
   ...Array.from({ length: 9 }, (_, i) => ['clap', 'cheer'].map(k => 'assets/bg/crowd/' + k + '_' + String(i + 1).padStart(2, '0') + '.jpg')).flat(),
-  'assets/src/saqer_sheet2.png', 'assets/src/thief_sheet.png', 'assets/src/creatures_sheet.png', 'assets/src/saqer_run.png', 'assets/src/saqer_walk.png', 'assets/src/thief_walk.png', 'assets/src/hercules_talk.png', 'assets/src/sky_temple.png', 'assets/bg/city_below.png', 'assets/bg/city_street.png', 'assets/src/hercules_sheet.png', 'assets/src/pillar.png',
+  'assets/src/saqer_sheet2.png', 'assets/src/thief_sheet.png', 'assets/src/creatures_sheet.png', 'assets/src/saqer_run.png', 'assets/src/saqer_walk.png', 'assets/src/thief_walk.png', 'assets/src/hercules_talk.png', 'assets/src/sky_temple.png', 'assets/bg/city_below.png', 'assets/bg/city_street.png', 'assets/src/hercules_sheet.png', 'assets/src/pillar.png', 'assets/src/jameed.png',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png', 'icons/apple-touch-icon.png',
 ];
 /* Voice-over recordings (assets/vo/…) and your own Dana picture are not listed here:

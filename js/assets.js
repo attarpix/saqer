@@ -5,7 +5,7 @@
    the painted sheets in assets/src when the game starts (sheets.js).
    Tiles, creatures and Dana are painted in code (art.js, saqer.js).
    ============================================================ */
-import { buildArt, ART } from './art.js';
+import { buildArt, ART, goldJameed } from './art.js';
 import { buildCharacters } from './saqer.js';
 import { buildSaqer, buildHercules, cutMagentaSheet, fitFigure, squashed, bodyX, cutTemple } from './sheets.js';
 import { paintColumn, doubled, streetBackdrop, skyBackdrop, templeFront, cloudPuffs, brazier, urn, streetBackdrop2 } from './scenery.js';
@@ -33,6 +33,7 @@ const IMAGES = {
   herculesTalk: 'assets/src/hercules_talk.png',
   skyTemple:    'assets/src/sky_temple.png',
   herculesSheet:'assets/src/hercules_sheet.png',
+  jameedArt:    'assets/src/jameed.png',
 };
 
 for (let i = 1; i <= CROWD_FRAMES; i++) {
@@ -118,6 +119,9 @@ export async function loadAssets(onProgress = () => {}) {
     const kH = idle.img.height / HT[0].height, refW = HT[0].width * kH, ax = idle.ax / idle.img.width * refW;
     const talk = HT.slice(1).map(c => ({ img: fitFigure(c, { k: kH, grid: false }), ax }));
     SPRITES.hercules.talk = talk.concat(talk.slice(1, -1).reverse());
+    // the owner's jameed (art/new/Make this jameed piece…nT3.png), 14 units wide; the golden one is the same piece in gold
+    ART.jameed = fitFigure(cutMagentaSheet(IMG.jameedArt)[0][0], { w: 56 });
+    ART.goldJameed = goldJameed();
   }
   await loadCustom();
   tick();

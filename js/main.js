@@ -48,6 +48,8 @@ function fit() {
   const rot = !NOROT && document.body.classList.contains('touch') && ah > aw && upright;
   document.body.classList.toggle('rot', rot);
   if (rot) [aw, ah] = [ah, aw];
+  // touch: the buttons sit outside the picture, about 75 game units on each side (css #touch .pad)
+  if (document.body.classList.contains('touch')) aw = aw * VW / (VW + 2 * 78);
   const dpr = window.devicePixelRatio || 1;
   const cw = canvas.width, ch = canvas.height;
   let s = Math.min((aw * dpr) / cw, (ah * dpr) / ch);

@@ -16,6 +16,10 @@ import { MORPH_FRAMES } from './player.js';
 import { storyView } from './ui.js';
 
 let ctx;
+/* touch screens (phones, the car): the play view is zoomed in 10%, so the art reads bigger.
+   The HUD stays full size. Vertically the view follows Saqer when he climbs high. */
+const ZOOM = 1.1;
+let zoomY = VH - VH / ZOOM;
 export function initRender(canvas) {
   ctx = canvas.getContext('2d', { alpha: false });
   ctx.imageSmoothingEnabled = false;
@@ -39,6 +43,12 @@ export function render() {
   if (G.state === 'gameover') { ctx.fillStyle = '#0b0710'; ctx.fillRect(0, 0, VW, VH); return; }
 
   const cam = half(G.camX);
+  const z = !G.mapShot && document.body.classList.contains('touch') ? ZOOM : 1;
+  if (z !== 1) {
+    const span = VH - VH / z, want = Math.max(0, Math.min(span, player.y - 40));
+    zoomY += (want - zoomY) * 0.1;
+    ctx.save(); ctx.scale(z, z); ctx.translate(-(VW - VW / z) / 2, -zoomY);
+  }
   const shook = G.shake > 0 && !G.mapShot;
   if (shook) { ctx.save(); ctx.translate(half((Math.random() - 0.5) * Math.min(4, G.shake * 0.4)), half((Math.random() - 0.5) * Math.min(4, G.shake * 0.4))); }
   drawBackdrop(cam);
@@ -64,6 +74,7 @@ export function render() {
   drawPlayer(cam);
   drawPopups(cam);
   if (shook) ctx.restore();
+  if (z !== 1) ctx.restore();
   if (G.era === 'past' && !G.mapShot) drawPast();
   if (G.mapShot) return;                 // tools/map.html: the stage only, no HUD
   drawOverlays();
@@ -332,7 +343,7 @@ function drawLift(p, cam) {
 
 function drawItem(m, cam) {
   const im = m.kind === 'mansaf' ? ART.mansaf : ART.jameed;
-  const w = im.width / SCALE, h = im.height / SCALE;
+  const d = im.div || SCALE, w = im.width / d, h = im.height / d;   // the owner's art is drawn at 4 px per unit
   const px = half(m.x + m.w / 2 - w / 2 - cam), py = half(m.y + m.h - h);
   if (px < -20 || px > VW + 20) return;
   if (m.emerge) {
@@ -504,8 +515,8 @@ function drawGolden(px, py) {
     const a = G.tick / 14 + (i * Math.PI) / 2;
     ctx.fillStyle = '#fff3b8'; ctx.fillRect(half(px + 8 + Math.cos(a) * 13), half(y + 6 + Math.sin(a) * 10), 1.5, 1.5);
   }
-  text('GOLDEN JAMEED', px - 30, py - 26, '#ffd166', 6);
-  text('GROWN FOR GOOD', px - 34, py - 17, '#ffffff', 6);
+  text('GOLDEN JAMEED', px - 92, py, '#ffd166', 6);          // beside it, not above: the top is the HUD's
+  text('GROWN FOR GOOD', px - 96, py + 9, '#ffffff', 6);
 }
 
 /* arrows over the shafts that lead down, and at the lifts that lead up */

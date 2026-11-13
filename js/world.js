@@ -55,13 +55,13 @@ export function bumpBlock(tx, ty) {
   hitFromBelow(tx, ty);
   switch (t) {
     case T.Q_COIN: case T.HIDDEN_COIN:
-      popCoin(tx, ty); setTile(tx, ty, T.USED); bump(tx, ty); break;
+      popCoin(tx, ty); gone(tx, ty, T.USED); bump(tx, ty); break;
     case T.HIDDEN_LIRA:
-      popLira(tx, ty); setTile(tx, ty, T.USED); bump(tx, ty); break;
+      popLira(tx, ty); gone(tx, ty, T.USED); bump(tx, ty); break;
     case T.BRICK_COINS: {
       const k = key(tx, ty), n = (level.multi.get(k) || 1) - 1;
       popCoin(tx, ty); bump(tx, ty);
-      if (n <= 0) { level.multi.delete(k); setTile(tx, ty, T.USED); } else level.multi.set(k, n);
+      if (n <= 0) { level.multi.delete(k); gone(tx, ty, T.USED); } else { level.multi.set(k, n); gone(tx, ty, T.BRICK_COINS, n); }
       break;
     }
     case T.Q_JAMEED:
@@ -105,8 +105,8 @@ function hitFromBelow(tx, ty) {
     }
   }
   const above = tileAt(tx, ty - 1);
-  if (above === T.COIN) { setTile(tx, ty - 1, T.EMPTY); popCoin(tx, ty - 1); }
-  else if (above === T.LIRA) { setTile(tx, ty - 1, T.EMPTY); popLira(tx, ty - 1); }
+  if (above === T.COIN) { gone(tx, ty - 1, T.EMPTY); popCoin(tx, ty - 1); }
+  else if (above === T.LIRA) { gone(tx, ty - 1, T.EMPTY); popLira(tx, ty - 1); }
 }
 
 /* ---------------- spawning ---------------- */
@@ -296,10 +296,10 @@ export function collectCoins(e) {
   const y0 = Math.floor(e.y / TILE), y1 = Math.floor((e.y + e.h - 0.01) / TILE);
   for (let ty = y0; ty <= y1; ty++) for (let tx = x0; tx <= x1; tx++) {
     const t = tileAt(tx, ty);
-    if (t === T.COIN) { setTile(tx, ty, T.EMPTY); addCoin(); }
-    else if (t === T.LIRA) { setTile(tx, ty, T.EMPTY); addLira(tx * TILE + 8, ty * TILE); }
+    if (t === T.COIN) { gone(tx, ty, T.EMPTY); addCoin(); }
+    else if (t === T.LIRA) { gone(tx, ty, T.EMPTY); addLira(tx * TILE + 8, ty * TILE); }
     else if (t === T.KEY) { setTile(tx, ty, T.EMPTY); takeKey(tx, ty); }
-    else if (t === T.GOLD) { setTile(tx, ty, T.EMPTY); takeGolden(tx, ty); }
+    else if (t === T.GOLD) { gone(tx, ty, T.EMPTY); takeGolden(tx, ty); }
   }
 }
 
@@ -393,4 +393,29 @@ function tryChains(p) {
   sfx.brick(); sfx.item();
   sparkle(p.x + p.w / 2, p.y, 22);
   say(['THE CHAINS FALL AWAY.', 'RIDE THE LIFT UP TO THE TEMPLE OF HERCULES.'], 300);
+}
+
+/* ---------------- what is gone for good ----------------
+   Coins, gold liras and the golden jameed are taken once per playthrough: dying does not bring them back
+   (only a new game does). Jameed and mansaf boxes are not remembered: they come back after every death. */
+function gone(tx, ty, t, n) {
+  setTile(tx, ty, t);
+  let m = G.gone.get(G.area);
+  if (!m) G.gone.set(G.area, m = new Map());
+  m.set(key(tx, ty), n === undefined ? t : { t, n });
+}
+/* a freshly built area: take out what was already collected this playthrough */
+export function applyGone(id) {
+  const m = G.gone.get(id);
+  if (!m) return;
+  for (const [k, v] of m) {
+    const [x, y] = k.split(',').map(Number);
+    if (typeof v === 'number') { setTile(x, y, v); level.multi.delete(k); }
+    else level.multi.set(k, v.n);
+  }
+}
+/* after a death: the jameed and mansaf boxes are full again */
+export function refillBoxes(boxes) {
+  for (const [x, y, t] of boxes) setTile(x, y, t);
+  W.entities = W.entities.filter(e => !(e.type === 'item' && (e.kind === 'jameed' || e.kind === 'mansaf')));
 }

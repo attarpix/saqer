@@ -11,12 +11,13 @@
 import { TILE, VW, VH, GROUND_TOP, START_LIVES, MAHR_GOAL, MAX_HP } from './config.js';
 import { G, W, player, clearWorld } from './state.js';
 import { level, buildLevel, linkAt } from './level.js';
+import { T } from './tiles.js';
 import { AREAS, START_AREA, PAST_AREA, FLAG_COL, GATE_COL } from './quest.js';
 import { STORY } from './story.js';
 import { takeAction, pollGamepad } from './input.js';
 import { sfx, music, crowd, setMuted, unlockAudio } from './audio.js';
 import { updatePlayer, placePlayer, killPlayer, makeBig } from './player.js';
-import { updateEntities, updateEffects, spawnLevelEntities, addScore, say, heal } from './world.js';
+import { updateEntities, updateEffects, spawnLevelEntities, addScore, say, heal, applyGone, refillBoxes } from './world.js';
 import { spawnBoss, updateBoss } from './boss.js';
 import { loadSave, writeSave } from './storage.js';
 import { clamp } from './physics.js';
@@ -27,6 +28,7 @@ const AREA_ORDER = ['amman', 'phila', 'under', 'temple', 'theater'];
 
 /* what each area looked like when Saqer last left it */
 let memory = new Map();
+const boxesOf = new Map();                   // area → its jameed and mansaf boxes as built
 
 /* ---------------- flow ---------------- */
 export function boot() {
@@ -53,7 +55,7 @@ export function toTitle() {
 function resetRun() {
   G.score = 0; G.coins = 0; G.lives = START_LIVES;
   G.mahr = 0; G.mahrStart = 0; G.liras = 0; G.lirasStart = 0;
-  G.golden = false; G.hp = MAX_HP; G.keys = {};
+  G.golden = false; G.hp = MAX_HP; G.keys = {}; G.gone = new Map();
   G.clock = 0; G.banner = null; G.cut = null; G.boss = null; G.cheer = 0; G.shake = 0;
   memory = new Map();
 }
@@ -98,9 +100,15 @@ function enterArea(id, tx, mode = 'ground', card = false) {
   const wasBig = player.big && level.def;
   buildLevel(def);
   clearWorld();
+  const boxes = [];                              // the jameed and mansaf boxes as built, refilled after a death
+  for (let y = 0; y < level.tiles.length; y++) for (let x = 0; x < level.w; x++) {
+    const t = level.tiles[y][x];
+    if (t === T.Q_JAMEED || t === T.BRICK_MANSAF) boxes.push([x, y, t]);
+  }
+  boxesOf.set(id, boxes);
   const old = memory.get(id);
   if (old) { level.tiles = old.tiles; level.multi = old.multi; W.entities = old.entities; }
-  else spawnLevelEntities();
+  else { spawnLevelEntities(); applyGone(id); }
   G.area = id;
   if (tx === null || tx === undefined) tx = level.startX;
   G.entry = { area: id, tx, mode };
@@ -146,6 +154,12 @@ function respawn(loseLife) {
   }
   W.particles = []; W.coinFx = []; W.popups = [];
   heal();
+  // every jameed and mansaf box is full again, here and in the areas left behind (coins stay taken)
+  refillBoxes(boxesOf.get(G.area) || []);
+  for (const [id, mem] of memory) {
+    for (const [x, y, t] of boxesOf.get(id) || []) mem.tiles[y][x] = t;
+    mem.entities = mem.entities.filter(e => !(e.type === 'item' && (e.kind === 'jameed' || e.kind === 'mansaf')));
+  }
   if (!level.def.roam) {                  // today's Amman is a one-way stage: it starts over
     memory.delete(G.area);
     const id = G.area; G.area = '';
