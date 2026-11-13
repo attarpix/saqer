@@ -43,7 +43,7 @@ body {
 }
 
 #stage {
-  position: fixed; inset: 0;
+  position: fixed; top: 0; right: 0; bottom: 0; left: 0;
   display: grid; place-items: center;
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
@@ -67,16 +67,17 @@ canvas#game {
 
 /* ---------------- screens ---------------- */
 .screen {
-  position: absolute; inset: 0;
+  position: absolute; top: 0; right: 0; bottom: 0; left: 0;
   display: none;
   flex-direction: column; align-items: center; justify-content: center;
-  gap: calc(var(--u) * 7);
+  /* spacing by margins, not flex gap: older car browsers ignore gap */
   font-size: calc(var(--u) * 8);
   line-height: 1.6;
   text-align: center;
   z-index: 10;
 }
 .screen.open { display: flex; }
+.screen > :not(:first-child) { margin-top: calc(var(--u) * 7); }
 .screen.dim { background: rgba(11, 7, 16, .55); }
 .screen h2 { margin: 0 0 calc(var(--u) * 6); font-size: calc(var(--u) * 12); font-weight: normal; color: var(--gold); text-shadow: var(--px) var(--u) 0 var(--ink); }
 .screen p { margin: 0; }
@@ -98,7 +99,8 @@ canvas#game {
 }
 
 /* ---------------- buttons ---------------- */
-.menu { display: flex; flex-direction: column; gap: calc(var(--u) * 5); align-items: stretch; }
+.menu { display: flex; flex-direction: column; align-items: stretch; }
+.menu > :not(:first-child) { margin-top: calc(var(--u) * 5); }
 .px-btn {
   font: inherit; font-size: calc(var(--u) * 8);
   color: var(--sand);
@@ -137,7 +139,8 @@ body.touch .hint.keys { display: none; }
 
 /* ---------------- title ---------------- */
 #screen-title { justify-content: flex-start; padding-top: calc(var(--u) * 24); }
-.logo { margin: 0; display: flex; align-items: center; gap: calc(var(--u) * 10); font-weight: normal; }
+.logo { margin: 0; display: flex; align-items: center; font-weight: normal; }
+.logo > :not(:first-child) { margin-left: calc(var(--u) * 10); }
 .logo-en {
   font-size: calc(var(--u) * 32);
   color: var(--gold);
@@ -177,7 +180,7 @@ body.touch .hint.keys { display: none; }
 #touch { display: none; }
 body.touch #touch {
   display: block;
-  position: fixed; inset: 0;
+  position: fixed; top: 0; right: 0; bottom: 0; left: 0;
   z-index: 5;
   pointer-events: none;
 }
@@ -186,12 +189,14 @@ body.touch.menu-open #touch { display: none; }
 #touch .pad {
   position: absolute; bottom: calc(env(safe-area-inset-bottom) + 18px);
   width: var(--side, 140px);
-  display: flex; flex-wrap: wrap; justify-content: center; align-content: flex-end; gap: 8px;
+  display: flex; flex-wrap: wrap; justify-content: center; align-content: flex-end;
   pointer-events: auto;
 }
 #touch .pad-left  { left: env(safe-area-inset-left); flex-direction: column; flex-wrap: nowrap; align-items: center; }
 #touch .pad-right { right: env(safe-area-inset-right); }
 #touch .pad .tbtn { width: var(--btn, 60px); height: var(--btn, 60px); }
+#touch .pad-left .tbtn + .tbtn { margin-top: 8px; }
+#touch .pad-right .tbtn + .tbtn { margin-left: 8px; }
 .tbtn {
   display: grid; place-items: center;
   width: 64px; height: 64px;
