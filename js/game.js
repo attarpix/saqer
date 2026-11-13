@@ -373,7 +373,8 @@ function updateGoal() {
     if (player.y >= baseTop - player.h && G.flagY <= POLE_TOP + 1) { G.goalPhase = 1; G.stateTimer = 0; }
   } else if (G.goalPhase === 1) {
     if (t === 30) sfx.warp();
-    if (t > 30) { c.white = Math.min(1, (t - 30) / 60); G.shake = 3; }
+    if (t > 30) G.shake = Math.min(4, (t - 30) / 15);
+    c.white = Math.min(1, Math.max(0, (t - 82) / 18));                // a short flash at the very end
     if (t > 100) {                                   // full white: swap the world
       const big = player.big, x = player.x;
       G.era = 'past';
@@ -389,7 +390,7 @@ function updateGoal() {
       G.goalPhase = 2; G.stateTimer = 0;
     }
   } else if (G.goalPhase === 2) {
-    c.white = Math.max(0, 1 - t / 70);
+    c.white = Math.max(0, 1 - t / 42);
     c.title = t;
     if (t > 190) { G.goalPhase = 3; G.stateTimer = 0; sfx.thud(); }
   } else if (G.goalPhase === 3) {

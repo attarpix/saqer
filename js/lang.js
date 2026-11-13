@@ -33,6 +33,12 @@ const AR = {
   'THE LIFT IS CHAINED.': 'المصعد مربوط بالجنازير.', 'THE BRONZE KEY IN THE VAULTS': 'المفتاح البرونزي اللي بالأقبية',
   'WILL FREE IT.': 'بفكّه.',
   'THE CHAINS FALL AWAY.': 'الجنازير وقعت.', 'RIDE THE LIFT UP TO THE TEMPLE OF HERCULES.': 'اركب المصعد واطلع على معبد هرقل.',
+  'THE BRONZE KEY!': 'المفتاح البرونزي!', 'IT FREES THE CHAINED LIFT': 'بفكّ المصعد المربوط',
+  'AT THE WEST END OF THE STREET.': 'بآخر الشارع من الغرب.',
+  'THE KEY OF HERCULES!': 'مفتاح هرقل!', 'IT OPENS THE GATE IN THE EAST VAULT,': 'بفتح البوابة بالقبو الشرقي،',
+  'ON THE WAY TO THE THEATRE.': 'عالطريق للمدرّج.',
+  'LOCKED.': 'مسكّرة.', 'ITS KEY IS IN THE TEMPLE OF HERCULES,': 'مفتاحها بمعبد هرقل،', 'HIGH ABOVE THE CITY.': 'فوق المدينة بالعالي.',
+  'THE BRONZE KEY IS IN ANOTHER VAULT.': 'المفتاح البرونزي بقبو ثاني.',
   'ATTAR10X: UNKILLABLE': 'ATTAR10X: ما بموت', 'NOTHING CAN HURT SAQER NOW.': 'ولا إشي بأذي صقر هسّا.',
   'ATTAR10X: OFF': 'ATTAR10X: انطفى', 'BACK TO NORMAL.': 'رجعنا عالطبيعي.',
   // menus (index.html)

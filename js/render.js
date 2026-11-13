@@ -21,6 +21,7 @@ let ctx;
    The HUD stays full size. Vertically the view follows Saqer when he climbs high. */
 const ZOOM = 1.1;
 let zoomY = VH - VH / ZOOM;
+const view = { z: 1, ox: 0, oy: 0, cam: 0 };          // how the play view was drawn this frame (for screen effects)
 export function initRender(canvas) {
   ctx = canvas.getContext('2d', { alpha: false });
   ctx.imageSmoothingEnabled = false;
@@ -45,10 +46,12 @@ export function render() {
 
   const cam = half(G.camX);
   const z = !G.mapShot && document.body.classList.contains('touch') ? ZOOM : 1;
+  view.z = z; view.ox = 0; view.oy = 0; view.cam = cam;
   if (z !== 1) {
     const span = VH - VH / z, want = Math.max(0, Math.min(span, player.y - 40));
     zoomY += (want - zoomY) * 0.1;
     ctx.save(); ctx.scale(z, z); ctx.translate(-(VW - VW / z) / 2, -zoomY);
+    view.ox = (VW - VW / z) / 2; view.oy = zoomY;
   }
   const shook = G.shake > 0 && !G.mapShot;
   if (shook) { ctx.save(); ctx.translate(half((Math.random() - 0.5) * Math.min(4, G.shake * 0.4)), half((Math.random() - 0.5) * Math.min(4, G.shake * 0.4))); }
@@ -586,7 +589,8 @@ const pad = (n, l) => String(Math.max(0, Math.floor(n))).padStart(l, '0');
 function drawPopups(cam) {
   for (const p of W.popups) {
     const col = p.gold ? '#ffd166' : p.text === '1UP' ? '#7dff8a' : '#fff';
-    text(p.text, half(p.x - cam), half(p.y - Math.max(0, p.t) * 0.6), col, 6);
+    const s = isAr() && /^GOLD +/.test(p.text) ? p.text.replace('GOLD', 'ذهب') : p.text;
+    text(s, half(p.x - cam), half(p.y - Math.max(0, p.t) * 0.6), col, 6);
   }
 }
 
@@ -633,7 +637,8 @@ function drawHUD() {
 /* messages, the time-travel title, the white-out */
 function drawOverlays() {
   const c = G.cut;
-  if (c && c.white > 0) { ctx.fillStyle = 'rgba(255,250,235,' + c.white.toFixed(2) + ')'; ctx.fillRect(0, 0, VW, VH); }
+  if (c && G.state === 'goal') drawWarp(c);
+  else if (c && c.white > 0) { ctx.fillStyle = 'rgba(255,250,235,' + c.white.toFixed(2) + ')'; ctx.fillRect(0, 0, VW, VH); }
   drawYear();
   if (c && G.goalPhase === 2 && c.title > 20) {
     const a = Math.min(1, (c.title - 20) / 30) * Math.min(1, (190 - c.title) / 25);
@@ -801,6 +806,84 @@ function drawPast() {
   }
 }
 
+/* ---------------- the time warp (the flag in Amman) ----------------
+   Phase 1: the present wobbles like a rewinding tape, a vortex of gold and violet spins around
+   Saqer while streaks of light rush into him, and the year counts back; a flash of white.
+   Phase 2: Philadelphia opens up as a widening circle from Saqer, with a shock ring. */
+let snap = null;
+const hash = n => { const s = Math.sin(n * 127.1) * 43758.5453; return s - Math.floor(s); };
+const WARP_COLS = ['#ffd166', '#f2b632', '#7ad0ff', '#c08cff', '#fff3b8'];
+function drawWarp(c) {
+  const ph = G.goalPhase, t = G.stateTimer;
+  const sx = (player.x + player.w / 2 - view.cam - view.ox) * view.z;      // Saqer on screen
+  const sy = (player.y + player.h / 2 - view.oy) * view.z;
+  const k = ph === 1 ? Math.min(1, Math.max(0, (t - 12) / 78)) : ph === 2 ? Math.max(0, 1 - t / 50) : 0;
+  if (k > 0) {
+    // 1. the picture wobbles in bands, harder and harder
+    const cv = ctx.canvas;
+    if (!snap) snap = document.createElement('canvas');
+    if (snap.width !== cv.width || snap.height !== cv.height) { snap.width = cv.width; snap.height = cv.height; }
+    snap.getContext('2d').drawImage(cv, 0, 0);
+    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.imageSmoothingEnabled = false;
+    const band = 4 * RES, amp = k * k * 16 * RES;
+    for (let y = 0; y < cv.height; y += band) {
+      const n = Math.floor(y / band);
+      const dx = Math.round(Math.sin(n * 0.45 + G.tick * 0.32) * amp + (hash(n + Math.floor(G.tick / 3)) - 0.5) * amp * 0.7);
+      ctx.drawImage(snap, 0, y, cv.width, band, dx, y, cv.width, band);
+    }
+    ctx.restore();
+    ctx.fillStyle = 'rgba(52,18,84,' + (0.42 * k).toFixed(3) + ')'; ctx.fillRect(0, 0, VW, VH);
+    // 2. a tunnel of rings closing in on him, and five spiral arms spinning around him
+    ctx.lineWidth = 2;
+    for (let j = 0; j < 6; j++) {
+      const rr = 240 - ((G.tick * 2.2 + j * 40) % 240);
+      ctx.globalAlpha = k * 0.55 * (rr / 240);
+      ctx.strokeStyle = j % 2 ? '#c08cff' : '#7ad0ff';
+      ctx.beginPath(); ctx.ellipse(sx, sy, rr, rr * 0.78, 0, 0, Math.PI * 2); ctx.stroke();
+    }
+    const spin = G.tick * 0.11 * (ph === 1 ? 1 : -1);
+    for (const [lw, white] of [[3.5, false], [1.2, true]]) {
+      ctx.lineWidth = lw;
+      for (let a = 0; a < 5; a++) {
+        ctx.globalAlpha = k * (white ? 0.7 : 0.85);
+        ctx.strokeStyle = white ? '#fffbe8' : WARP_COLS[a];
+        ctx.beginPath();
+        for (let i = 0; i <= 44; i++) {
+          const r = 3 + i * 4.2 * (0.5 + k * 0.8), ang = spin + a * (Math.PI * 2 / 5) + i * 0.2;
+          const x = sx + Math.cos(ang) * r, y = sy + Math.sin(ang) * r * 0.78;
+          if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y);
+        }
+        ctx.stroke();
+      }
+    }
+    // 3. streaks of light rushing in
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 40; i++) {
+      const ang = hash(i) * Math.PI * 2, life = (G.tick * 0.022 * (0.6 + hash(i + 9)) + hash(i + 3)) % 1;
+      const d = (1 - life) * 240, len = 5 + 20 * k;
+      ctx.globalAlpha = k * life;
+      ctx.strokeStyle = i % 3 ? '#fff3b8' : '#7ad0ff';
+      ctx.beginPath(); ctx.moveTo(sx + Math.cos(ang) * d, sy + Math.sin(ang) * d);
+      ctx.lineTo(sx + Math.cos(ang) * (d + len), sy + Math.sin(ang) * (d + len)); ctx.stroke();
+    }
+    // a glow on Saqer
+    const g = ctx.createRadialGradient(sx, sy, 0, sx, sy, 24 + 46 * k);
+    g.addColorStop(0, 'rgba(255,243,184,' + (0.85 * k).toFixed(3) + ')'); g.addColorStop(1, 'rgba(255,243,184,0)');
+    ctx.globalAlpha = 1; ctx.fillStyle = g; ctx.fillRect(0, 0, VW, VH);
+  }
+  // 4. the white light
+  if (c.white > 0) {
+    ctx.fillStyle = 'rgb(255,250,235)';
+    if (ph === 2) {                                   // the new world opens from Saqer outwards
+      const R = (1 - c.white) * 280;
+      ctx.beginPath(); ctx.rect(0, 0, VW, VH); ctx.arc(sx, sy, R, 0, Math.PI * 2, true); ctx.fill('evenodd');
+      ctx.globalAlpha = c.white; ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(sx, sy, R, 0, Math.PI * 2); ctx.stroke();
+      ctx.globalAlpha = 1;
+    } else { ctx.globalAlpha = c.white; ctx.fillRect(0, 0, VW, VH); ctx.globalAlpha = 1; }
+  }
+}
+
 /* the year rolling back while the world whites out */
 function drawYear() {
   const c = G.cut;
@@ -811,12 +894,15 @@ function drawYear() {
   else if (G.goalPhase === 2 && G.stateTimer < 50) { year = then; a = 1 - G.stateTimer / 50; }
   if (a <= 0) return;
   ctx.globalAlpha = a;
-  ctx.font = '24px ' + FONT; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-  ctx.fillStyle = 'rgba(255,250,235,0.9)'; ctx.fillText((isAr() ? year + ' م' : 'AD ' + year), VW / 2 + 1, 101);
-  ctx.fillStyle = '#3a1a06'; ctx.fillText((isAr() ? year + ' م' : 'AD ' + year), VW / 2, 100);
+  if (isAr()) text(year + ' م', VW / 2, 100, '#ffe08a', 22, 'center');          // the year in the Arabic font, with its م
+  else {
+    ctx.font = '24px ' + FONT; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    ctx.fillStyle = '#140d1c'; ctx.fillText('AD ' + year, VW / 2 + 1.5, 101.5);
+    ctx.fillStyle = '#ffe08a'; ctx.fillText('AD ' + year, VW / 2, 100);
+  }
   // rewinding clock hands
   const cx = VW / 2, cy = 76, ang = -G.stateTimer * 0.35;
-  ctx.strokeStyle = '#3a1a06'; ctx.lineWidth = 1.5;
+  ctx.strokeStyle = '#ffe08a'; ctx.lineWidth = 1.5;
   ctx.beginPath(); ctx.arc(cx, cy, 12, 0, 7); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(ang) * 9, cy + Math.sin(ang) * 9); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(ang / 12) * 6, cy + Math.sin(ang / 12) * 6); ctx.stroke();

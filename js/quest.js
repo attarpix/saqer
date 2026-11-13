@@ -122,8 +122,7 @@ export const AREAS = {
       L.row(22, 9, 'B?BJB');
       L.row(24, 5, '?');
       L.thorns(27, 2);
-      L.scorpions(18, 14);
-      L.flyer(20, 7, 3);
+      L.scorpion(31);                               // one only, well away from the temple lift: Saqer comes up from the vaults at column 10
       L.column(4, 3);
       L.coins(6, 9, 3);
 
