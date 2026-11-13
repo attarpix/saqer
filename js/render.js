@@ -598,7 +598,7 @@ function drawHUD() {
   text('SAQER', 10, 8);
   if (G.god) text('ATTAR10X', 10, 46, '#7dff8a', 6);
   text(pad(G.score, 6), 10, 19);
-  text('MAHR', 68, 8, '#ffd166');
+  text('DINARS', 68, 8, '#ffd166');          // no mahr yet: Dana and her mahr come in level 2
   ctx.drawImage(ART.coin[Math.floor(G.tick / 10) % 4], 67, 18.5, 8, 8);
   text(String(G.mahr), 77, 19);
   text('STAGE', 128, 8);
@@ -718,7 +718,7 @@ function drawCutscene(v) {
   ctx.translate(0, -shift);
 
   const theatre = v.bg === 'theater';
-  const name = ART.themes[v.bg] ? v.bg : 'amman';
+  const name = ART.themes[v.bg] ? v.bg : v.bg === 'phila' ? 'sky' : 'amman';   // Philadelphia stands on white marble
   const th = ART.themes[name];
   if (theatre) {
     ctx.imageSmoothingEnabled = true;

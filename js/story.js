@@ -145,3 +145,28 @@ STORY.afterBoss = [
     ar: 'بكفّي. الناس اختاروا. المدينة إلك تمشي فيها يا صقر عمّان.' },
   { speaker: '', text: 'TO BE CONTINUED …', ar: 'يتبع …' },
 ];
+
+/* ============================================================
+   PHILADELPHIA — after the time jump, before Saqer is free to go.
+   The narrator introduces the old city; the reader moves on with NEXT,
+   so there is time to read. The last page warns that the city is a
+   little maze.
+   ============================================================ */
+STORY.philadelphia = [
+  { bg: 'phila', cast: ['saqer'], speaker: '',
+    text: 'PHILADELPHIA, 150 AD. THE ROMAN CITY THAT WILL ONE DAY BE AMMAN.',
+    ar: 'فيلادلفيا، سنة 150 م. المدينة الرومانية اللي رح تصير يوم من الأيام عمّان.' },
+  { speaker: '',
+    text: 'IT TOOK ITS NAME FROM KING PTOLEMY II PHILADELPHUS, AND IT IS ONE OF THE TEN CITIES OF THE DECAPOLIS.',
+    ar: 'أخذت اسمها من الملك بطليموس الثاني فيلادلفوس، وهي وحدة من المدن العشر، الديكابوليس.' },
+  { speaker: '',
+    text: 'A STREET OF COLUMNS RUNS ALONG THE VALLEY, AND THE GREAT THEATRE SEATS SIX THOUSAND PEOPLE.',
+    ar: 'شارع أعمدة بيمشي على طول الوادي، والمدرّج الكبير بيتّسع لستة آلاف واحد.' },
+  { speaker: '',
+    text: 'HIGH ON THE CITADEL HILL, THE CITY HONOURS HERCULES WITH A TEMPLE.',
+    ar: 'وفوق على جبل القلعة، المدينة بتكرّم هرقل بمعبد.' },
+  { speaker: 'SAQER', text: 'WHERE AM I? AND HOW DO I GET BACK HOME?', ar: 'وين أنا؟ وكيف بدّي أرجع عالبيت؟' },
+  { speaker: '',
+    text: 'THE OLD CITY IS A LITTLE MAZE: A STREET, VAULTS BELOW IT, A TEMPLE IN THE SKY. LOOK CAREFULLY.',
+    ar: 'المدينة القديمة متاهة صغيرة: شارع، وأقبية تحته، ومعبد بالسما. دوّر منيح.' },
+];

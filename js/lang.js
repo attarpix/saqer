@@ -14,7 +14,7 @@ export const isAr = () => lang === 'ar';
 
 const AR = {
   // score bar
-  'SAQER': 'صقر', 'MAHR': 'المهر', 'STAGE': 'المرحلة', 'LIVES': 'الأرواح', 'TIME': 'الوقت',
+  'SAQER': 'صقر', 'MAHR': 'المهر', 'DINARS': 'دنانير', 'STAGE': 'المرحلة', 'LIVES': 'الأرواح', 'TIME': 'الوقت',
   'HERCULES': 'هرقل', 'ATTAR10X': 'ATTAR10X',
   // stage names (the STAGE value)
   '1-1': '1-1', 'PHILADELPHIA': 'فيلادلفيا', 'THE TEMPLE': 'المعبد', 'THE VAULTS': 'الأقبية', 'THE THEATRE': 'المدرّج',
@@ -42,7 +42,7 @@ const AR = {
   'ATTAR10X: UNKILLABLE': 'ATTAR10X: ما بموت', 'NOTHING CAN HURT SAQER NOW.': 'ولا إشي بأذي صقر هسّا.',
   'ATTAR10X: OFF': 'ATTAR10X: انطفى', 'BACK TO NORMAL.': 'رجعنا عالطبيعي.',
   // menus (index.html)
-  'A MAHR ACROSS JORDAN': 'مهر عبر الأردن', 'START': 'ابدأ', 'INSTALL': 'ثبّت اللعبة',
+  'A JOURNEY BACK IN TIME': 'رحلة عبر الزمن', 'START': 'ابدأ', 'INSTALL': 'ثبّت اللعبة',
   'PAUSED': 'استراحة', 'RESUME': 'كمّل', 'RESTART STAGE': 'أعد المرحلة', 'QUIT TO TITLE': 'للقائمة الرئيسية',
   'GAME OVER': 'انتهت اللعبة', 'TRY THIS STAGE AGAIN': 'جرّب المرحلة مرة ثانية', 'TITLE': 'القائمة الرئيسية',
   'SKIP': 'تخطّي', 'NEXT ▶': '◀ التالي', 'LOADING…': 'جاري التحميل…',
@@ -60,8 +60,8 @@ export const tScore = n => (lang === 'ar' ? 'النتيجة ' : 'SCORE ') + n;
 export const tStage = id => lang === 'ar' ? 'المرحلة ' + t(id) : 'STAGE ' + id;
 export const tLiras = n => lang === 'ar' ? n + ' ليرات ذهب مخبّاية هون' : n + ' GOLD LIRAS HIDDEN HERE';
 export const tVictory = (time, bonus, dinars, liras, score) => lang === 'ar'
-  ? ['الوقت ' + time + '   مكافأة ' + bonus, 'دنانير ' + dinars + '    ليرات ذهب ' + liras, 'النتيجة ' + score]
-  : ['TIME  ' + time + '   BONUS ' + bonus, 'DINARS  ' + dinars + '    GOLD LIRAS  ' + liras, 'SCORE  ' + score];
+  ? ['الوقت ' + time + '   مكافأة ' + bonus, 'دنانير ' + dinars, 'النتيجة ' + score]
+  : ['TIME  ' + time + '   BONUS ' + bonus, 'DINARS  ' + dinars, 'SCORE  ' + score];
 
 /* the menus in index.html: every element marked data-t keeps its English in data-en */
 export function applyLang() {

@@ -417,13 +417,17 @@ function updateGoal() {
         }
       }
       sfx.item();
-      say(['THE GATE IS BURIED.', 'RIDE THE LIFT BACK OVER THE GREAT STAIR.'], 300);
     }
     if (t > 70) {
+      // the old city is introduced first (NEXT moves on, so there is time to read), then he is free to go
       G.cut = null;
-      G.state = 'play';
-      player.jumpHeld = true;
-      music.start(false, level.def.tune);
+      playStory(STORY.philadelphia, () => {
+        G.state = 'play';
+        player.jumpHeld = true;
+        music.start(false, level.def.tune);
+        say(['THE GATE IS BURIED.', 'RIDE THE LIFT BACK OVER THE GREAT STAIR.'], 300);
+      });
+      return;
     }
   }
   updateEntities();

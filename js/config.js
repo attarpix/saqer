@@ -22,6 +22,7 @@ export const TIME_TICKS  = 24;    // frames per in-game second
    200 means: collect most of the dinars AND find a few of the secrets. */
 export const MAHR_GOAL  = 200;    // dinars Dana asks for. Lower = easier ending, higher = harder.
 export const LIRA_VALUE = 10;     // dinars each hidden gold lira adds to the mahr
+export const GOLD_LIRAS = false;  // level 1 is the introduction: no hidden gold liras (they come with Dana in level 2)
 
 export const PHYS = {
   walkMax: 1.9,  runMax: 1.9,            // one speed: there is no running any more (the owner's choice)
