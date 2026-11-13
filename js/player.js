@@ -116,7 +116,7 @@ export function updatePlayer() {
   else if (Math.abs(player.vx) < 0.08) player.vx = 0;
   else player.vx -= sign(player.vx) * PHYS.friction;
   // releasing run while faster than walk speed now eases down instead of snapping
-  if (Math.abs(player.vx) > maxSpd) player.vx -= sign(player.vx) * Math.min(PHYS.friction, Math.abs(player.vx) - maxSpd);
+  if (Math.abs(player.vx) > maxSpd) player.vx = sign(player.vx) * maxSpd;   // one top speed: he never goes faster than this
 
   if (keys.jump && player.onGround && !player.jumpHeld) {
     player.vy = PHYS.jumpVel - Math.abs(player.vx) * 0.12;   // a little extra height at speed

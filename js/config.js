@@ -24,8 +24,8 @@ export const MAHR_GOAL  = 200;    // dinars Dana asks for. Lower = easier ending
 export const LIRA_VALUE = 10;     // dinars each hidden gold lira adds to the mahr
 
 export const PHYS = {
-  walkMax: 1.6,  runMax: 2.6,
-  walkAcc: 0.10, runAcc: 0.14,
+  walkMax: 1.9,  runMax: 1.9,            // one speed: there is no running any more (the owner's choice)
+  walkAcc: 0.11, runAcc: 0.11,
   friction: 0.09,
   jumpVel: -7.5,                  // apex ≈ 84 units, clears 4-tall columns
   stompVel: -5.5, stompVelHeld: -7.5,

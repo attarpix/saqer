@@ -46,8 +46,8 @@ export function initInput() {
   window.addEventListener('blur', () => { src.kb = {}; src.touch = {}; merge(); actions.add('blur'); });
 
   /* ---- two joysticks (phones) ----
-     left stick, up and down: down = jump (like Space), up = up.
-     right stick, back and forward: walk; pushed all the way = run.
+     left stick, up and down: up = jump (like Space), down = down.
+     right stick, back and forward: walk (one speed).
      A thumb that lands anywhere in a stick's half of the screen grabs that stick. */
   const pad = document.getElementById('touch');
   if (pad) {
@@ -59,14 +59,14 @@ export function initInput() {
         if (s.axis === 'h') {
           if (s.gx < -DEAD) t.left = true;
           if (s.gx > DEAD) t.right = true;
-          if (Math.abs(s.gx) > RUN) t.run = true;
+
         } else {
-          if (s.gy > 0.45) t.jump = true;
-          const up = s.gy < -0.45;
-          if (up && !s.upHeld) actions.add('up');
-          s.upHeld = up;
-          if (t.jump && !s.dnHeld) actions.add('down');
-          s.dnHeld = !!t.jump;
+          if (s.gy < -0.45) t.jump = true;                         // up = jump
+          const dn = s.gy > 0.45;
+          if (dn && !s.dnHeld) actions.add('down');
+          s.dnHeld = dn;
+          if (t.jump && !s.upHeld) actions.add('up');
+          s.upHeld = !!t.jump;
         }
         s.el.classList.toggle('active', s.ptr !== null);
       }
