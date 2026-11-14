@@ -353,7 +353,7 @@ function takeGolden(tx, ty) {
   G.score += 5000;
   sfx.oneUp();
   sparkle(tx * TILE + 8, ty * TILE + 8, 20);
-  say(['THE GOLDEN JAMEED!', 'SAQER STAYS GROWN FOR GOOD.', 'HE CAN TAKE 3 HITS NOW.', 'JAMEED AND MANSAF REFILL THEM.'], 330);
+  say(['THE GOLDEN JAMEED!', 'SAQER STAYS GROWN FOR GOOD.', 'NOW HE CAN TAKE 3 HITS AND HAS 3 LIVES.', 'JAMEED AND MANSAF REFILL THEM.'], 330);
 }
 
 /* The puzzle, in order:

@@ -28,7 +28,7 @@ const AR = {
   'HERCULES!': 'هرقل!', 'STOMP HIM WHILE HE CATCHES HIS BREATH.': 'دوس عليه وهو بياخد نفَسه.',
   'THE GATE IS BURIED.': 'البوابة انطمرت.', 'RIDE THE LIFT BACK OVER THE GREAT STAIR.': 'اركب المصعد وارجع فوق الدرج الكبير.',
   'THE GOLDEN JAMEED!': 'الجميد الذهبي!', 'SAQER STAYS GROWN FOR GOOD.': 'صقر بضلّه كبير للأبد.',
-  'HE CAN TAKE 3 HITS NOW.': 'هسّا بيتحمّل 3 ضربات.', 'JAMEED AND MANSAF REFILL THEM.': 'الجميد والمنسف برجّعوهم.',
+  'NOW HE CAN TAKE 3 HITS AND HAS 3 LIVES.': 'هسّا بيتحمّل 3 ضربات وإله 3 أرواح.', 'JAMEED AND MANSAF REFILL THEM.': 'الجميد والمنسف برجّعوهم.',
   'THE GATE IS OPEN.': 'البوابة انفتحت.', 'THE LIFT BEYOND IT CLIMBS TO THE THEATRE.': 'المصعد اللي وراها بطلع عالمدرّج.',
   'THE LIFT IS CHAINED.': 'المصعد مربوط بالجنازير.', 'THE BRONZE KEY IN THE VAULTS': 'المفتاح البرونزي اللي بالأقبية',
   'WILL FREE IT.': 'بفكّه.',
