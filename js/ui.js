@@ -4,6 +4,7 @@
    (RTL) text and scale with the pixel frame via the --u variable.
    ============================================================ */
 import { sfx, playVO, stopVO, voPlaying } from './audio.js';
+import { releaseTouch } from './input.js';
 import { isAr, t } from './lang.js';
 
 const $ = s => document.querySelector(s);
@@ -30,6 +31,7 @@ export function initUI(h) {
 }
 
 export function showScreen(name) {
+  releaseTouch();                                   // the on-screen buttons hide behind a menu: none may stay pressed
   document.querySelectorAll('.screen').forEach(s => s.classList.toggle('open', s.id === 'screen-' + name));
   openName = name;
   document.body.classList.add('menu-open');

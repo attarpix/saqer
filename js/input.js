@@ -13,6 +13,10 @@ const actions = new Set();
 export const takeAction = a => actions.delete(a);
 export const pushAction = a => actions.add(a);
 
+/* let go of every on-screen button (a menu opened, or the game lost focus) */
+let releaseAll = () => {};
+export const releaseTouch = () => releaseAll();
+
 const KEYMAP = {
   ArrowLeft: 'left', KeyA: 'left',
   ArrowRight: 'right', KeyD: 'right',
@@ -45,7 +49,8 @@ export function initInput() {
     if (k) { src.kb[k] = false; e.preventDefault(); }
     merge();
   });
-  window.addEventListener('blur', () => { src.kb = {}; src.touch = {}; merge(); actions.add('blur'); });
+  window.addEventListener('blur', () => { src.kb = {}; releaseTouch(); src.touch = {}; merge(); actions.add('blur'); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) { src.kb = {}; releaseTouch(); merge(); } });
 
   /* ---- on-screen buttons (phones) ----
      left side: ▲ jump (like Space) and ▼ down. right side: ◀ back and ▶ forward.
@@ -74,6 +79,17 @@ export function initInput() {
       b.addEventListener('lostpointercapture', end);
       b.addEventListener('contextmenu', e => e.preventDefault());
     }
+    // a button must never stay pressed (2026-11-15: ◀ got stuck on a phone). Belt and braces:
+    //  · a finger lifted anywhere on the page releases whatever it held, even if its button never heard;
+    //  · when no finger is left on the screen at all, everything is released;
+    //  · a menu opening, or the game losing focus, releases everything (releaseTouch below).
+    const lift = e => { if (held.delete(e.pointerId)) update(); };
+    window.addEventListener('pointerup', lift, true);
+    window.addEventListener('pointercancel', lift, true);
+    const none = e => { if (e.touches && e.touches.length === 0 && held.size) { held.clear(); update(); } };
+    window.addEventListener('touchend', none, true);
+    window.addEventListener('touchcancel', none, true);
+    releaseAll = () => { if (held.size || Object.keys(src.touch).length) { held.clear(); update(); } };
     const ps = pad.querySelector('[data-action]');
     if (ps) ps.addEventListener('pointerdown', e => { unlockAudio(); actions.add(ps.dataset.action); e.preventDefault(); });
   }
