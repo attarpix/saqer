@@ -215,7 +215,10 @@ function paintTheater(cam) {
   const A = theatrePictures(), cheering = G.cheer > 0, alt = Math.floor(G.tick / 9) % 2;
   const img = crowdFrame(cheering);
   ctx.imageSmoothingEnabled = true;                     // the crowd picture at full detail, lifted so its front row sits just above the podium wall
-  ctx.drawImage(img, -cam, -PODIUM - 4, 28 * TILE, VH + 1);
+  // the whole theatre, from the arched gate at the top to the front row on the podium wall, in its own proportions;
+  // narrower than the arena, so it slides a little slower than the stage (depth)
+  const h = 200, w = h * img.width / img.height, span = Math.max(1, level.w * TILE - VW);
+  ctx.drawImage(img, -Math.min(cam, span) * (w - VW) / span, GROUND_Y - PODIUM - h * 0.93, w, h);
   ctx.imageSmoothingEnabled = false;
   ctx.drawImage(A.stage, -cam, GROUND_Y - PODIUM, A.stage.width * AP, A.stage.height * AP);
 }
@@ -441,6 +444,27 @@ function drawSprite(fr, cx, groundY, k = 1, flip = false) {
   ctx.imageSmoothingEnabled = false;
 }
 
+/* Hercules' boulder: a round grey stone, lit from the top left (built once) */
+let boulderArt = null;
+function boulder() {
+  if (boulderArt) return boulderArt;
+  const N = 28, c = document.createElement('canvas'); c.width = c.height = N;
+  const g = c.getContext('2d'), R = N / 2 - 0.5;
+  const hash = (x, y) => { const s = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453; return s - Math.floor(s); };
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+    const dx = x + 0.5 - N / 2, dy = y + 0.5 - N / 2, d = Math.hypot(dx, dy);
+    if (d > R) continue;
+    if (d > R - 1.6) { g.fillStyle = '#1e1812'; g.fillRect(x, y, 1, 1); continue; }                 // outline
+    const lit = (-dx * 0.55 - dy * 0.7) / R + hash(x, y) * 0.35 - 0.1;
+    g.fillStyle = lit > 0.55 ? '#d6d0c6' : lit > 0.15 ? '#aaa298' : lit > -0.3 ? '#827a70' : '#5a534b';   // grey stone: it stands out on the pale floor
+    g.fillRect(x, y, 1, 1);
+  }
+  g.fillStyle = '#3e3832';                                                                         // a few cracks
+  for (const [x, y, w, h] of [[9, 8, 5, 1], [13, 9, 1, 3], [16, 17, 4, 1], [15, 15, 1, 2], [7, 18, 3, 1]]) g.fillRect(x, y, w, h);
+  boulderArt = c;
+  return c;
+}
+
 /* ---------------- Hercules ---------------- */
 function drawBoss(b, cam) {
   const f = SPRITES.hercules, t = b.t;
@@ -449,8 +473,8 @@ function drawBoss(b, cam) {
     case 'walk':    fr = f.walk[Math.floor(b.anim / 9) % 4]; break;
     case 'windup':  fr = f.windup[Math.min(2, Math.floor(t / 11))]; break;
     case 'smash':   fr = f.smash[t < 6 ? 0 : 1]; break;
-    case 'roarUp':  fr = f.roarUp[Math.floor(t / 9) % 2]; break;
-    case 'roar':    fr = f.roar[Math.floor(t / 6) % 4]; break;
+    case 'roarUp':  fr = f.windup[Math.min(2, Math.floor(t / 10))]; break;     // he raises the club …
+    case 'roar':    fr = f.smash[(t % 32) < 6 ? 0 : 1]; break;                 // … and swings: a boulder flies
     case 'charge':  fr = f.run[Math.floor(b.anim / 5) % 4]; break;
     case 'recover': fr = t < 10 ? f.smash[1] : f.kneel[Math.floor(t / 18) % 2]; break;
     case 'hurt':    fr = f.hurt[Math.floor(t / 7) % 2]; break;
@@ -476,11 +500,12 @@ function drawBoss(b, cam) {
       const im = ART.wave, k = 0.7 + 0.3 * Math.abs(Math.sin(s.t / 3));
       ctx.drawImage(im, half(s.x + s.w / 2 - 14 - cam), half(GROUND_Y - 24 * k), 28, 24 * k);
     } else {
-      const im = ART.roar[Math.floor(s.t / 5) % 2];
+      const im = boulder(), r = 9;                         // the boulder spins as it rolls or flies
+      if (!s.high) { ctx.fillStyle = 'rgba(20,13,28,0.35)'; ctx.fillRect(half(s.x - 1 - cam), GROUND_Y - 1.5, 18, 1.5); }
       ctx.save();
       ctx.translate(half(s.x + s.w / 2 - cam), half(s.y + s.h / 2));
-      if (s.vx < 0) ctx.scale(-1, 1);
-      ctx.drawImage(im, -30, -21, 48, 42);
+      ctx.rotate(s.t * 0.19 * Math.sign(s.vx));
+      ctx.drawImage(im, -r, -r, r * 2, r * 2);
       ctx.restore();
     }
   }

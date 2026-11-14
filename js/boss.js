@@ -3,7 +3,8 @@
 
    He walks Saqer down and picks an attack:
      club smash   long wind-up, then a shockwave runs along the floor both ways: jump it
-     lion's roar  a roar flies across the arena, low (jump it) and, when he is angry, a second one high (stay down)
+     boulder      he swings and hurls a boulder that rolls along the floor (jump it); when he is angry,
+                  a second rock flies at head height (stay down). (It was a flying lion's roar, until 2026-11-14.)
      charge       (once he has been hit twice) he runs the length of the arena: jump over him
    After every attack he has to catch his breath (stars over his head).
    That is the only time a stomp on his head counts. At any other time
@@ -68,8 +69,8 @@ export function updateBoss() {
       if (b.t > 36 - ph * 5) set(b, 'roar');
       break;
     case 'roar':
-      if (b.t === 8) roar(b, false);
-      if (ph === 3 && b.t === 40) roar(b, true);
+      if (b.t === 8) hurl(b, false);
+      if (ph === 3 && b.t === 40) hurl(b, true);
       if (b.t > (ph === 3 ? 66 : 44)) { set(b, 'recover'); b.rest = 160 - ph * 18; }
       break;
     case 'charge':
@@ -119,17 +120,20 @@ function smash(b, ph) {
   for (const d of [-1, 1]) b.shots.push({ kind: 'wave', x: x - 6, y: GY - 11, w: 12, h: 11, vx: d * (2.1 + ph * 0.2), life: 48 + ph * 14, t: 0 });
 }
 
-/* the Nemean lion's roar: low (jump over it) or high (don't jump) */
-function roar(b, high) {
-  sfx.roar();
-  const x = b.facing > 0 ? b.x + b.w + 4 : b.x - 26;
-  b.shots.push({ kind: 'roar', x, y: high ? GY - 62 : GY - 22, w: 22, h: 20, vx: b.facing * 2.7, life: 170, t: 0 });
+/* he swings and hurls a boulder: low, it rolls along the floor (jump over it); high, it flies at head height (stay down) */
+function hurl(b, high) {
+  sfx.roar(); G.shake = 4;
+  const x = b.facing > 0 ? b.x + b.w + 2 : b.x - 16;
+  b.shots.push({ kind: 'rock', x, y: high ? GY - 62 : GY - 18, w: 16, h: 16, vx: b.facing * (high ? 3 : 2.5), life: 190, t: 0, high });
+  dust(x + 7, GY - 2, 4);
 }
+
 
 function updateShots(b) {
   for (const s of b.shots) {
     s.x += s.vx; s.t++; s.life--;
     if (s.kind === 'wave' && s.t % 5 === 0) dust(s.x + 6, GY - 1, 1);
+    if (s.kind === 'rock' && !s.high && s.t % 7 === 0) dust(s.x + 8, GY - 1, 1);   // the boulder kicks up dust as it rolls
     if (G.state === 'play' && overlap(player, s)) hurtPlayer('HERCULES');
   }
   b.shots = b.shots.filter(s => s.life > 0 && s.x > -40 && s.x < level.w * TILE + 40);
