@@ -274,26 +274,10 @@ body.share .credit { font-size: calc(var(--u) * 7); }
 #touch .tbtn[data-key="down"] { background: rgba(0,122,61,.78); }
 #touch .pad .tbtn.down { background: rgba(242,182,50,.9); color: #140d1c; filter: none; transform: translateY(calc(var(--u) * 1)); }
 
-/* ---------------- the map (normal mode bonus) ---------------- */
-.px-panel.map { width: calc(var(--u) * 300); padding: calc(var(--u) * 5) calc(var(--u) * 8); }
-.px-panel.map h2 { margin: 0 0 calc(var(--u) * 1) !important; font-size: calc(var(--u) * 10); }
-body.ar .px-panel.map h2 { font-size: calc(var(--u) * 12); line-height: 1.2; }
-.px-panel.map .menu { margin-top: 0 !important; }
-.px-panel.map .px-btn { padding-top: calc(var(--u) * 2); padding-bottom: calc(var(--u) * 2); }
+/* ---------------- the map (normal mode bonus): an old hand-drawn parchment ---------------- */
 #screen-map { gap: 0; }
-#screen-map > .px-panel { margin: 0 !important; }
-.map-svg { width: 100%; height: auto; max-height: calc(var(--u) * 104); display: block; direction: ltr; }
-.map-svg text { font-family: var(--font); font-size: 6px; fill: #fff; text-anchor: middle; }
-body.ar .map-svg text { font-family: var(--font-ar); font-size: 9px; font-weight: 700; }
-.map-svg .m-small { fill: #ffe08a; font-size: 5px; }
-.map-svg .m-sky { fill: #6aa7d8; stroke: #fff; }
-.map-svg .m-theatre { fill: #b8865a; stroke: #ffe08a; }
-.map-svg .m-street { fill: #cbb48a; stroke: #fff; }
-.map-svg .m-street + text, .map-svg .m-sky + text { fill: #140d1c; }
-.map-svg .m-vault { fill: #4a4a5a; stroke: #aaa; }
-.map-svg .m-way { stroke: #ffd166; stroke-width: 2; stroke-dasharray: 3 2; }
-.map-svg .m-shaft { stroke: #fff; stroke-width: 1; stroke-dasharray: 2 2; opacity: .6; }
-.map-svg .m-step { fill: #ce1126; stroke: #fff; }
-.map-svg text.m-num { font-family: var(--font) !important; font-size: 5px !important; font-weight: normal !important; dominant-baseline: middle; }
-.map-steps { margin: calc(var(--u) * 2) 0 calc(var(--u) * 3) !important; padding-left: calc(var(--u) * 12); text-align: left; font-size: calc(var(--u) * 4.5); line-height: 1.6; color: #fff; }
-body.ar .map-steps { direction: rtl; text-align: right; padding-left: 0; padding-right: calc(var(--u) * 12); font-size: calc(var(--u) * 7); line-height: 1.35; }
+.old-map { width: calc(var(--u) * 290); margin: 0 !important; }
+.old-map .map-svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 calc(var(--u) * 3) 0 rgba(0,0,0,.45)); }
+.old-map .m-x { fill: #b3202a; font: bold 12px Georgia, serif; text-anchor: middle; }
+.old-map .menu { margin-top: calc(var(--u) * 4) !important; align-items: center; }
+.old-map .px-btn { min-width: calc(var(--u) * 80); padding-top: calc(var(--u) * 3); padding-bottom: calc(var(--u) * 3); }
