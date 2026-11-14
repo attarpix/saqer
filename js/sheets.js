@@ -233,10 +233,11 @@ export function buildSaqer(img) {
   });
   const out = {};
   for (const size of ['big', 'small']) {
-    const k = SAQER_H[size] / standH, f = {};
+    // small Saqer is as wide as big Saqer, only shorter: growing and shrinking change his height, never his width
+    const k = SAQER_H[size] / standH, kx = SAQER_H.big / standH, f = {};
     for (const name in raw) f[name] = raw[name].map(c => {
       const s = document.createElement('canvas');
-      s.width = Math.max(1, Math.round(c.width * k)); s.height = Math.max(1, Math.round(c.height * k));
+      s.width = Math.max(1, Math.round(c.width * kx)); s.height = Math.max(1, Math.round(c.height * k));
       const sg = s.getContext('2d'); sg.imageSmoothingEnabled = true; sg.imageSmoothingQuality = 'high';
       sg.drawImage(c, 0, 0, s.width, s.height);
       const im = coarser(s, SAQER_PX);
@@ -293,10 +294,10 @@ export function cutMagentaSheet(img, minArea = 400) {
 
 /* a cut figure sized for the game: h canvas px tall (or w wide), on the same pixel grid as Saqer.
    .div = canvas px per world unit, which render.js reads for the creatures. */
-export function fitFigure(c, { h = 0, w = 0, k = 0, flip = false, grid = true } = {}) {
+export function fitFigure(c, { h = 0, w = 0, k = 0, kx = 0, flip = false, grid = true } = {}) {   // kx: a different width scale (small Saqer)
   const s = k || (h ? h / c.height : w / c.width);
   const o = document.createElement('canvas');
-  o.width = Math.max(1, Math.round(c.width * s)); o.height = Math.max(1, Math.round(c.height * s));
+  o.width = Math.max(1, Math.round(c.width * (kx || s))); o.height = Math.max(1, Math.round(c.height * s));
   const g = o.getContext('2d'); g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high';
   if (flip) { g.translate(o.width, 0); g.scale(-1, 1); }
   g.drawImage(c, 0, 0, o.width, o.height);

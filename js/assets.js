@@ -108,8 +108,8 @@ export async function loadAssets(onProgress = () => {}) {
     const med = a => a.slice().sort((x, y) => x - y)[a.length >> 1];
     const WALK = cutMagentaSheet(IMG.saqerWalk)[0];                  // [standing, 8 frames of one stride]
     for (const size of ['big', 'small']) {
-      const k = (size === 'big' ? 120 : 80) / WALK[0].height;
-      const walk = WALK.slice(1).map(c => { const im = fitFigure(c, { k }); return { img: im, ax: bodyX(im) }; });
+      const k = (size === 'big' ? 120 : 80) / WALK[0].height, kx = 120 / WALK[0].height;   // small: as wide as big, only shorter
+      const walk = WALK.slice(1).map(c => { const im = fitFigure(c, { k, kx }); return { img: im, ax: bodyX(im) }; });
       SPRITES.saqer[size].walk = walk;
       SPRITES.saqer[size].run = walk;
     }
