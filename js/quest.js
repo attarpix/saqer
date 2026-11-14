@@ -271,6 +271,7 @@ export const AREAS = {
       L.row(183, 5, 'g');                           // SECRET: above the second pillar
       L.flyer(181, 5, 2);
       L.scorpions(190, 195);
+      L.hardOnly('scorpion', 195); L.hardOnly('flyer', 181);   // normal mode: no scorpion at the gate, no bat right after it (too hard to pass unhurt)
       // (the jameed box that stood here is behind the gate now, for health before the fight)
       L.block(200, 2, 1, 8);                        // the bronze gate
       L.bars(200, 12, 3);

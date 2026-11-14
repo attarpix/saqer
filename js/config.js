@@ -34,8 +34,9 @@ export const LIRA_VALUE = 10;     // dinars each hidden gold lira adds to the ma
 export const GOLD_LIRAS = false;  // level 1 is the introduction: no hidden gold liras (they come with Dana in level 2)
 
 export const PHYS = {
-  walkMax: 1.9,  runMax: 1.9,            // one speed: there is no running any more (the owner's choice)
-  walkAcc: 0.11, runAcc: 0.11,
+  walkMax: 1.5,  runMax: 2.5,            // classic platformer speeds: walk, and run at 5/3 of it
+  runAfter: 45,                          // frames holding one direction on the ground before he starts to run (no run button on phones)
+  walkAcc: 0.098, runAcc: 0.098,         // he speeds up smoothly to either top speed; turning round brakes twice as hard
   friction: 0.09,
   jumpVel: -7.5,                  // apex ≈ 84 units, clears 4-tall columns
   stompVel: -5.5, stompVelHeld: -7.5,

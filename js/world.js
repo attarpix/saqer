@@ -129,9 +129,9 @@ function makeEntity(s) {
   }
 }
 export function spawnLevelEntities() {
-  // easy mode: every second enemy stays home (config.js MODES); lifts always come
+  // normal (easy) mode: every second enemy stays home, and those marked hardOnly in quest.js (config.js MODES); lifts always come
   let k = 0;
-  const spawns = level.spawns.filter(s => s.type === 'plat' || !D.fewer || k++ % 2 === 0);
+  const spawns = level.spawns.filter(s => s.type === 'plat' || !D.fewer || (k++ % 2 === 0 && !s.hard));   // (k counts the hard-only ones too, so the rest stay the same)
   W.entities = spawns.map(makeEntity);
   let n = 0;                                           // every enemy gets a number (the attar debug view)
   for (const e of W.entities) if (e.type === 'naughty') e.num = ++n;

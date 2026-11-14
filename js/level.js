@@ -115,6 +115,8 @@ export function buildLevel(def) {
     clear(x, y, w, h) { for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) setTile(x + i, y + j, T.EMPTY); },
     bars(x, y, h = 3) { for (let j = 0; j < h; j++) setTile(x, y - j, T.BARS); },
     /** a shaft: falling off the bottom between columns a and b lands Saqer in area `to`, dropping in at column tx */
+    /** this enemy only comes in hard mode (type as in the spawn list: 'scorpion', 'flyer' …, at column x) */
+    hardOnly(type, x) { for (const s of level.spawns) if (s.type === type && s.x === x) s.hard = true; },
     shaftDown(a, b, to, tx, hint) { level.links.push({ kind: 'down', a, b, to, tx, hint }); },   // hint: lines said on landing (once, unless he has the temple key)
     /** a way up: rising off the top of the screen between columns a and b (on a lift) comes out in area `to` at column tx */
     wayUp(a, b, to, tx) { level.links.push({ kind: 'up', a, b, to, tx }); },

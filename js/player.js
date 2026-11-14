@@ -18,7 +18,7 @@ export function placePlayer(tileX, groundRow) {
     vx: 0, vy: 0, onGround: false, facing: 1,
     big: false, wantBig: false, jumping: false, jumpHeld: true,
     invuln: 0, morph: 0, morphDir: 0, walkT: 0, landT: 0, hurtT: 0,
-    stompChain: 0, deathKind: '', visible: true, riding: null, star: 0,
+    stompChain: 0, deathKind: '', visible: true, riding: null, star: 0, holdDir: 0, holdT: 0,
   });
 }
 
@@ -110,16 +110,22 @@ export function updatePlayer() {
   if (player.landT > 0) player.landT--;
   if (player.wantBig && canGrow()) growPlayer();
 
-  const run = keys.run;
+  // two speeds, as in the classic platformers: he walks, and after holding one direction for a moment
+  // on the ground he breaks into a run (phones have no run button; on a keyboard X / Shift runs at once)
+  const dir = keys.left && !keys.right ? -1 : keys.right && !keys.left ? 1 : 0;
+  if (!dir || dir !== player.holdDir) { player.holdDir = dir; player.holdT = 0; }
+  else if (player.onGround || player.holdT >= PHYS.runAfter) player.holdT++;
+  const run = keys.run || (dir !== 0 && player.holdT >= PHYS.runAfter);
   const maxSpd = run ? PHYS.runMax : PHYS.walkMax;
   const acc = run ? PHYS.runAcc : PHYS.walkAcc;
 
-  if (keys.left && !keys.right) { player.vx -= acc; player.facing = -1; }
-  else if (keys.right && !keys.left) { player.vx += acc; player.facing = 1; }
-  else if (Math.abs(player.vx) < 0.08) player.vx = 0;
+  if (dir) {
+    player.vx += dir * (sign(player.vx) === -dir ? acc * 2 : acc);   // turning round: a skid, twice the brake
+    player.facing = dir;
+  } else if (Math.abs(player.vx) < 0.08) player.vx = 0;
   else player.vx -= sign(player.vx) * PHYS.friction;
-  // releasing run while faster than walk speed now eases down instead of snapping
-  if (Math.abs(player.vx) > maxSpd) player.vx = sign(player.vx) * maxSpd;   // one top speed: he never goes faster than this
+  // above the top speed (he stopped running): ease down to it, never past it
+  if (Math.abs(player.vx) > maxSpd) player.vx = sign(player.vx) * Math.max(maxSpd, Math.abs(player.vx) - acc - 0.06);
 
   if (keys.jump && player.onGround && !player.jumpHeld) {
     player.vy = PHYS.jumpVel - Math.abs(player.vx) * 0.12;   // a little extra height at speed
