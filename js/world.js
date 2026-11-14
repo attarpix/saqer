@@ -170,7 +170,12 @@ const STOMP_CHAIN = [100, 200, 400, 500, 800, 1000, 2000, 4000, 5000, 8000];
 
 /* shared by every enemy: stomped from above, or it hurts Saqer */
 function meetPlayer(c) {
-  if (G.state !== 'play' || player.morph || !overlap(c, player)) return;
+  if (G.state !== 'play' || player.morph) return;
+  // normal mode: a hidden magnet. Coming down from above, a wider and taller box counts as landing on him;
+  // the box that hurts Saqer stays the same (config.js MODES: magnet, in world units)
+  const m = D.magnet || 0;
+  const falling = player.vy > 0 && player.y + player.h - player.vy <= c.y + 8 + m;
+  if (!overlap(c, player) && !(m && falling && overlap({ x: c.x - m, y: c.y - m, w: c.w + m * 2, h: c.h + m }, player))) return;
   if (player.star > 0) {                                // the mansaf's power: whatever he touches is knocked away
     flipNaughty(c, sign(c.x + c.w / 2 - (player.x + player.w / 2)) || 1);
     addScore(200, c.x, c.y - 4);
@@ -180,7 +185,7 @@ function meetPlayer(c) {
   // a stomp. Just after one stomp (stompT) anything else under his feet counts too,
   // so landing on two enemies at once squashes both instead of hurting him.
   const again = player.stompT > 0 && player.y + player.h <= c.y + c.h * 0.8;
-  if ((player.vy > 0 && prevBottom <= c.y + 8) || again) {
+  if ((player.vy > 0 && prevBottom <= c.y + 8 + m) || again) {
     player.stompT = 8;
     if (c.kind === 'flyer') { c.flipped = true; c.vy = 0.5; c.vx = 0; }   // knocked out of the sky
     else { c.squash = 26; c.vx = 0; }

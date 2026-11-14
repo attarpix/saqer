@@ -281,3 +281,15 @@ body.share .credit { font-size: calc(var(--u) * 7); }
 .old-map .m-x { fill: #b3202a; font: bold 12px Georgia, serif; text-anchor: middle; }
 .old-map .menu { margin-top: calc(var(--u) * 4) !important; align-items: center; }
 .old-map .px-btn { min-width: calc(var(--u) * 80); padding-top: calc(var(--u) * 3); padding-bottom: calc(var(--u) * 3); }
+
+/* phone buttons: an invisible touch area around each one, bigger than the button you see, so a thumb that
+   lands a little off still counts. Between two buttons it meets halfway; outwards it reaches further.
+   (plain top/left/right/bottom: the car's old browser has no inset) */
+#touch .pad .tbtn { position: relative; }
+#touch .pad .tbtn::before { content: ''; position: absolute; top: calc(var(--u) * -3); bottom: calc(var(--u) * -3); left: calc(var(--u) * -3); right: calc(var(--u) * -3); }
+#touch .pad.row .tbtn::before { top: calc(var(--u) * -14); bottom: calc(var(--u) * -14); }
+#touch .pad.row .tbtn:first-child::before { left: calc(var(--u) * -14); }
+#touch .pad.row .tbtn:last-child::before { right: calc(var(--u) * -14); }
+#touch .pad.col .tbtn::before { left: calc(var(--u) * -14); right: calc(var(--u) * -14); }
+#touch .pad.col .tbtn:first-child::before { top: calc(var(--u) * -14); }
+#touch .pad.col .tbtn:last-child::before { bottom: calc(var(--u) * -14); }

@@ -16,8 +16,8 @@ export const STEP = 1000 / 60;    // fixed simulation step (ms)
    hard is the game as it was designed. easy has the same lives and the same Hercules,
    but every second enemy stays home and there are no thorn bushes. */
 export const MODES = {
-  easy: { lives: 3, boss: 6, speed: 1, fewer: true,  thorns: false },
-  hard: { lives: 3, boss: 6, speed: 1, fewer: false, thorns: true },
+  easy: { lives: 3, boss: 6, speed: 1, fewer: true,  thorns: false, magnet: 5 },   // magnet: landing on an enemy counts from 5 units further
+  hard: { lives: 3, boss: 6, speed: 1, fewer: false, thorns: true,  magnet: 0 },
 };
 export const D = Object.assign({ name: 'hard' }, MODES.hard);   // the mode in play
 export function setMode(name) { if (MODES[name]) Object.assign(D, MODES[name], { name }); }
