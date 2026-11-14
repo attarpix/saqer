@@ -384,8 +384,6 @@ function startGoal() {
   player.vx = 0; player.vy = 0; player.facing = 1; player.invuln = 0; player.hurtT = 0; player.riding = null;
   addScore(bonus, poleX + 6, player.y);
   G.flagY = baseTop - 14;
-  // the flag climbs only as high as Saqer caught the pole: a jump at the top raises it all the way
-  G.flagTop = Math.max(POLE_TOP + 1, Math.min(baseTop - 30, POLE_TOP + 1 + rel * (baseTop - 14 - POLE_TOP - 1)));
   G.cut = { white: 0, angle: 0, crashed: false, title: 0 };
   music.travel();                         // the tune bends from today into the past while he slides down
 }
@@ -397,8 +395,8 @@ function updateGoal() {
 
   if (G.goalPhase === 0) {
     player.y = Math.min(player.y + 2.2, baseTop - player.h);
-    G.flagY = Math.max(G.flagTop, G.flagY - 2.4);
-    if (player.y >= baseTop - player.h && G.flagY <= G.flagTop) { G.goalPhase = 1; G.stateTimer = 0; }
+    G.flagY = Math.max(POLE_TOP + 1, G.flagY - 2.4);
+    if (player.y >= baseTop - player.h && G.flagY <= POLE_TOP + 1) { G.goalPhase = 1; G.stateTimer = 0; }
   } else if (G.goalPhase === 1) {
     if (t === 30) sfx.warp();
     if (t > 30) G.shake = Math.min(4, (t - 30) / 15);
