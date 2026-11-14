@@ -190,7 +190,10 @@ function gameOver() {
   music.stop();
   setText('#over-score', tScore(String(G.score).padStart(6, '0')));
   setText('#over-hi', tBest(String(G.hiScore).padStart(6, '0')));
+  setText('#over-saved', '');
   showScreen('over');
+  // the score goes on the top 10 here too (or when he reaches the hall, whichever comes first)
+  autoSave().then(() => { if (G.savedAs) setText('#over-saved', tLine('SAVED AS') + ' ' + G.savedAs); });
 }
 
 function saveHi() {
@@ -536,7 +539,7 @@ function openHall(name) {
 }
 export function hallBack() { resume(); }
 
-/* the score goes on the top 10 by itself when Saqer walks into the hall: once a run, never with the
+/* the score goes on the top 10 by itself at GAME OVER or when Saqer walks into the hall (whichever comes first): once a run, never with the
    cheat on (attar10x) or in a ?debug test run; under the name typed on the difficulty screen, or a default */
 async function autoSave() {
   if (G.saved || G.usedGod || DEBUG_RUN) return;
