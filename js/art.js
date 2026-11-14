@@ -467,11 +467,11 @@ function thorn() {
     const len = 11 + r() * 7;
     const bx = 16 + (i - 5) * 0.9, by = 30;
     const ex = bx + Math.cos(a) * len, ey = by + Math.sin(a) * len;
-    s.line(bx, by, ex, ey, 2, i % 2 ? '#c9b76a' : '#a39350');            // pale straw: has to show up at night
-    s.set(ex, ey - 1, '#fffbe0'); s.set(ex + (Math.cos(a) > 0 ? 1 : -1), ey, '#fffbe0');
-    s.set((bx + ex) / 2 + 1, (by + ey) / 2 - 1, '#fffbe0');
+    s.line(bx, by, ex, ey, 2, i % 2 ? '#a3283a' : '#7a1c2c');            // dark red: it must not look like the straw bushes in the backdrops
+    s.set(ex, ey - 1, '#ff5a64'); s.set(ex + (Math.cos(a) > 0 ? 1 : -1), ey, '#ff5a64');   // bright red spike tips
+    s.set((bx + ex) / 2 + 1, (by + ey) / 2 - 1, '#ff9aa0');
   }
-  s.rect(11, 29, 10, 2, '#7a6c38');
+  s.rect(11, 29, 10, 2, '#3a0f18');
   return s.outline().canvas();
 }
 

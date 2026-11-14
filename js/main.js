@@ -52,7 +52,7 @@ function fit() {
   document.body.classList.toggle('rot', rot);
   if (rot) [aw, ah] = [ah, aw];
   // touch: the buttons sit outside the picture, about 75 game units on each side (css #touch .pad)
-  if (document.body.classList.contains('touch')) aw = aw * VW / (VW + 2 * 78);
+  if (document.body.classList.contains('touch')) aw = aw * VW / (VW + 2 * 92);
   const dpr = window.devicePixelRatio || 1;
   const cw = canvas.width, ch = canvas.height;
   let s = Math.min((aw * dpr) / cw, (ah * dpr) / ch);
@@ -122,7 +122,7 @@ initUI({
     document.querySelectorAll('#screen-mode [data-act^="mode-"]').forEach(b => b.classList.toggle('primary', b.dataset.act === 'mode-' + D.name));
     const cur = document.querySelector('#screen-mode [data-act="mode-' + D.name + '"]'); if (cur) cur.focus({ preventScroll: true });
   },
-  'mode-easy': () => play('easy'), 'mode-normal': () => play('normal'), 'mode-hard': () => play('hard'),
+  'mode-easy': () => play('easy'), 'mode-hard': () => play('hard'),
   sound: toggleSound,
   install: async () => { if (!installEvt) return; installEvt.prompt(); await installEvt.userChoice; installEvt = null; setHidden('#btn-install', true); },
   resume,

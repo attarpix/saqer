@@ -55,13 +55,13 @@ export function bumpBlock(tx, ty) {
   hitFromBelow(tx, ty);
   switch (t) {
     case T.Q_COIN: case T.HIDDEN_COIN:
-      popCoin(tx, ty); gone(tx, ty, T.USED); bump(tx, ty); break;
+      popCoin(tx, ty); setTile(tx, ty, T.USED); bump(tx, ty); break;   // boxes are not remembered: they refill after a death
     case T.HIDDEN_LIRA:
       popLira(tx, ty); gone(tx, ty, T.USED); bump(tx, ty); break;
     case T.BRICK_COINS: {
       const k = key(tx, ty), n = (level.multi.get(k) || 1) - 1;
       popCoin(tx, ty); bump(tx, ty);
-      if (n <= 0) { level.multi.delete(k); gone(tx, ty, T.USED); } else { level.multi.set(k, n); gone(tx, ty, T.BRICK_COINS, n); }
+      if (n <= 0) { level.multi.delete(k); setTile(tx, ty, T.USED); } else level.multi.set(k, n);
       break;
     }
     case T.Q_JAMEED:
@@ -129,7 +129,10 @@ function makeEntity(s) {
   }
 }
 export function spawnLevelEntities() {
-  W.entities = level.spawns.map(makeEntity);
+  // easy mode: every second enemy stays home (config.js MODES); lifts always come
+  let k = 0;
+  const spawns = level.spawns.filter(s => s.type === 'plat' || !D.fewer || k++ % 2 === 0);
+  W.entities = spawns.map(makeEntity);
   let n = 0;                                           // every enemy gets a number (the attar debug view)
   for (const e of W.entities) if (e.type === 'naughty') e.num = ++n;
   for (const e of W.entities) if (e.type === 'plat') placeLift(e);
@@ -166,6 +169,11 @@ const STOMP_CHAIN = [100, 200, 400, 500, 800, 1000, 2000, 4000, 5000, 8000];
 /* shared by every enemy: stomped from above, or it hurts Saqer */
 function meetPlayer(c) {
   if (G.state !== 'play' || player.morph || !overlap(c, player)) return;
+  if (player.star > 0) {                                // the mansaf's power: whatever he touches is knocked away
+    flipNaughty(c, sign(c.x + c.w / 2 - (player.x + player.w / 2)) || 1);
+    addScore(200, c.x, c.y - 4);
+    return;
+  }
   const prevBottom = player.y + player.h - player.vy;
   // a stomp. Just after one stomp (stompT) anything else under his feet counts too,
   // so landing on two enemies at once squashes both instead of hurting him.
@@ -271,7 +279,7 @@ function updateItem(m) {
 
   if (G.state === 'play' && overlap(m, player)) {
     m.active = false;
-    if (m.kind === 'mansaf') { oneUp(m.x, m.y); heal(); }
+    if (m.kind === 'mansaf') { oneUp(m.x, m.y); heal(); player.star = 600; }   // and 10 seconds of invincibility
     else if (G.golden) { heal(); addScore(1000, m.x, m.y); sfx.grow(); }
     else if (!player.big && !player.wantBig) { growPlayer(); addScore(1000, m.x, m.y); }
     else { addScore(1000, m.x, m.y); sfx.coin(); }
@@ -416,8 +424,8 @@ export function applyGone(id) {
     else level.multi.set(k, v.n);
   }
 }
-/* after a death: the jameed and mansaf boxes are full again */
+/* after a death: every box is full again (coins, jameed, mansaf) */
 export function refillBoxes(boxes) {
-  for (const [x, y, t] of boxes) setTile(x, y, t);
+  for (const [x, y, t, n] of boxes) { setTile(x, y, t); if (n) level.multi.set(x + ',' + y, n); }
   W.entities = W.entities.filter(e => !(e.type === 'item' && (e.kind === 'jameed' || e.kind === 'mansaf')));
 }

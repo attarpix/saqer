@@ -18,7 +18,7 @@ export function placePlayer(tileX, groundRow) {
     vx: 0, vy: 0, onGround: false, facing: 1,
     big: false, wantBig: false, jumping: false, jumpHeld: true,
     invuln: 0, morph: 0, morphDir: 0, walkT: 0, landT: 0, hurtT: 0,
-    stompChain: 0, deathKind: '', visible: true, riding: null,
+    stompChain: 0, deathKind: '', visible: true, riding: null, star: 0,
   });
 }
 
@@ -62,8 +62,8 @@ export function growPlayer() {
 }
 
 export function hurtPlayer(by = '?') {        // by: what hurt him (enemy #n, thorn, Hercules), for the attar debug view
-  if (!(player.invuln > 0 || player.morph > 0 || G.state !== 'play' || G.god)) G.lastHurt = by;
-  if (player.invuln > 0 || player.morph > 0 || G.state !== 'play' || G.god) return;
+  if (!(player.invuln > 0 || player.star > 0 || player.morph > 0 || G.state !== 'play' || G.god)) G.lastHurt = by;
+  if (player.invuln > 0 || player.star > 0 || player.morph > 0 || G.state !== 'play' || G.god) return;
   if (G.golden) {                       // grown for good: a hit costs one bar, never his size
     G.hp--;
     if (G.hp <= 0) { killPlayer('hit'); return; }
@@ -104,6 +104,7 @@ export function killPlayer(kind) {
 export function updatePlayer() {
   if (player.morph > 0) { player.morph--; return; }     // brief freeze while growing/shrinking
   if (player.invuln > 0) player.invuln--;
+  if (player.star > 0) player.star--;                   // the mansaf's 10 seconds
   if (player.stompT > 0) player.stompT--;
   if (player.hurtT > 0) player.hurtT--;
   if (player.landT > 0) player.landT--;

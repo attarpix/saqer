@@ -229,7 +229,7 @@ export const AREAS = {
       L.flyer(26, 5, 3); L.flyer(16, 10, 3);
 
       /* ── Chamber B: 70–127 ── */
-      L.ground(70, 85); L.ground(91, 99); L.ground(105, 127);
+      L.ground(70, 85); L.ground(88, 88); L.ground(91, 99); L.ground(105, 127);   // 88: the middle of the three little gaps is closed (P5)
       L.clear(122, 0, 2, 2);
       L.lift(122, 12, 2, { dy: -13, period: 430 });
       L.wayUp(121, 124, 'phila', 126);

@@ -423,6 +423,17 @@ function drawPlayer(cam) {
   const lean = 0;                                   // the poses already lean; turning the picture would break its pixels
   const sq = playing && player.landT > 0 ? 1 - player.landT * 0.012 : 1;
   const cx = half(player.x + player.w / 2 - cam), gy = half(player.y + player.h + 1.2 - bob);
+  if (player.star > 0 && (player.star > 120 || Math.floor(G.tick / 4) % 2)) {   // the mansaf's power: a golden glow (it flickers in the last 2 seconds)
+    const g = ctx.createRadialGradient(cx, gy - player.h / 2, 2, cx, gy - player.h / 2, 26);
+    const a = 0.45 + 0.2 * Math.sin(G.tick / 4);
+    g.addColorStop(0, 'rgba(255,214,90,' + a.toFixed(2) + ')'); g.addColorStop(1, 'rgba(255,214,90,0)');
+    ctx.fillStyle = g; ctx.fillRect(cx - 28, gy - player.h / 2 - 28, 56, 56);
+    for (let i = 0; i < 4; i++) {                       // sparks circling him
+      const an = G.tick / 7 + i * Math.PI / 2;
+      ctx.fillStyle = i % 2 ? '#fff3b8' : '#ffd166';
+      ctx.fillRect(half(cx + Math.cos(an) * 12 - 1), half(gy - player.h / 2 + Math.sin(an) * 14 - 1), 2, 2);
+    }
+  }
   ctx.save();
   ctx.translate(cx, gy);
   ctx.rotate(lean);
@@ -631,8 +642,10 @@ function drawHUD() {
   text('STAGE', 128, 8);
   const id = level.def ? (level.def.id || '') : '';
   text(id, 128, 19, '#fff', id.length > 8 ? 6 : 8);
-  text('LIVES', 214, 8);
-  text('x' + G.lives, 222, 19);
+  if (G.golden) {                                       // lives only count once he has the golden jameed
+    text('LIVES', 214, 8);
+    text('x' + G.lives, 222, 19);
+  }
   text('TIME', 270, 8);
   const s = clockSeconds();
   text(Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'), 270, 19);
@@ -725,6 +738,7 @@ function drawIntroCard() {
   if (!isAr()) { ctx.fillStyle = '#efe0bf'; ctx.fillText(def.nameAr || '', VW / 2, 94); }
   ctx.direction = 'ltr';
   drawSprite(SPRITES.saqer.small.idle[0], VW / 2 - 18, 158, 1, false);
+  if (G.golden)
   text('x  ' + G.lives, VW / 2 - 4, 143, '#ffffff', 8);
   if (level.liraTotal) {
     ctx.drawImage(ART.lira[0], VW / 2 - 82, 176, 12, 12);

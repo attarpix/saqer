@@ -189,15 +189,15 @@ body.touch #touch {
 }
 body.touch.menu-open #touch { display: none; }
 #touch .pad {
-  position: absolute; bottom: calc(var(--u) * 40);     /* higher than the ground line, easy for thumbs */
+  position: absolute; bottom: calc(var(--u) * 34);     /* higher than the ground line, easy for thumbs */
   pointer-events: auto;
 }
 #touch .pad-left  { right: 100%; margin-right: calc(var(--u) * 6); }   /* outside the picture, in the side bars (main.js keeps room) */
-#touch .pad-right { left: 100%; margin-left: calc(var(--u) * 6); width: calc(var(--u) * 66); }
-#touch .pad .tbtn { width: calc(var(--u) * 30); height: calc(var(--u) * 30); font-size: calc(var(--u) * 9); }
-#touch .pad-left .tbtn + .tbtn { margin-top: calc(var(--u) * 5); }
+#touch .pad-right { left: 100%; margin-left: calc(var(--u) * 6); width: calc(var(--u) * 80); }
+#touch .pad .tbtn { width: calc(var(--u) * 37); height: calc(var(--u) * 37); line-height: calc(var(--u) * 37); font-size: calc(var(--u) * 11); }
+#touch .pad-left .tbtn + .tbtn { margin-top: calc(var(--u) * 6); }
 #touch .pad-right .tbtn { float: left; }
-#touch .pad-right .tbtn + .tbtn { margin-left: calc(var(--u) * 5); }
+#touch .pad-right .tbtn + .tbtn { margin-left: calc(var(--u) * 6); }
 .tbtn {
   display: block; text-align: center;
   width: 64px; height: 64px; line-height: calc(var(--u) * 30);

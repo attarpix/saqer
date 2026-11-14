@@ -1,7 +1,7 @@
 /* ============================================================
    LEVEL — tile grid + builder API used by levels.js
    ============================================================ */
-import { LH, GROUND_TOP, TILE, GOLD_LIRAS } from './config.js';
+import { LH, GROUND_TOP, TILE, GOLD_LIRAS, D } from './config.js';
 import { T, SOLID, CHAR_TILES } from './tiles.js';
 
 export const level = {
@@ -125,6 +125,8 @@ export function buildLevel(def) {
 
   // no gold liras for now: they belong to Dana's mahr, which starts in level 2 (set GOLD_LIRAS in config.js to bring them back)
   if (!GOLD_LIRAS) for (const row of level.tiles) for (let x = 0; x < row.length; x++) if (row[x] === T.LIRA || row[x] === T.HIDDEN_LIRA) row[x] = T.EMPTY;
+  // easy mode: no thorn bushes (config.js MODES)
+  if (!D.thorns) for (const row of level.tiles) for (let x = 0; x < row.length; x++) if (row[x] === T.THORN) row[x] = T.EMPTY;
   // the killing spots, numbered for the attar debug view: pits (a fall with no way into another area) and thorns
   level.hazards = [];
   let pit = -1, np = 0, nt = 0;
