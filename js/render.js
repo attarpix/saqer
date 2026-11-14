@@ -4,7 +4,8 @@
    32-px art drawn into 16-unit boxes lands 1:1 on canvas pixels.
    ============================================================ */
 import { TILE, SCALE, RES, VW, VH, GROUND_TOP, LH, MAHR_GOAL, MAX_HP, D } from './config.js';
-import { clockSeconds, PILLAR_X, PILLAR_REST } from './game.js';
+import { clockSeconds, PILLAR_X, PILLAR_REST, hallThing } from './game.js';
+import { topCached } from './board.js';
 import { bossOpen } from './boss.js';
 import { GATE_COL } from './quest.js';
 import { T } from './tiles.js';
@@ -64,6 +65,7 @@ export function render() {
   if (level.gateX >= 0) drawGate(cam);
   if (level.def.templeCol) drawTempleFront(cam);
   if (level.def.decor) drawDecor(cam);
+  if (level.def.things) drawThings(cam);
   if (level.flagX >= 0) drawFlag(cam);
   for (const e of W.entities) if (e.type === 'item' && e.emerge) drawItem(e, cam);   // behind blocks
   drawTiles(cam);
@@ -103,7 +105,14 @@ function drawBackdrop(cam) {
     ctx.fillRect(0, 0, VW, VH);
     return;
   }
-  if (kind === 'amman') paintPhoto(IMG.amman, cam, level.w * TILE, false, '#2b1a4a');
+  if (kind === 'amman') {                                // today's Amman: by day on a first game, at sunset after Hercules
+    const img = G.sunset ? IMG.amman : IMG.ammanDay;
+    if (def.photoEnd) {                                  // the short stretch by the flag: the east end of the picture
+      const w = img.width * (GROUND_Y + 2) / img.height, maxC = Math.max(0, level.w * TILE - VW);
+      paintPhoto(img, 4 * (w - VW) - (maxC - cam), 4 * VW, false, '#2b1a4a', G.sunset ? undefined : '40,70,110');
+    } else paintPhoto(img, cam, level.w * TILE, false, '#2b1a4a', G.sunset ? undefined : '40,70,110');
+  }
+  else if (kind === 'room') paintRoom(cam);
   else if (kind === 'phila') paintScenery(ART.scenery.street, cam);
   else if (kind === 'sky') paintScenery(ART.scenery.sky, cam);
   else if (kind === 'theater') paintTheater(cam);
@@ -317,7 +326,7 @@ function drawFlag(cam) {
   ctx.fillStyle = '#f2b632'; ctx.fillRect(px + 6, topY - 4.5, 4, 4);
   ctx.fillStyle = '#ffe08a'; ctx.fillRect(px + 6.5, topY - 4, 1.5, 1.5);
   // the flag hangs low and is raised when Saqer reaches the pole
-  const fy = (G.state === 'goal') ? G.flagY : botY - TILE - 14;
+  const fy = level.def.flagUp ? topY + 1 : (G.state === 'goal') ? G.flagY : botY - TILE - 14;   // after Hercules it stays raised
   const fr = ART.flag[Math.floor(G.tick / 8) % 3];
   ctx.drawImage(fr, px + 8, half(fy), fr.width / SCALE, fr.height / SCALE);
 }
@@ -985,6 +994,120 @@ function drawDebugPanel() {
   ctx.fillStyle = 'rgba(11,7,16,0.72)'; ctx.fillRect(4, top - 2, 236, lines.length * 9 + 3);
   ctx.font = '6px ' + FONT; ctx.direction = 'ltr';
   lines.forEach((s, i) => { ctx.textAlign = 'left'; ctx.textBaseline = 'top'; ctx.fillStyle = i ? '#ffffff' : '#7dff8a'; ctx.fillText(s, 7, top + i * 9); });
+}
+
+/* ---------------- the hall at the end of stage one (quest.js: room) ----------------
+   Drawn in code: a stone hall with flag-coloured banners and torches. On the floor and the walls,
+   the things to use; the one Saqer stands by gets a bouncing ▼. */
+function paintRoom(cam) {
+  const g = ctx.createLinearGradient(0, 0, 0, GROUND_Y);
+  g.addColorStop(0, '#1d1226'); g.addColorStop(1, '#4a2c22');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, VW, GROUND_Y + 2);
+  // stone courses, moving with the room
+  ctx.fillStyle = 'rgba(0,0,0,0.22)';
+  for (let row = 0, y = 18; y < GROUND_Y; row++, y += 14) {
+    ctx.fillRect(0, y, VW, 1);
+    for (let x = -((cam + (row % 2) * 16) % 32); x < VW; x += 32) ctx.fillRect(half(x), y, 1, 14);
+  }
+  // the ceiling beam
+  ctx.fillStyle = '#2a1810'; ctx.fillRect(0, 0, VW, 16);
+  ctx.fillStyle = '#5a3a20'; ctx.fillRect(0, 13, VW, 3);
+  // pilasters, banners (black, white, green, a red point) and torches
+  for (let i = 0; i < 6; i++) {
+    const x = i * 96 + 40 - cam;
+    if (x < -50 || x > VW + 50) continue;
+    ctx.fillStyle = '#6b4a34'; ctx.fillRect(half(x - 5), 16, 10, GROUND_Y - 16);
+    ctx.fillStyle = '#8a6448'; ctx.fillRect(half(x - 5), 16, 2, GROUND_Y - 16);
+    const bx = x + 26, bw = bx + cam;                   // (no banner behind the top-10 board)
+    if (!(bw > 136 && bw < 262)) {
+    ctx.fillStyle = '#111111'; ctx.fillRect(half(bx), 18, 14, 9);
+    ctx.fillStyle = '#f2f2f2'; ctx.fillRect(half(bx), 27, 14, 9);
+    ctx.fillStyle = '#007a3d'; ctx.fillRect(half(bx), 36, 14, 9);
+    ctx.fillStyle = '#ce1126'; ctx.beginPath(); ctx.moveTo(bx, 18); ctx.lineTo(bx + 8, 31.5); ctx.lineTo(bx, 45); ctx.fill();
+    }
+    const fr = ART.skyProps.brazier[Math.floor(G.tick / 6 + i) % 3];
+    const glow = ctx.createRadialGradient(x, 70, 2, x, 70, 46);
+    glow.addColorStop(0, 'rgba(255,190,90,0.35)'); glow.addColorStop(1, 'rgba(255,190,90,0)');
+    ctx.fillStyle = glow; ctx.fillRect(x - 46, 24, 92, 92);
+    ctx.drawImage(fr, half(x - 8), 58, 16, fr.height * 16 / fr.width);
+  }
+}
+
+const HALL_LABEL = { portal: 'PLAY AGAIN', book: 'SAVE SCORE', plaque: 'THANK YOU', door2: 'STAGE 2' };
+function drawThings(cam) {
+  const near = hallThing();
+  for (const t of level.def.things) {
+    const w = (t.w || 1) * TILE, x = t.x * TILE - cam, cx = x + w / 2;
+    if (x > VW + 40 || x + w < -40) continue;
+    const pulse = 0.5 + 0.5 * Math.sin(G.tick / 14 + t.x);
+    if (t.kind === 'portal') {                       // a ring of time, spinning: play stage one again
+      const cy = GROUND_Y - 26;
+      ctx.fillStyle = 'rgba(52,18,84,0.85)'; ctx.beginPath(); ctx.ellipse(cx, cy, 15, 24, 0, 0, Math.PI * 2); ctx.fill();
+      for (let a = 0; a < 5; a++) {
+        ctx.strokeStyle = WARP_COLS[a]; ctx.lineWidth = 2; ctx.beginPath();
+        for (let i = 0; i <= 18; i++) {
+          const r = 2 + i * 0.75, an = G.tick * 0.08 + a * 1.256 + i * 0.32;
+          const px = cx + Math.cos(an) * r, py = cy + Math.sin(an) * r * 1.6;
+          if (i) ctx.lineTo(px, py); else ctx.moveTo(px, py);
+        }
+        ctx.stroke();
+      }
+      ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(cx, cy, 15, 24, 0, 0, Math.PI * 2); ctx.stroke();
+    } else if (t.kind === 'book') {                  // a lectern with the book of names
+      ctx.fillStyle = '#4a2a14'; ctx.fillRect(half(cx - 2), GROUND_Y - 22, 4, 22);
+      ctx.fillRect(half(cx - 7), GROUND_Y - 2, 14, 2);
+      ctx.fillStyle = '#6b3d1c'; ctx.beginPath(); ctx.moveTo(cx - 10, GROUND_Y - 22); ctx.lineTo(cx + 10, GROUND_Y - 22); ctx.lineTo(cx + 8, GROUND_Y - 28); ctx.lineTo(cx - 8, GROUND_Y - 28); ctx.fill();
+      ctx.fillStyle = '#f6eedc'; ctx.fillRect(half(cx - 8), GROUND_Y - 31, 7.5, 4); ctx.fillRect(half(cx + 0.5), GROUND_Y - 31, 7.5, 4);
+      ctx.fillStyle = '#b8a07a'; ctx.fillRect(half(cx - 6), GROUND_Y - 30, 4, 0.75); ctx.fillRect(half(cx + 2), GROUND_Y - 30, 4, 0.75);
+      ctx.fillStyle = 'rgba(255,224,138,' + (0.25 + 0.3 * pulse).toFixed(2) + ')'; ctx.fillRect(half(cx - 10), GROUND_Y - 36, 20, 4);
+    } else if (t.kind === 'board') {                 // the top 10, on the wall
+      const y = 52, h = 112;                         // below the score bar
+      ctx.fillStyle = '#c99a3a'; ctx.fillRect(half(x - 3), y - 3, w + 6, h + 6);
+      ctx.fillStyle = '#1e2a22'; ctx.fillRect(half(x), y, w, h);
+      text('TOP 10', cx, y + 4, '#ffd166', 8, 'center');
+      const list = topCached().slice(0, 10);
+      if (!list.length) text('BE THE FIRST!', cx, y + 56, '#ffffff', 6, 'center');
+      list.forEach((r, i) => {
+        const ly = y + 19 + i * 9;
+        text(String(i + 1), x + 6, ly, '#cbb7e8', 6);
+        text(String(r.name).slice(0, 12), x + 18, ly, '#ffffff', 6);
+        text(String(r.score).padStart(6, '0'), x + w - 6, ly, '#ffd166', 6, 'right');
+      });
+    } else if (t.kind === 'plaque') {                // thanks for playing, and what is coming
+      const y = 92;
+      ctx.fillStyle = '#7a4a1e'; ctx.fillRect(half(cx - 16), y, 32, 40);
+      ctx.fillStyle = '#c98a3a'; ctx.fillRect(half(cx - 14), y + 2, 28, 36);
+      ctx.fillStyle = '#ce1126';                       // a heart
+      ctx.fillRect(half(cx - 6), y + 10, 5, 5); ctx.fillRect(half(cx + 1), y + 10, 5, 5); ctx.fillRect(half(cx - 6), y + 13, 12, 5);
+      ctx.fillRect(half(cx - 4), y + 18, 8, 3); ctx.fillRect(half(cx - 2), y + 21, 4, 2);
+      ctx.fillStyle = '#7a4a1e'; for (let i = 0; i < 3; i++) ctx.fillRect(half(cx - 9), y + 27 + i * 3, 18, 1);
+    } else {                                         // the doors to the next stages
+      const n = +t.kind.slice(4), open = n === 2, dw = 26, dh = 46, dx = cx - dw / 2, dy = GROUND_Y - dh;
+      ctx.fillStyle = open ? '#c99a3a' : '#5a5048'; ctx.beginPath();
+      ctx.moveTo(dx - 3, GROUND_Y); ctx.lineTo(dx - 3, dy + 10); ctx.arc(cx, dy + 10, dw / 2 + 3, Math.PI, 0); ctx.lineTo(dx + dw + 3, GROUND_Y); ctx.fill();
+      ctx.fillStyle = open ? '#6b3d1c' : '#3a2a20'; ctx.beginPath();
+      ctx.moveTo(dx, GROUND_Y); ctx.lineTo(dx, dy + 10); ctx.arc(cx, dy + 10, dw / 2, Math.PI, 0); ctx.lineTo(dx + dw, GROUND_Y); ctx.fill();
+      ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.fillRect(half(cx - 0.5), dy + 2, 1, dh - 2);
+      if (open) {                                    // stage 2: a gold door with its opening date
+        ctx.fillStyle = '#ffd166'; ctx.fillRect(half(cx + 4), dy + 26, 2, 2);
+        ctx.fillStyle = '#140d1c'; ctx.fillRect(half(cx - 16), dy - 16, 32, 12);
+        text('21.11', cx, dy - 14, '#ffd166', 6, 'center');
+      } else {                                       // stages 3 to 5: boarded up
+        ctx.fillStyle = '#8a6448';
+        ctx.save(); ctx.translate(cx, dy + 26); ctx.rotate(0.5); ctx.fillRect(-16, -2, 32, 4); ctx.rotate(-1); ctx.fillRect(-16, -2, 32, 4); ctx.restore();
+        text('SOON', cx, dy - 14, '#cbb7e8', 6, 'center');
+      }
+      text(String(n), cx, dy + 4, open ? '#ffd166' : '#a89a8a', 8, 'center');
+    }
+    if (HALL_LABEL[t.kind]) {
+      const ly = t.kind === 'plaque' ? 80 : t.kind === 'door2' ? GROUND_Y - 76 : GROUND_Y - 62;
+      text(HALL_LABEL[t.kind], cx, ly, '#ffffff', 6, 'center');
+    }
+    if (near === t) {                                // press ▼ here
+      const by = (t.kind === 'board' ? 172 : t.kind === 'plaque' ? 136 : GROUND_Y - 54) + Math.sin(G.tick / 6) * 2;
+      ctx.fillStyle = '#ffd166'; ctx.beginPath(); ctx.moveTo(cx - 5, by); ctx.lineTo(cx + 5, by); ctx.lineTo(cx, by + 6); ctx.fill();
+    }
+  }
 }
 
 /* the year rolling back while the world whites out */

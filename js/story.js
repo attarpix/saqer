@@ -143,7 +143,6 @@ STORY.afterBoss = [
   { bg: 'theater', cast: ['saqer', 'hercules'], speaker: 'HERCULES',
     text: 'ENOUGH. THE CROWD HAS CHOSEN. THE CITY IS YOURS TO WALK, SAQER OF AMMAN.',
     ar: 'بكفّي. الناس اختاروا. المدينة إلك تمشي فيها يا صقر عمّان.' },
-  { speaker: '', text: 'TO BE CONTINUED …', ar: 'يتبع …' },
 ];
 
 /* ============================================================

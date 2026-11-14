@@ -6,7 +6,7 @@ import { loadAssets } from './assets.js';
 import { initRender, render } from './render.js';
 import { initInput } from './input.js';
 import { initUI, setHidden, showScreen } from './ui.js';
-import { boot, update, newGame, pause, resume, restartStage, toggleSound, toTitle, continueGame, debugStage, refreshMenus, openMap, closeMap } from './game.js';
+import { boot, update, newGame, pause, resume, restartStage, toggleSound, toTitle, continueGame, debugStage, refreshMenus, openMap, closeMap, saveScore, hallBack, replayHard } from './game.js';
 import { applyLang, toggleLang } from './lang.js';
 import { initStats, stat } from './stats.js';
 import { G, W, player } from './state.js';
@@ -133,6 +133,7 @@ initUI({
   info: () => showScreen('info'),
   map: () => openMap('pause'),
   'map-close': closeMap,
+  'save-score': saveScore, 'hall-back': hallBack, 'replay-hard': () => { tryFullscreen(); stat('replay-hard'); replayHard(); },
   back: () => showScreen('title'),
 });
 
@@ -170,6 +171,7 @@ function loop(t) {
    button and type it there. */
 function toggleGod() {
   G.god = !G.god;
+  if (G.god) G.usedGod = true;            // a run with the cheat on cannot go on the top 10
   G.banner = { lines: [G.god ? 'ATTAR10X: UNKILLABLE' : 'ATTAR10X: OFF', G.god ? 'NOTHING CAN HURT SAQER NOW.' : 'BACK TO NORMAL.'], t: 200 };
 }
 function toggleDebug() {
@@ -181,7 +183,7 @@ const codeBox = document.getElementById('code-box');
 let typed = '', pending = null;
 const later = () => { clearTimeout(pending); pending = setTimeout(() => { pending = null; typed = ''; if (codeBox) { codeBox.value = ''; codeBox.blur(); } toggleDebug(); }, 800); };
 window.addEventListener('keydown', e => {
-  if (e.target === codeBox) return;            // the phone box reads its own text (below)
+  if (e.target && e.target.tagName === 'INPUT') return;   // the phone code box reads its own text (below); the name box is just a name
   // read the physical keys (e.code), so it works whatever language the keyboard is set to (Arabic too)
   const m = /^Key([A-Z])$/.exec(e.code) || /^(?:Digit|Numpad)(\d)$/.exec(e.code);
   if (!m || e.repeat) return;
@@ -209,4 +211,11 @@ if (codeBox) {
     if (v.endsWith('attar')) later();
   });
   codeBox.addEventListener('blur', () => { if (!pending) codeBox.value = ''; });
+}
+
+/* the name box in the hall: letters typed there must not move Saqer, and Enter saves */
+const nameBox = document.getElementById('save-name');
+if (nameBox) {
+  nameBox.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') { saveScore(); nameBox.blur(); } });
+  nameBox.addEventListener('keyup', e => e.stopPropagation());
 }

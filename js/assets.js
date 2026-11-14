@@ -17,7 +17,8 @@ export let SPRITES = null;
 const CROWD_FRAMES = 9;                                   // frames pulled from the owner's crowd videos (assets/bg/crowd)
 const IMAGES = {
   title:        'assets/bg/title_theater.png',
-  amman:        'assets/bg/amman_sunset.jpg',
+  amman:        'assets/bg/amman_sunset.jpg',     // today's Amman at sunset (after Hercules, and replays from the hall)
+  ammanDay:     'assets/bg/amman_day.jpg',        // … and by day (a first game) — art/new/background day.png
   phila:        'assets/bg/philadelphia.jpg',
   theaterCalm:  'assets/bg/theater_calm.jpg',
   theaterCheer: 'assets/bg/theater_cheer.jpg',

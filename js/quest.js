@@ -298,4 +298,47 @@ export const AREAS = {
       L.ground(0, 27);
     },
   },
+
+  /* ───────────── back in today's Amman, at sunset: the end of stage one ─────────────
+     After Hercules, Saqer is back by the flag (raised for good). Nothing to fight or collect:
+     the gate beside the flag is the door to the hall (room below). */
+  finale: {
+    id: '1-1', name: 'WASAT AL-BALAD', nameAr: 'وسط البلد',
+    theme: 'amman', backdrop: 'amman', tune: 'amman',
+    width: 32, roam: true, flagUp: true, photoEnd: true, doorTo: 'room',
+    build(L) {
+      L.start(4);
+      L.ground(0, 31);
+      L.flag(12);
+      L.gate(20);                                   // the way into the hall
+    },
+  },
+
+  /* ───────────── the hall: stage one is done ─────────────
+     A walkable room. Things to use (stand by one and press ▼; a ▼ shows over it):
+       portal  play stage one again, on hard, starting at sunset
+       book    save your score to the top 10
+       board   the top 10 (on the wall, read only)
+       plaque  thanks for playing, and what is coming (the info screen)
+       door2   stage 2: opens on 21.11
+       door3..5  coming soon                                                   */
+  room: {
+    id: '1-1', name: 'STAGE ONE COMPLETE', nameAr: 'خلصت المرحلة الأولى',
+    theme: 'sky', backdrop: 'room', tune: 'amman',
+    width: 32, noFlag: true, roam: true,
+    things: [
+      { kind: 'portal', x: 2 },
+      { kind: 'book',   x: 6 },
+      { kind: 'board',  x: 9,  w: 7 },
+      { kind: 'plaque', x: 17 },
+      { kind: 'door2',  x: 20 },
+      { kind: 'door3',  x: 23 },
+      { kind: 'door4',  x: 26 },
+      { kind: 'door5',  x: 29 },
+    ],
+    build(L) {
+      L.start(4);
+      L.ground(0, 31);
+    },
+  },
 };

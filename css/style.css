@@ -293,3 +293,19 @@ body.share .credit { font-size: calc(var(--u) * 7); }
 #touch .pad.col .tbtn::before { left: calc(var(--u) * -14); right: calc(var(--u) * -14); }
 #touch .pad.col .tbtn:first-child::before { top: calc(var(--u) * -14); }
 #touch .pad.col .tbtn:last-child::before { bottom: calc(var(--u) * -14); }
+
+/* ---------------- the hall at the end of stage one ---------------- */
+.px-panel.hall { width: calc(var(--u) * 250); padding: calc(var(--u) * 6) calc(var(--u) * 10); }
+.px-panel.hall h2 { margin-bottom: calc(var(--u) * 3) !important; font-size: calc(var(--u) * 10); }
+body.ar .px-panel.hall h2 { font-size: calc(var(--u) * 13); }
+.top-list { margin: 0 0 calc(var(--u) * 3) !important; padding: 0 calc(var(--u) * 6); font-size: calc(var(--u) * 6); line-height: 1.7; text-align: left; color: #fff; max-height: calc(var(--u) * 100); overflow: hidden; }
+.top-list li span { float: right; color: var(--gold); }
+body.ar .top-list { direction: rtl; text-align: right; }
+body.ar .top-list li span { float: left; }
+.top-list .me { color: var(--gold-hi); }
+.save-row { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; }
+.save-row > * { margin: calc(var(--u) * 1) calc(var(--u) * 2) !important; }
+#save-name { font: inherit; font-size: 16px; width: calc(var(--u) * 80); padding: calc(var(--u) * 2) calc(var(--u) * 3); background: var(--ink); color: #fff; border: 0; box-shadow: 0 0 0 var(--u) var(--gold); -webkit-user-select: text; user-select: text; }
+#save-score { color: var(--gold); }
+body.ar .px-panel.hall { direction: rtl; }
+body.ar .px-panel.hall .ig, body.ar #save-name { direction: ltr; }

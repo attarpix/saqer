@@ -21,7 +21,9 @@ import { updateEntities, updateEffects, spawnLevelEntities, addScore, say, heal,
 import { spawnBoss, updateBoss } from './boss.js';
 import { loadSave, writeSave } from './storage.js';
 import { clamp } from './physics.js';
-import { tSound, tBest, tScore } from './lang.js';
+import { tSound, tBest, tScore, t as tLine } from './lang.js';
+import { fetchTop, submitScore, topCached, online } from './board.js';
+const DEBUG_RUN = /[?&]debug/.test(location.search);   // test runs never go on the top 10
 import { stat } from './stats.js';
 import { showScreen, hideScreens, uiOpen, uiScreen, uiConfirm, uiMove, showStory, setText, setHidden } from './ui.js';
 
@@ -60,14 +62,16 @@ function resetRun() {
   G.score = 0; G.coins = 0; G.lives = D.lives;
   G.mahr = 0; G.mahrStart = 0; G.liras = 0; G.lirasStart = 0;
   G.golden = false; G.hp = MAX_HP; G.keys = {}; G.gone = new Map(); player.star = 0; G.hinted = false; G.hasMap = false;
+  G.clockStop = false; G.saved = false; G.usedGod = false; G.hallSeen = false;
   G.clock = 0; G.banner = null; G.cut = null; G.boss = null; G.cheer = 0; G.shake = 0;
   memory = new Map();
 }
 
-export function newGame(mode) {
-  if (mode) { setMode(mode); writeSave({ mode }); }        // easy / normal / hard (config.js MODES)
+export function newGame(mode, sunset = false) {
+  if (mode) { setMode(mode); writeSave({ mode }); }        // easy (shown as normal) / hard (config.js MODES)
   unlockAudio();
   resetRun();
+  G.sunset = sunset;                      // Amman by day on a first game; at sunset when replayed from the hall
   G.era = 'now';
   hideScreens();
   enterArea(START_AREA, null, 'ground', true);
@@ -264,7 +268,8 @@ export function update() {
     takeAction('restart');
     return;
   }
-  const confirm = takeAction('confirm'); takeAction('up'); takeAction('down');
+  const confirm = takeAction('confirm'); takeAction('up');
+  G.downPress = takeAction('down');       // (the hall uses it: ▼ by a thing)
   if (takeAction('pause')) { pause(); return; }
   if (takeAction('restart') && (G.state === 'play' || G.state === 'dying')) { restartStage(); return; }
 
@@ -281,7 +286,7 @@ export function update() {
       updateEffects();
       if (G.stateTimer > 600 || (confirm && G.stateTimer > 120)) {
         G.state = 'cleared';
-        playStory(STORY.afterBoss, () => toTitle());
+        playStory(STORY.afterBoss, toFinale);
       }
       break;
     default: break;
@@ -294,10 +299,12 @@ function updatePlay() {
   if (G.boss && G.boss.state !== 'wait') updateBoss();
   updateCamera();
   updateEffects();
-  G.clock++;
+  if (!G.clockStop) G.clock++;          // the clock stops once Hercules is down
 
   if (G.state !== 'play') return;
   if (G.boss && G.boss.done) { victory(); return; }
+  if (level.def.doorTo && atDoor()) { enterHall(); return; }
+  if (level.def.things) useThings();
 
   // ways into other areas
   if (player.y + player.h < 5) {
@@ -313,7 +320,7 @@ function updatePlay() {
     }
   }
 
-  if (level.flagX >= 0 && player.x + player.w >= level.flagX * TILE) startGoal();
+  if (level.flagX >= 0 && !level.def.flagUp && player.x + player.w >= level.flagX * TILE) startGoal();   // (after Hercules the flag is only to look at)
 }
 
 function snapCamera() {
@@ -346,7 +353,7 @@ export const clockSeconds = () => Math.floor(G.clock / 60);
 export const timeBonus = () => Math.max(0, 900 - clockSeconds()) * 20;     // quicker than 15 minutes earns a bonus
 
 function victory() {
-  G.state = 'victory'; G.stateTimer = 0; stat('hercules');
+  G.state = 'victory'; G.stateTimer = 0; stat('hercules'); G.clockStop = true;
   music.stop();
   sfx.goal(); sfx.cheer();
   G.bonus = timeBonus();
@@ -471,3 +478,90 @@ export function closeMap() {
   if (G.mapFrom === 'pause') showScreen('pause');
   else resume();
 }
+
+/* ---------------- the end of stage one: back in Amman, and the hall ----------------
+   After Hercules: today's Amman at sunset, by the flag (raised for good); the gate is the way into the
+   hall, where the score goes on the top 10 and the next stages wait (quest.js: finale, room). */
+function toFinale() {
+  G.era = 'now'; G.sunset = true; G.boss = null; G.cheer = 0;
+  enterArea('finale', 4, 'ground');
+  G.fade = 40;
+  say(['BACK IN AMMAN, TODAY.', 'THE GATE BY THE FLAG LEADS ON.'], 400);
+}
+function atDoor() {
+  const cx = player.x + player.w / 2, x0 = level.gateX * TILE;
+  return cx > x0 + 8 && cx < x0 + 40 && player.onGround;
+}
+function enterHall() {
+  enterArea('room', 4, 'ground');
+  G.downPress = false;                                        // a ▼ from before must not use anything at once
+  if (!G.hallSeen) { G.hallSeen = true; sfx.goal(); say(['STAGE ONE COMPLETE!', 'PRESS ▼ BY ANYTHING THAT GLOWS.'], 420); }
+}
+/* the thing in the hall Saqer is standing by (the room draws a ▼ over it), or null */
+export function hallThing() {
+  if (!level.def || !level.def.things) return null;
+  const cx = player.x + player.w / 2;
+  let best = null, bd = 18;
+  for (const t of level.def.things) {
+    const tx = (t.x + (t.w || 1) / 2) * TILE, d = Math.abs(cx - tx) - ((t.w || 1) - 1) * TILE / 2;
+    if (d < bd) { bd = d; best = t; }
+  }
+  return best;
+}
+function useThings() {
+  if (!G.downPress) return;
+  G.downPress = false;
+  const t = hallThing();
+  if (!t) return;
+  sfx.select();
+  switch (t.kind) {
+    case 'portal': openHall('replay'); break;
+    case 'book':   openHall('save'); break;
+    case 'board':  openHall('save'); break;
+    case 'plaque': openHall('future'); break;
+    case 'door2':  say(['STAGE 2', 'OPENS ON 21.11.'], 260); break;
+    default:       say(['COMING SOON.', 'THE GAME IS STILL BEING MADE.'], 260); break;
+  }
+}
+function openHall(name) {
+  G.prevState = 'play'; G.state = 'paused';
+  music.stop();
+  if (name === 'save') fillTop();
+  showScreen(name);
+}
+export function hallBack() { resume(); }
+
+/* the top 10 screen: the list, and (once a run, without the cheat) saving this score */
+async function fillTop() {
+  const can = !G.saved && !G.usedGod && !DEBUG_RUN;
+  setHidden('#save-row', !can);
+  const nb = document.getElementById('save-name'); if (nb) nb.placeholder = tLine('NAME');
+  setText('#save-score', String(G.score).padStart(6, '0'));
+  setText('#save-msg', G.saved ? tLine('SAVED!') : G.usedGod ? tLine('NOT WITH THE CHEAT ON.') : online() ? '' : tLine('SAVED ON THIS PHONE FOR NOW.'));
+  showTop(topCached());
+  showTop(await fetchTop());
+}
+function showTop(list) {
+  const ol = document.getElementById('top-list');
+  if (!ol) return;
+  ol.textContent = '';
+  if (!list.length) { const li = document.createElement('li'); li.textContent = tLine('NO SCORES YET: BE THE FIRST!'); ol.appendChild(li); return; }
+  for (const r of list.slice(0, 10)) {
+    const li = document.createElement('li');
+    li.textContent = r.name + (r.mode === 'hard' ? ' ★' : '') + ' ';
+    const s = document.createElement('span'); s.textContent = String(r.score).padStart(6, '0');
+    li.appendChild(s); ol.appendChild(li);
+  }
+}
+export async function saveScore() {
+  const box = document.getElementById('save-name');
+  const name = box ? box.value : '';
+  if (!name.trim() || G.saved) return;
+  setText('#save-msg', '…');
+  const ok = await submitScore(name, G.score, D.name);
+  if (ok) { G.saved = true; stat('saved-score'); }
+  setHidden('#save-row', G.saved);
+  setText('#save-msg', ok ? tLine('SAVED!') : tLine('COULD NOT SAVE. TRY AGAIN.'));
+  showTop(topCached());
+}
+export function replayHard() { newGame('hard', true); }

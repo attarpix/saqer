@@ -25,7 +25,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Changa:wght@700;800&display=swap">
-<link rel="stylesheet" href="css/style.css?v=49">
+<link rel="stylesheet" href="css/style.css?v=50">
 </head>
 <body>
 <main id="stage">
@@ -53,7 +53,7 @@
         <button class="px-btn" id="btn-install" data-act="install" data-t hidden>INSTALL</button>
       </nav>
       <p id="hi-score" class="hint">BEST 000000</p>
-      <p class="hint" style="position:absolute;top:calc(var(--u) * 3);right:calc(var(--u) * 4);margin:0;opacity:.6">V49</p>
+      <p class="hint" style="position:absolute;top:calc(var(--u) * 3);right:calc(var(--u) * 4);margin:0;opacity:.6">V50</p>
       <p class="hint keys" data-t>←→ MOVE · Z JUMP · X RUN · P PAUSE · M SOUND</p>
       <a class="credit" href="https://www.instagram.com/attar10x/" target="_blank" rel="noopener"><span data-t>A GAME BY</span> @attar10x</a>
     </section>
@@ -126,6 +126,46 @@
           <text x="284" y="100" class="m-x">✕</text>
         </svg>
         <nav class="menu"><button class="px-btn primary" data-act="map-close" data-t>BACK</button></nav>
+      </div>
+    </section>
+
+    <!-- the hall at the end of stage one: save your score / the top 10 -->
+    <section id="screen-save" class="screen dim" aria-label="Top 10">
+      <div class="px-panel hall">
+        <h2 data-t>TOP 10</h2>
+        <ol id="top-list" class="top-list"></ol>
+        <div id="save-row" class="save-row">
+          <p class="hint"><span data-t>YOUR SCORE</span> <b id="save-score">0</b></p>
+          <input id="save-name" type="text" maxlength="12" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="NAME">
+          <button class="px-btn small primary" data-act="save-score" data-t>SAVE</button>
+        </div>
+        <p id="save-msg" class="hint"></p>
+        <nav class="menu"><button class="px-btn small" data-act="hall-back" data-t>BACK</button></nav>
+      </div>
+    </section>
+
+    <!-- the plaque: thanks, and what is coming -->
+    <section id="screen-future" class="screen dim" aria-label="Coming next">
+      <div class="px-panel hall">
+        <h2 data-t>THANK YOU FOR PLAYING MY GAME!</h2>
+        <p class="info-text" data-t>STAGE 2 OPENS ON 21.11. STAGES 3, 4 AND 5 ARE COMING SOON: THE GAME IS STILL BEING MADE.</p>
+        <p class="info-text" data-t>WANT TO HELP DESIGN THE NEXT STAGES, OR BECOME A CHARACTER IN THE GAME? TALK TO ATTAR.</p>
+        <nav class="menu">
+          <a class="px-btn primary ig" href="https://www.instagram.com/attar10x/" target="_blank" rel="noopener">INSTAGRAM @attar10x</a>
+          <button class="px-btn small" data-act="hall-back" data-t>BACK</button>
+        </nav>
+      </div>
+    </section>
+
+    <!-- the time portal: play stage one again, on hard -->
+    <section id="screen-replay" class="screen dim" aria-label="Play again">
+      <div class="px-panel hall">
+        <h2 data-t>PLAY STAGE 1 AGAIN?</h2>
+        <p class="info-text" data-t>ON HARD: ALL THE ENEMIES, AND THE THORNS. AMMAN AT SUNSET.</p>
+        <nav class="menu">
+          <button class="px-btn primary" data-act="replay-hard" data-t>YES, ON HARD</button>
+          <button class="px-btn small" data-act="hall-back" data-t>BACK</button>
+        </nav>
       </div>
     </section>
 
@@ -209,6 +249,6 @@
 })();
 </script>
 <script nomodule>window.__saqerOld();</script>
-<script type="module" src="js/main.js?v=49"></script>
+<script type="module" src="js/main.js?v=50"></script>
 </body>
 </html>
