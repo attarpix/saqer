@@ -23,7 +23,7 @@ const GY = GROUND_TOP * TILE;
 
 export function spawnBoss() {
   G.boss = {
-    x: 20 * TILE, y: GY - 48, w: 26, h: 48,
+    x: 20 * TILE, y: GY - 35, w: 19, h: 35,          // 1.3× Saqer (his body box scaled with his picture)
     facing: -1, hp: D.boss, state: 'intro', t: 0, anim: 0,
     rest: 0, dir: -1, flash: 0, blockT: 0, shots: [], done: false,
   };
@@ -98,7 +98,7 @@ export function updateBoss() {
     default: break;
   }
 
-  b.h = b.state === 'recover' && b.t > 10 ? 36 : 48;     // he is down on one knee while he gets his breath back
+  b.h = b.state === 'recover' && b.t > 10 ? 26 : 35;     // he is down on one knee while he gets his breath back
   b.y = GY - b.h;
   updateShots(b);
   if (b.state !== 'down' && b.state !== 'hurt') touch(b);
@@ -113,9 +113,9 @@ function dust(x, y, n) {
 /* the club comes down: whoever is under it is hit, and a shockwave runs along the floor each way */
 function smash(b, ph) {
   G.shake = 12; sfx.thud();
-  const cx = b.facing > 0 ? b.x + b.w : b.x - 34;
-  if (overlap(player, { x: cx, y: GY - 34, w: 34, h: 34 })) hurtPlayer('HERCULES');
-  const x = b.facing > 0 ? b.x + b.w + 14 : b.x - 14;
+  const cx = b.facing > 0 ? b.x + b.w : b.x - 25;               // his club's reach, scaled with him
+  if (overlap(player, { x: cx, y: GY - 26, w: 25, h: 26 })) hurtPlayer('HERCULES');
+  const x = b.facing > 0 ? b.x + b.w + 10 : b.x - 10;
   dust(x, GY - 2, 8);
   for (const d of [-1, 1]) b.shots.push({ kind: 'wave', x: x - 6, y: GY - 11, w: 12, h: 11, vx: d * (2.1 + ph * 0.2), life: 48 + ph * 14, t: 0 });
 }

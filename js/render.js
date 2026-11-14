@@ -150,7 +150,7 @@ function paintPhoto(img, cam, levelPx, tile, pit, veilRgb = '40,20,70') {
   // a soft veil pushes the painting back so Saqer and the blocks read clearly in front of it
   const veil = ctx.createLinearGradient(0, GROUND_Y - 120, 0, GROUND_Y);
   veil.addColorStop(0, 'rgba(' + veilRgb + ',0.12)'); veil.addColorStop(1, 'rgba(' + veilRgb + ',0.36)');
-  ctx.fillStyle = veil; ctx.fillRect(0, 0, VW, GROUND_Y);
+  if (!crisp) { ctx.fillStyle = veil; ctx.fillRect(0, 0, VW, GROUND_Y); }   // the day picture shows at full colour (the owner: the brighter the better)
 }
 
 /* the backdrops painted in code (scenery.js): a still sky, then layers that slide at different speeds.
@@ -226,14 +226,20 @@ function paintStage(w) {
   g.fillStyle = dim; g.fillRect(0, P, w, H - P);
   return c;
 }
+/* the theatre crowd (the owner's video 3), at its true proportions: 200 units tall, its front row on the
+   podium wall. In the fight it slides a little slower than the stage; in the story scenes it is centred. */
+function drawCrowd(img, cam, span) {
+  const h = 200, w = h * img.width / img.height;
+  const x = span > 1 ? -Math.min(cam, span) * (w - VW) / span : -(w - VW) / 2;
+  ctx.imageSmoothingEnabled = true;
+  ctx.drawImage(img, x, GROUND_Y - PODIUM - h * 0.93, w, h);
+  ctx.imageSmoothingEnabled = false;
+}
 function paintTheater(cam) {
   const A = theatrePictures(), cheering = G.cheer > 0, alt = Math.floor(G.tick / 9) % 2;
   const img = crowdFrame(cheering);
   ctx.imageSmoothingEnabled = true;                     // the crowd picture at full detail, lifted so its front row sits just above the podium wall
-  // the whole theatre, from the arched gate at the top to the front row on the podium wall, in its own proportions;
-  // narrower than the arena, so it slides a little slower than the stage (depth)
-  const h = 200, w = h * img.width / img.height, span = Math.max(1, level.w * TILE - VW);
-  ctx.drawImage(img, -Math.min(cam, span) * (w - VW) / span, GROUND_Y - PODIUM - h * 0.93, w, h);
+  drawCrowd(img, cam, Math.max(1, level.w * TILE - VW));
   ctx.imageSmoothingEnabled = false;
   ctx.drawImage(A.stage, -cam, GROUND_Y - PODIUM, A.stage.width * AP, A.stage.height * AP);
 }
@@ -654,30 +660,32 @@ function drawPopups(cam) {
 }
 
 function drawHUD() {
-  text('SAQER', 10, 8);
-  if (G.god) text('ATTAR10X', 10, 46, '#7dff8a', 6);
-  text(pad(G.score, 6), 10, 19);
-  text('DINARS', 68, 8, '#ffd166');          // no mahr yet: Dana and her mahr come in level 2
-  ctx.drawImage(ART.coin[Math.floor(G.tick / 10) % 4], 67, 18.5, 8, 8);
-  text(String(G.mahr), 77, 19);
-  text('STAGE', 128, 8);
-  const id = level.def ? (level.def.id || '') : '';
-  text(id, 128, 19, '#fff', id.length > 8 ? 6 : 8);
-  if (G.golden) {                                       // lives only count once he has the golden jameed
-    text('LIVES', 214, 8);
-    text('x' + G.lives, 222, 19);
+  // one row of numbers with small pictures, no words (the owner: the labels looked wrong on phones)
+  const y = 8;
+  text(pad(G.score, 6), 10, y);                                              // the score
+  if (G.god) text('ATTAR10X', 10, 36, '#7dff8a', 6);
+  ctx.drawImage(ART.coin[Math.floor(G.tick / 10) % 4], 70, y - 0.5, 8, 8);    // dinars
+  text(String(G.mahr), 80, y);
+  const id = level.def ? (level.def.id || '') : '';                          // the stage
+  text(id, 128, y, '#ffd166', id.length > 8 ? 6 : 8);
+  if (G.golden) {                                                            // lives (once he has the golden jameed): a little Saqer
+    const im = SPRITES.saqer.small.idle[0].img, ih = 9, iw = ih * im.width / im.height;
+    ctx.imageSmoothingEnabled = true; ctx.drawImage(im, 212, y - 1, iw, ih); ctx.imageSmoothingEnabled = false;
+    text('x' + G.lives, 212 + iw + 2, y);
   }
-  text('TIME', 270, 8);
-  const s = clockSeconds();
-  text(Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'), 270, 19);
+  const s = clockSeconds(), cx = 266, cy = y + 4;                            // the time, by a little clock
+  ctx.fillStyle = '#140d1c'; ctx.beginPath(); ctx.arc(cx + 0.5, cy + 0.5, 4.5, 0, 7); ctx.fill();
+  ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(cx, cy, 4, 0, 7); ctx.fill();
+  ctx.fillStyle = '#140d1c'; ctx.fillRect(cx - 0.5, cy - 3, 1, 3.5); ctx.fillRect(cx - 0.5, cy - 0.5, 2.5, 1);
+  text(Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'), 274, y);
 
   // the hit bar (once he has the golden jameed) and the key
   if (G.golden) {
-    for (let i = 0; i < MAX_HP; i++) ctx.drawImage(ART.heart[i < G.hp ? 0 : 1], 10 + i * 13, 31, 11.25, 9.75);
+    for (let i = 0; i < MAX_HP; i++) ctx.drawImage(ART.heart[i < G.hp ? 0 : 1], 10 + i * 13, 21, 11.25, 9.75);
   }
   { let kx = G.golden ? 52 : 10;                                             // the keys he carries
-    if (G.keys.vault) { ctx.drawImage(ART.key, kx, 28, 16, 16); kx += 18; }
-    if (G.keys.temple) ctx.drawImage(ART.keyTemple, kx, 28, 16, 16); }
+    if (G.keys.vault) { ctx.drawImage(ART.key, kx, 18, 16, 16); kx += 18; }
+    if (G.keys.temple) ctx.drawImage(ART.keyTemple, kx, 18, 16, 16); }
 
   // the health of Hercules
   const b = G.boss;
@@ -785,7 +793,7 @@ function drawCutscene(v) {
   const th = ART.themes[name];
   if (theatre) {
     ctx.imageSmoothingEnabled = true;
-    ctx.drawImage(crowdFrame(false), -64, GROUND_Y - VH - PODIUM + 4, 448, VH + 1);   // as in the fight: the crowd behind the podium wall …
+    drawCrowd(crowdFrame(false), 0, 1);                                               // exactly as in the fight: the crowd behind the podium wall …
     ctx.imageSmoothingEnabled = false;
     const st = theatrePictures().stage; ctx.drawImage(st, -64, GROUND_Y - PODIUM, st.width * AP, st.height * AP);   // … and the stone stage
     ctx.imageSmoothingEnabled = false;

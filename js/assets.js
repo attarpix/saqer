@@ -14,7 +14,7 @@ import { DANA_ART } from './story.js';
 export const IMG = {};
 export let SPRITES = null;
 
-const CROWD_FRAMES = 9;                                   // frames pulled from the owner's crowd videos (assets/bg/crowd)
+const CROWD_FRAMES = 12;                                  // the theatre crowd: 1 s of the owner's video 3 (steady camera), 12 frames a second (assets/bg/crowd)
 const IMAGES = {
   title:        'assets/bg/title_theater.png',
   amman:        'assets/bg/amman_sunset.jpg',     // today's Amman at sunset (after Hercules, and replays from the hall)
@@ -39,8 +39,7 @@ const IMAGES = {
 
 for (let i = 1; i <= CROWD_FRAMES; i++) {
   const n = String(i).padStart(2, '0');
-  IMAGES['crowdClap' + i] = 'assets/bg/crowd/clap_' + n + '.jpg';
-  IMAGES['crowdCheer' + i] = 'assets/bg/crowd/cheer_' + n + '.jpg';
+  IMAGES['crowd' + i] = 'assets/bg/crowd/crowd_' + n + '.jpg';
 }
 
 function loadImage(src) {
@@ -75,7 +74,7 @@ export async function loadAssets(onProgress = () => {}) {
   Object.assign(IMG, ch.img);
   SPRITES = ch.sprites;
   const seq = name => { const a = []; for (let i = 1; i <= CROWD_FRAMES; i++) a.push(IMG[name + i]); return a.concat(a.slice(1, -1).reverse()); };   // there and back: no jump at the loop
-  IMG.crowdClap = seq('crowdClap'); IMG.crowdCheer = seq('crowdCheer');
+  IMG.crowdClap = seq('crowd'); IMG.crowdCheer = IMG.crowdClap;   // one steady video for both: cheering just plays it faster
   SPRITES.saqer = buildSaqer(IMG.saqerSheet);                      // { big: {idle:[…], walk:[…], run:[…] …}, small: {…} }
   SPRITES.hercules = buildHercules(IMG.herculesSheet);
   // painted in code (scenery.js): the pillars, the backdrops of the past, the Temple of Hercules
@@ -121,7 +120,7 @@ export async function loadAssets(onProgress = () => {}) {
     const talk = HT.slice(1).map(c => ({ img: fitFigure(c, { k: kH }), ax }));   // on the characters' pixel grid, like the rest of him
     SPRITES.hercules.talk = talk.concat(talk.slice(1, -1).reverse());
     // the owner's jameed (art/new/Make this jameed piece…nT3.png), 14 units wide; the golden one is the same piece in gold
-    ART.jameed = fitFigure(cutMagentaSheet(IMG.jameedArt)[0][0], { w: 56 });
+    ART.jameed = fitFigure(cutMagentaSheet(IMG.jameedArt)[0][0], { w: 56, grid: 1.5 });   // the jameed keeps its 1.5 pixel (the owner: its size was already good)
     ART.goldJameed = goldJameed();
   }
   await loadCustom();

@@ -119,7 +119,7 @@ const HERC = {
   kneel:  [[910, 640, 910], [1062, 640, 1062]],
   out:    [[853, 772, 846], [1011, 808, 1011], [1177, 818, 1178]],
 };
-export const HERC_SCALE = 1.37;       // sheet px → canvas px (he stands about 54 world units tall, Saqer 30)
+export const HERC_SCALE = 0.99;       // sheet px → canvas px: he stands about 39 world units tall, 1.3× Saqer (30) — the owner's size
 
 export function buildHercules(img) {
   const id = pixels(img);
@@ -166,7 +166,7 @@ const SAQ = {
 export const SAQER_H = { big: 120, small: 80 };
 /* his pixel size, in canvas px: the sheet is a little finer than the rest of the game, so he is
    rebuilt on a slightly coarser grid (1 = as the sheet gives it, 2 = the tiles' pixel) */
-export const SAQER_PX = 1.5;
+export const SAQER_PX = 2;     // the same pixel as the tiles (2026-11-15: was 1.5; the owner wants one pixel size for everything)
 
 /* snap a figure to a grid of px canvas pixels: averaged down, edges made hard, then blown back up with no smoothing */
 function coarser(src, px) {
@@ -302,7 +302,7 @@ export function fitFigure(c, { h = 0, w = 0, k = 0, kx = 0, flip = false, grid =
   const g = o.getContext('2d'); g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high';
   if (flip) { g.translate(o.width, 0); g.scale(-1, 1); }
   g.drawImage(c, 0, 0, o.width, o.height);
-  const out = grid ? coarser(o, SAQER_PX) : o;
+  const out = grid ? coarser(o, grid === true ? SAQER_PX : grid) : o;   // grid: true = the characters' pixel, or a number of canvas px
   out.div = 4;
   return out;
 }

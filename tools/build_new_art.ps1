@@ -13,6 +13,8 @@ $jpg = [System.Drawing.Imaging.ImageCodecInfo]::GetImageEncoders() | Where-Objec
 $q = New-Object System.Drawing.Imaging.EncoderParameters 1
 $q.Param[0] = New-Object System.Drawing.Imaging.EncoderParameter ([System.Drawing.Imaging.Encoder]::Quality), ([long]90)
 
+# present-day Amman by day (2026-11-15): art/new/try this new day gigger size.png → assets/bg/amman_day.png, made with ffmpeg:
+#   crop=6336:2144:0:0,scale=1241:420:flags=area,eq=saturation=1.3:contrast=1.05:brightness=0.02   (1 art px = 2 canvas px in the game)
 function Fit($name, $out, $cropH, $w, $h) {
   $im = [System.Drawing.Image]::FromFile((Join-Path $src $name))
   if ($cropH -le 0) { $cropH = $im.Height }
@@ -77,8 +79,7 @@ Copy-Item (Join-Path $src 'a58b9724-0da8-4fd1-92b3-56d25d74d8a5.png') (Join-Path
 Copy-Item (Join-Path $src 'c2bafdf7-0cf1-4157-8b02-7d2acad11851.png') (Join-Path $raw 'saqer_run.png') -Force         # Saqer running
 # the theatre crowd, from the owner's videos (needs ffmpeg): 9 clapping frames, 9 cheering frames (before the camera moves), and their sound
 $crowd = Join-Path $bg 'crowd'; New-Item -ItemType Directory -Force $crowd | Out-Null
-ffmpeg -v error -y -ss 0.25 -t 1.5 -i (Join-Path $src 'crowd 3.mp4') -vf fps=6 -q:v 4 (Join-Path $crowd 'clap_%02d.jpg')
-ffmpeg -v error -y -ss 0 -t 1.5 -i (Join-Path $src 'crowd.mp4') -vf fps=6 -q:v 4 (Join-Path $crowd 'cheer_%02d.jpg')
+ffmpeg -v error -y -ss 0.25 -t 1.0 -i (Join-Path $src 'crowd 3.mp4') -vf fps=12 -q:v 2 (Join-Path $crowd 'crowd_%02d.jpg')   # one steady video for clapping and cheering
 $sfx = Join-Path $root 'assets\sfx'; New-Item -ItemType Directory -Force $sfx | Out-Null
 ffmpeg -v error -y -i (Join-Path $src 'crowd.mp4') -vn -ac 1 -ar 44100 -af 'afade=t=in:d=0.15,afade=t=out:st=4.3:d=0.8' -b:a 96k (Join-Path $sfx 'crowd_roar.mp3')
 ffmpeg -v error -y -i (Join-Path $src 'crowd 3.mp4') -vn -ac 1 -ar 44100 -t 4.8 -b:a 96k (Join-Path $sfx 'crowd_clap.mp3')
