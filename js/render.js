@@ -997,7 +997,7 @@ function drawDebugPanel() {
 }
 
 /* ---------------- the hall at the end of stage one (quest.js: room) ----------------
-   Drawn in code: a stone hall with flag-coloured banners and torches. On the floor and the walls,
+   Drawn in code: a stone hall with pilasters and torches. On the floor and the walls,
    the things to use; the one Saqer stands by gets a bouncing ▼. */
 function paintRoom(cam) {
   const g = ctx.createLinearGradient(0, 0, 0, GROUND_Y);
@@ -1012,19 +1012,12 @@ function paintRoom(cam) {
   // the ceiling beam
   ctx.fillStyle = '#2a1810'; ctx.fillRect(0, 0, VW, 16);
   ctx.fillStyle = '#5a3a20'; ctx.fillRect(0, 13, VW, 3);
-  // pilasters, banners (black, white, green, a red point) and torches
+  // pilasters and torches (no flags: the banners that hung here are gone)
   for (let i = 0; i < 6; i++) {
     const x = i * 96 + 40 - cam;
     if (x < -50 || x > VW + 50) continue;
     ctx.fillStyle = '#6b4a34'; ctx.fillRect(half(x - 5), 16, 10, GROUND_Y - 16);
     ctx.fillStyle = '#8a6448'; ctx.fillRect(half(x - 5), 16, 2, GROUND_Y - 16);
-    const bx = x + 26, bw = bx + cam;                   // (no banner behind the top-10 board)
-    if (!(bw > 136 && bw < 262)) {
-    ctx.fillStyle = '#111111'; ctx.fillRect(half(bx), 18, 14, 9);
-    ctx.fillStyle = '#f2f2f2'; ctx.fillRect(half(bx), 27, 14, 9);
-    ctx.fillStyle = '#007a3d'; ctx.fillRect(half(bx), 36, 14, 9);
-    ctx.fillStyle = '#ce1126'; ctx.beginPath(); ctx.moveTo(bx, 18); ctx.lineTo(bx + 8, 31.5); ctx.lineTo(bx, 45); ctx.fill();
-    }
     const fr = ART.skyProps.brazier[Math.floor(G.tick / 6 + i) % 3];
     const glow = ctx.createRadialGradient(x, 70, 2, x, 70, 46);
     glow.addColorStop(0, 'rgba(255,190,90,0.35)'); glow.addColorStop(1, 'rgba(255,190,90,0)');
