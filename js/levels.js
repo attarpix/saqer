@@ -112,7 +112,7 @@ export const LEVELS = [
       L.coins(182, 8, 3);
 
       // the great stair, flag and gate
-      L.stairs(190, 8, 'up');            // 4 columns nearer the flag than it was: with one speed, a full jump from the top step reaches the pole (the top of it, from the very edge)
+      L.stairs(186, 8, 'up');
       L.lira(197, 2);                    // SECRET 3: a running leap off the top of the great stair
       L.flag(202);
       L.gate(208);
