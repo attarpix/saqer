@@ -19,8 +19,8 @@
      create policy "anyone reads"  on scores for select using (true);
      create policy "anyone adds"   on scores for insert with check (true);
    ============================================================ */
-export const SUPABASE_URL = '';          // e.g. 'https://abcd1234.supabase.co'
-export const SUPABASE_KEY = '';          // the public anon key (safe to ship: the table only allows read and add)
+export const SUPABASE_URL = 'https://cawsosvhfeufpzbxmknl.supabase.co';   // the saqer project (organization Saqer, free plan)
+export const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNhd3Nvc3ZoZmV1ZnB6Ynhta25sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ2NjA4NTYsImV4cCI6MjExMDIzNjg1Nn0.T7ncvLYocBuY5Z_5KVOArL9AUV69tOA920zLLKPu1Yc';   // the public anon key (safe to ship: the table only allows read and add)
 
 const LOCAL = 'saqer.board.v1';
 export const online = () => !!(SUPABASE_URL && SUPABASE_KEY);
