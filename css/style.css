@@ -132,6 +132,15 @@ canvas#game {
 }
 .px-btn:active { transform: translateY(var(--px)); }
 .px-btn[hidden] { display: none; }
+/* share: green with a white arrow, so it can't be missed */
+.px-btn.share { background: var(--green); color: #fff; box-shadow:
+    0 calc(var(--u) * -1) 0 0 var(--ink), 0 var(--u) 0 0 var(--ink),
+    calc(var(--u) * -1) 0 0 0 var(--ink), var(--u) 0 0 0 var(--ink),
+    inset 0 calc(var(--px) * 2) 0 0 #2fb36a, inset 0 calc(var(--px) * -3) 0 0 #00532a; }
+.px-btn.share:focus-visible, .px-btn.share:hover { background: #0a9a4f; color: #fff; }
+.share-ico { width: 1em; height: 1em; vertical-align: -0.1em; margin-inline-end: 0.4em; shape-rendering: crispEdges; }
+.menu-row { display: flex; gap: calc(var(--u) * 4); }
+.menu-row > .px-btn { flex: 1 1 auto; padding-left: calc(var(--u) * 3); padding-right: calc(var(--u) * 3); white-space: nowrap; }
 
 .hint { font-size: calc(var(--u) * 6); color: #cbb7e8; }
 .hint.keys { position: absolute; bottom: calc(var(--u) * 8); opacity: .8; }

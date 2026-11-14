@@ -21,7 +21,7 @@ export function initUI(h) {
       const act = btn.dataset.act;
       if (act === 'story-next') return storyAdvance();
       if (act === 'story-skip') return storyFinish();
-      handlers[act] && handlers[act]();
+      handlers[act] && handlers[act](btn);
     });
   });
   $('#screen-story').addEventListener('pointerdown', e => {

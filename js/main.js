@@ -111,6 +111,25 @@ async function tryFullscreen() {
   try { await el.requestFullscreen({ navigationUI: 'hide' }); if (screen.orientation && screen.orientation.lock) await screen.orientation.lock('landscape'); } catch (_e) { /* optional */ }
 }
 
+/* ---------------- share: the phone's own share sheet, or the link copied ---------------- */
+const GAME_URL = 'https://attarpix.github.io/saqer/';
+async function shareGame(btn) {
+  const on = (document.querySelector('.screen.open') || {}).id;
+  const withScore = (on === 'screen-over' || on === 'screen-future') && G.score > 0;   // after a run: brag with the points
+  const text = withScore ? t('I GOT {n} POINTS IN SAQER. CAN YOU BEAT ME?').replace('{n}', G.score) : t('PLAY SAQER: A PIXEL TRIP BACK IN TIME TO ROMAN AMMAN.');
+  stat('share');
+  if (navigator.share) {
+    try { await navigator.share({ title: 'Saqer', text, url: GAME_URL }); return; }
+    catch (e) { if (e && e.name === 'AbortError') return; }      // closed by the player
+  }
+  try { await navigator.clipboard.writeText(text + ' ' + GAME_URL); } catch (_e) {
+    const ta = document.createElement('textarea'); ta.value = text + ' ' + GAME_URL; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch (_e2) { /* nothing more to try */ } ta.remove();
+  }
+  const label = btn && btn.querySelector('[data-t]');
+  if (label) { label.textContent = t('LINK COPIED!'); setTimeout(() => { label.textContent = t(label.dataset.en); }, 1800); }
+}
+
 /* ---------------- start ---------------- */
 applyLang();                                   // Arabic by default (js/lang.js)
 initStats();                                   // the play counter, once it has its code (js/stats.js)
@@ -133,6 +152,7 @@ initUI({
   retry: continueGame,
   lang: () => { toggleLang(); refreshMenus(); },
   info: () => showScreen('info'),
+  share: shareGame,
   map: () => openMap('pause'),
   'map-close': closeMap,
   'hall-back': hallBack, 'replay-hard': () => { tryFullscreen(); stat('replay-hard'); replayHard(); },
