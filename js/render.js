@@ -3,7 +3,7 @@
    The context is scaled ×2 so everything below is in world units;
    32-px art drawn into 16-unit boxes lands 1:1 on canvas pixels.
    ============================================================ */
-import { TILE, SCALE, RES, VW, VH, GROUND_TOP, LH, MAHR_GOAL, MAX_HP, BOSS_HP } from './config.js';
+import { TILE, SCALE, RES, VW, VH, GROUND_TOP, LH, MAHR_GOAL, MAX_HP, D } from './config.js';
 import { clockSeconds, PILLAR_X, PILLAR_REST } from './game.js';
 import { bossOpen } from './boss.js';
 import { GATE_COL } from './quest.js';
@@ -627,7 +627,7 @@ function drawHUD() {
     text('HERCULES', x, y - 10, '#ffd166', 6);
     ctx.fillStyle = '#140d1c'; ctx.fillRect(x - 2, y - 2, w + 4, 10);
     ctx.fillStyle = '#4b1820'; ctx.fillRect(x, y, w, 6);
-    const seg = w / BOSS_HP;
+    const seg = w / D.boss;
     for (let i = 0; i < b.hp; i++) {
       ctx.fillStyle = b.flash > 0 && Math.floor(G.tick / 3) % 2 ? '#ffffff' : '#e23a4c';
       ctx.fillRect(x + i * seg + 0.5, y, seg - 1, 6);

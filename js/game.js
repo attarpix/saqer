@@ -8,7 +8,7 @@
    (Dana's scenes and the four mahr stages are hidden for now; their
    text and layouts are still in story.js and levels.js.)
    ============================================================ */
-import { TILE, VW, VH, GROUND_TOP, START_LIVES, MAHR_GOAL, MAX_HP } from './config.js';
+import { TILE, VW, VH, GROUND_TOP, MAHR_GOAL, MAX_HP, D, setMode } from './config.js';
 import { G, W, player, clearWorld } from './state.js';
 import { level, buildLevel, linkAt } from './level.js';
 import { T } from './tiles.js';
@@ -37,6 +37,7 @@ export function boot() {
   const save = loadSave();
   G.hiScore = save.hi || 0;
   G.muted = !!save.muted;
+  setMode(save.mode || 'normal');
   setMuted(G.muted);
   for (const id of AREA_ORDER) {
     buildLevel(AREAS[id]);
@@ -55,14 +56,15 @@ export function toTitle() {
 }
 
 function resetRun() {
-  G.score = 0; G.coins = 0; G.lives = START_LIVES;
+  G.score = 0; G.coins = 0; G.lives = D.lives;
   G.mahr = 0; G.mahrStart = 0; G.liras = 0; G.lirasStart = 0;
   G.golden = false; G.hp = MAX_HP; G.keys = {}; G.gone = new Map();
   G.clock = 0; G.banner = null; G.cut = null; G.boss = null; G.cheer = 0; G.shake = 0;
   memory = new Map();
 }
 
-export function newGame() {
+export function newGame(mode) {
+  if (mode) { setMode(mode); writeSave({ mode }); }        // easy / normal / hard (config.js MODES)
   unlockAudio();
   resetRun();
   G.era = 'now';
@@ -191,7 +193,7 @@ function saveHi() {
 /* ?debug only: jump straight to an area (0 amman, 1 phila, 2 under, 3 theater, or its name) */
 export function debugStage(i, tx) {
   const id = typeof i === 'string' ? i : AREA_ORDER[clamp(i, 0, AREA_ORDER.length - 1)];
-  if (!G.lives) G.lives = START_LIVES;
+  if (!G.lives) G.lives = D.lives;
   G.era = id === 'amman' ? 'now' : 'past';
   if (id !== 'amman') { G.golden = true; heal(); }
   music.stop();

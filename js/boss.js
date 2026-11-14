@@ -8,9 +8,9 @@
    After every attack he has to catch his breath (stars over his head).
    That is the only time a stomp on his head counts. At any other time
    the stomp just bounces off, so jumping on him is never punished.
-   BOSS_HP stomps bring him down. He gets faster as he loses health.
+   D.boss stomps bring him down (it depends on the mode: config.js MODES). He gets faster as he loses health.
    ============================================================ */
-import { TILE, GROUND_TOP, BOSS_HP } from './config.js';
+import { TILE, GROUND_TOP, D } from './config.js';
 import { G, W, player } from './state.js';
 import { level } from './level.js';
 import { overlap, clamp, sign } from './physics.js';
@@ -23,12 +23,12 @@ const GY = GROUND_TOP * TILE;
 export function spawnBoss() {
   G.boss = {
     x: 20 * TILE, y: GY - 48, w: 26, h: 48,
-    facing: -1, hp: BOSS_HP, state: 'intro', t: 0, anim: 0,
+    facing: -1, hp: D.boss, state: 'intro', t: 0, anim: 0,
     rest: 0, dir: -1, flash: 0, blockT: 0, shots: [], done: false,
   };
 }
 
-export const bossPhase = b => (b.hp > BOSS_HP * 2 / 3 ? 1 : b.hp > BOSS_HP / 3 ? 2 : 3);   // three stages, whatever BOSS_HP is
+export const bossPhase = b => (b.hp > D.boss * 2 / 3 ? 1 : b.hp > D.boss / 3 ? 2 : 3);   // three stages, whatever BOSS_HP is
 export const bossOpen = b => b.state === 'recover';          // can be hurt right now
 const set = (b, s) => { b.state = s; b.t = 0; };
 

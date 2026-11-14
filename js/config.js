@@ -12,11 +12,18 @@ export const LH = 15;             // level height in tiles
 export const GROUND_TOP = 13;     // first ground row
 export const STEP = 1000 / 60;    // fixed simulation step (ms)
 
-export const START_LIVES = 5;     // level 1 is the introduction: kept easy
+/* ---- difficulty: chosen after START (easy / normal / hard), remembered with the save ---- */
+export const MODES = {
+  easy:   { lives: 5, boss: 4, speed: 0.8 },     // more lives, a shorter Hercules fight, slower enemies
+  normal: { lives: 4, boss: 5, speed: 0.9 },     // in between
+  hard:   { lives: 3, boss: 6, speed: 1 },       // the game exactly as it was designed (nothing harder)
+};
+export const D = Object.assign({ name: 'normal' }, MODES.normal);   // the mode in play: lives, boss (stomps for Hercules), speed (enemies)
+export function setMode(name) { if (MODES[name]) Object.assign(D, MODES[name], { name }); }
+export const START_LIVES = 3;     // (normal; the mode in play is D.lives)
 export const MAX_HP      = 3;     // hits Saqer can take once he has the golden jameed
-export const BOSS_HP     = 4;     // stomps it takes to bring Hercules down (level 1: kept easy)
+export const BOSS_HP     = 6;     // (normal; the mode in play is D.boss)
 export const TIME_TICKS  = 24;    // frames per in-game second
-export const ENEMY_SPEED = 0.8;   // enemies walk and fly at 80% (level 1: kept easy)
 
 /* ---- the story's numbers ---- */
 /* The four stages hold 220 dinars and 12 gold liras (worth 10 each): 340 in all.

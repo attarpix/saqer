@@ -45,6 +45,7 @@ const AR = {
   'A JOURNEY BACK IN TIME': 'رحلة عبر الزمن', 'START': 'ابدأ', 'INSTALL': 'ثبّت اللعبة',
   'PAUSED': 'استراحة', 'RESUME': 'كمّل', 'RESTART STAGE': 'أعد المرحلة', 'QUIT TO TITLE': 'للقائمة الرئيسية',
   'GAME OVER': 'انتهت اللعبة', 'TRY THIS STAGE AGAIN': 'جرّب المرحلة مرة ثانية', 'TITLE': 'القائمة الرئيسية',
+  'CHOOSE DIFFICULTY': 'اختار الصعوبة', 'EASY': 'سهل', 'NORMAL': 'عادي', 'HARD': 'صعب',
   'INFO': 'عن اللعبة', 'ABOUT SAQER': 'عن صقر', 'BACK': 'رجوع', 'A GAME BY': 'لعبة من تصميم',
   "SAQER IS A GAME DESIGNED BY ATTAR10X TO RAISE AWARENESS OF JORDAN'S HISTORIC SITES, AND OF WHY THEY ARE WORTH PROTECTING.": 'صقر لعبة من تصميم attar10x، هدفها التوعية بأهمية المواقع التاريخية في الأردن، وليش لازم نحافظ عليها.',
   'SKIP': 'تخطّي', 'NEXT ▶': '◀ التالي', 'LOADING…': 'جاري التحميل…',

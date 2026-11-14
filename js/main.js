@@ -1,7 +1,7 @@
 /* ============================================================
    BOOT — canvas sizing, asset loading, main loop, PWA hooks
    ============================================================ */
-import { VW, VH, RES, STEP } from './config.js';
+import { VW, VH, RES, STEP, D } from './config.js';
 import { loadAssets } from './assets.js';
 import { initRender, render } from './render.js';
 import { initInput } from './input.js';
@@ -113,10 +113,16 @@ async function tryFullscreen() {
 /* ---------------- start ---------------- */
 applyLang();                                   // Arabic by default (js/lang.js)
 initStats();                                   // the play counter, once it has its code (js/stats.js)
+function play(mode) { tryFullscreen(); stat('start'); stat('mode-' + mode); newGame(mode); }
 initRender(canvas);
 initInput();
 initUI({
-  start: () => { tryFullscreen(); stat('start'); newGame(); },
+  start: () => {                                   // first the difficulty: the last one played is lit and focused
+    showScreen('mode');
+    document.querySelectorAll('#screen-mode [data-act^="mode-"]').forEach(b => b.classList.toggle('primary', b.dataset.act === 'mode-' + D.name));
+    const cur = document.querySelector('#screen-mode [data-act="mode-' + D.name + '"]'); if (cur) cur.focus({ preventScroll: true });
+  },
+  'mode-easy': () => play('easy'), 'mode-normal': () => play('normal'), 'mode-hard': () => play('hard'),
   sound: toggleSound,
   install: async () => { if (!installEvt) return; installEvt.prompt(); await installEvt.userChoice; installEvt = null; setHidden('#btn-install', true); },
   resume,
