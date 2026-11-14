@@ -23,7 +23,7 @@ import { loadSave, writeSave } from './storage.js';
 import { clamp } from './physics.js';
 import { tSound, tBest, tScore } from './lang.js';
 import { stat } from './stats.js';
-import { showScreen, hideScreens, uiOpen, uiScreen, uiConfirm, uiMove, showStory, setText } from './ui.js';
+import { showScreen, hideScreens, uiOpen, uiScreen, uiConfirm, uiMove, showStory, setText, setHidden } from './ui.js';
 
 export const TOTALS = { liras: 0, dinars: 0, stages: [] };
 const AREA_ORDER = ['amman', 'phila', 'under', 'temple', 'theater'];
@@ -59,7 +59,7 @@ export function toTitle() {
 function resetRun() {
   G.score = 0; G.coins = 0; G.lives = D.lives;
   G.mahr = 0; G.mahrStart = 0; G.liras = 0; G.lirasStart = 0;
-  G.golden = false; G.hp = MAX_HP; G.keys = {}; G.gone = new Map(); player.star = 0; G.hinted = false;
+  G.golden = false; G.hp = MAX_HP; G.keys = {}; G.gone = new Map(); player.star = 0; G.hinted = false; G.hasMap = false;
   G.clock = 0; G.banner = null; G.cut = null; G.boss = null; G.cheer = 0; G.shake = 0;
   memory = new Map();
 }
@@ -213,6 +213,7 @@ export function pause() {
   music.stop();
   sfx.pause();
   refreshSoundLabel();
+  setHidden('[data-act="map"]', !G.hasMap);       // the map, once he has found it
   showScreen('pause');
 }
 export function resume() {
@@ -245,6 +246,7 @@ export function update() {
   if (G.fade > 0) G.fade--;
   if (G.shake > 0) G.shake--;
   if (G.cheer > 0) G.cheer--;
+  if (G.mapRequest) { G.mapRequest = false; openMap('box'); return; }
   if (G.banner) {                         // a note goes when its time is up, or at the next press of anything
     if (G.banner.at === undefined) { G.banner.at = G.presses; G.banner.age = 0; }
     G.banner.age++;
@@ -454,4 +456,18 @@ export { W };
 export function refreshMenus() {
   setText('#hi-score', tBest(String(G.hiScore).padStart(6, '0')));
   refreshSoundLabel();
+}
+
+/* the map of the game (normal mode): opened by the bonus box, or from the pause menu once found */
+export function openMap(from) {
+  G.mapFrom = from;
+  if (from === 'box') {
+    if (G.state !== 'play') return;
+    G.prevState = G.state; G.state = 'paused';
+  }
+  showScreen('map');
+}
+export function closeMap() {
+  if (G.mapFrom === 'pause') showScreen('pause');
+  else resume();
 }

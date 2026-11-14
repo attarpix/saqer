@@ -22,11 +22,12 @@ export const T = {
   BARS: 19,         // bronze gate bars: solid until Saqer brings the key
   GOLD: 20,         // the golden jameed: Saqer stays grown for good
   WALL: 21,         // invisible solid: where a giant pillar closes the street (the pillar is drawn on its own)
+  Q_MAP: 22,        // a bonus box (normal mode) with the map of the game in it
 };
 
 export const SOLID = new Set([
   T.GROUND, T.BRICK, T.Q_COIN, T.Q_JAMEED, T.USED, T.HARD,
-  T.COL_TL, T.COL_TR, T.COL_BL, T.COL_BR, T.BRICK_MANSAF, T.BRICK_COINS, T.BARS, T.WALL,
+  T.COL_TL, T.COL_TR, T.COL_BL, T.COL_BR, T.BRICK_MANSAF, T.BRICK_COINS, T.BARS, T.WALL, T.Q_MAP,
 ]);
 
 /* invisible tiles that only become solid when Saqer hits them from underneath */
@@ -50,4 +51,5 @@ export const CHAR_TILES = {
   'K': T.KEY,
   '=': T.BARS,
   'Y': T.GOLD,
+  'm': T.Q_MAP,
 };

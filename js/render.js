@@ -270,6 +270,12 @@ function drawTiles(cam) {
           ctx.drawImage(th.brick[v % 2], px, py, TILE, TILE); break;
         case T.Q_COIN: case T.Q_JAMEED:
           ctx.drawImage(ART.q[qf], px, py, TILE, TILE); break;
+        case T.Q_MAP: {                                     // the map box: a star box with a pulsing gold frame
+          ctx.drawImage(ART.q[qf], px, py, TILE, TILE);
+          ctx.globalAlpha = 0.45 + 0.35 * Math.sin(G.tick / 9);
+          ctx.strokeStyle = '#ffe08a'; ctx.lineWidth = 1.5; ctx.strokeRect(px - 1, py - 1, TILE + 2, TILE + 2);
+          ctx.globalAlpha = 1; break;
+        }
         case T.USED: ctx.drawImage(ART.used, px, py, TILE, TILE); break;
         case T.HARD: ctx.drawImage(th.hard, px, py, TILE, TILE); break;
         case T.COL_TL: ctx.drawImage(th.colCap, px - 2, py, 36, TILE); break;

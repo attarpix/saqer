@@ -34,6 +34,9 @@ export const G = {
   lastHurt: '',
   presses: 0,         // every press of a key or button (a note on screen goes at the next one)
   hinted: false,      // the hint at the theatre gate has been shown
+  hasMap: false,      // normal mode: he found the map box (the pause menu then has THE MAP)
+  mapRequest: false,
+  mapFrom: '',
   gone: new Map(),    // per playthrough: area → ("x,y" → tile left behind) for coins, liras and the golden jameed taken
   clock: 0,           // frames played (the clock counts up now)
   banner: null,       // { lines: [...], t } a message across the screen

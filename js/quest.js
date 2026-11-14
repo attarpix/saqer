@@ -25,6 +25,7 @@
      'Y' in a row                     the golden jameed
    ============================================================ */
 import { LEVELS } from './levels.js';
+import { D } from './config.js';
 
 export const START_AREA = 'amman';
 export const PAST_AREA  = 'phila';      // where the flag sends him
@@ -53,13 +54,13 @@ export const AREAS = {
             ['brazier', 140], ['urn', 160], ['brazier', 179], ['urn', 191]],   // the same props as the sky level, not solid
     build(L) {
       L.start(FLAG_COL + 1);
-      L.ground(0, 57); L.ground(61, 112); L.ground(116, 149); L.ground(153, 223);
+      L.ground(0, 57); L.ground(61, 112); L.ground(116, 145); L.ground(155, 223);   // the first shaft (146–154) is too wide to jump: he has to go down
       L.giant(0, 3);                                // a giant pillar closes the west end …
       L.giant(220, 3);                              // … and another stands beside the one that fell, closing the east end
       L.shaftDown(58, 60, 'under', 59);
       L.shaftDown(113, 115, 'under', 114);
       // the first drop from the new city lands at the theatre gate in the east vault: the end is shown early, with a hint
-      L.shaftDown(150, 152, 'under', 198, ['THE GATE TO THE THEATRE.', 'IT IS LOCKED: GET ITS KEY', 'FROM THE TEMPLE IN THE SKY.']);
+      L.shaftDown(146, 154, 'under', 198, ['THE GATE TO THE THEATRE.', 'IT IS LOCKED: GET ITS KEY', 'FROM THE TEMPLE IN THE SKY.']);
 
       // the ruined gate (the fallen pillar is drawn over it)
       L.block(206, 12, 4, 1); L.block(210, 11, 3, 2); L.block(213, 12, 1, 1);
@@ -266,9 +267,12 @@ export const AREAS = {
       L.flyer(164, 6, 3);
       L.scorpion(171); L.thorns(173, 2);
       L.flyer(172, 5, 3);
-      L.pillar(179, 11, 2); L.pillar(183, 10, 2);
+      // after the first drop: P10 closed, and two low, wide pillars with one-tile gaps (easy steps)
+      L.ground(177, 178);
+      L.pillar(179, 11, 3); L.pillar(183, 11, 3);
+      if (D.fewer) L.row(184, 7, 'm');               // normal mode: a bonus box with the map of the game in it
       L.coins(179, 9, 2);
-      L.row(183, 5, 'g');                           // SECRET: above the second pillar
+      L.row(184, 4, 'g');                           // SECRET: above the second pillar
       L.flyer(181, 5, 2);
       L.scorpions(190, 195);
       L.hardOnly('scorpion', 195); L.hardOnly('flyer', 181);   // normal mode: no scorpion at the gate, no bat right after it (too hard to pass unhurt)

@@ -64,6 +64,8 @@ export function bumpBlock(tx, ty) {
       if (n <= 0) { level.multi.delete(k); setTile(tx, ty, T.USED); } else level.multi.set(k, n);
       break;
     }
+    case T.Q_MAP:                                      // the bonus box: the map of the game (it opens like a pause)
+      setTile(tx, ty, T.USED); bump(tx, ty); sfx.oneUp(); G.hasMap = true; G.mapRequest = true; break;
     case T.Q_JAMEED:
       spawnItem(tx, ty, 'jameed'); setTile(tx, ty, T.USED); bump(tx, ty); sfx.item(); break;
     case T.BRICK_MANSAF:
