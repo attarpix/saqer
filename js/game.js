@@ -96,10 +96,10 @@ function remember() {
 }
 
 /* mode: 'ground' = standing at column tx, 'fall' = dropping in from above at column tx */
-function enterArea(id, tx, mode = 'ground', card = false) {
+function enterArea(id, tx, mode = 'ground', card = false, fresh = false) {   // fresh: after a death, he comes in small
   remember();
   const def = AREAS[id];
-  const wasBig = player.big && level.def;
+  const wasBig = !fresh && player.big && level.def;
   buildLevel(def);
   clearWorld();
   const boxes = [];                              // the jameed and mansaf boxes as built, refilled after a death
@@ -165,10 +165,10 @@ function respawn(loseLife) {
   if (!level.def.roam) {                  // today's Amman is a one-way stage: it starts over
     memory.delete(G.area);
     const id = G.area; G.area = '';
-    enterArea(id, null, 'ground', true);
+    enterArea(id, null, 'ground', true, true);
     return;
   }
-  placeAtEntry(player.big && player.deathKind === 'pit');   // a fall does not take away the jameed: he comes back big
+  placeAtEntry(false);                    // after a death he is small again (only the golden jameed keeps him big)
   G.state = 'play';
   G.fade = 16;
   if (level.def.boss) { spawnBoss(); G.cheer = 0; music.start(true, 'south'); }
