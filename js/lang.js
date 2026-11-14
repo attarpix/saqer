@@ -60,7 +60,7 @@ const AR = {
   'STAGE 1': 'المرحلة 1', 'STAGE 2': 'المرحلة 2', 'OPENS ON 21.11.': 'بتفتح 21.11.', 'COMING SOON.': 'قريباً.',
   'THE GAME IS STILL BEING MADE.': 'اللعبة لسّا قيد التطوير.',
   'PLAY AGAIN': 'العب من جديد', 'SAVE SCORE': 'سجّل نتيجتك', 'THANK YOU': 'شكراً', 'TOP 10': 'أفضل 10', 'BE THE FIRST!': 'كون الأول!', 'SOON': 'قريباً',
-  'YOUR SCORE': 'نتيجتك', 'SAVE': 'سجّل', 'NAME': 'اسمك', 'SAVED!': 'انسجلت!', 'NOT WITH THE CHEAT ON.': 'ما بنسجّل مع الغش.',
+  'YOUR SCORE': 'نتيجتك', 'YOUR NAME (OPTIONAL)': 'اسمك (اختياري)', 'SAVED AS': 'انسجلت باسم', 'YOUR SCORE IS ON THE BOARD.': 'نتيجتك انسجلت عاللوحة.', 'NO SCORE WITH THE CHEAT ON.': 'ما في نتيجة مع الغش.', 'SAVE': 'سجّل', 'NAME': 'اسمك', 'SAVED!': 'انسجلت!', 'NOT WITH THE CHEAT ON.': 'ما بنسجّل مع الغش.',
   'SAVED ON THIS PHONE FOR NOW.': 'هلّق بتنحفظ على هالجهاز بس.', 'NO SCORES YET: BE THE FIRST!': 'لسّا ما في نتائج: كون الأول!',
   'COULD NOT SAVE. TRY AGAIN.': 'ما زبطت. جرّب كمان مرة.',
   'THANK YOU FOR PLAYING MY GAME!': 'شكراً إنك لعبت لعبتي!',

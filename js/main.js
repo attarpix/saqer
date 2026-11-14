@@ -6,9 +6,10 @@ import { loadAssets } from './assets.js';
 import { initRender, render } from './render.js';
 import { initInput } from './input.js';
 import { initUI, setHidden, showScreen } from './ui.js';
-import { boot, update, newGame, pause, resume, restartStage, toggleSound, toTitle, continueGame, debugStage, refreshMenus, openMap, closeMap, saveScore, hallBack, replayHard } from './game.js';
-import { applyLang, toggleLang } from './lang.js';
+import { boot, update, newGame, pause, resume, restartStage, toggleSound, toTitle, continueGame, debugStage, refreshMenus, openMap, closeMap, hallBack, replayHard } from './game.js';
+import { applyLang, toggleLang, t } from './lang.js';
 import { initStats, stat } from './stats.js';
+import { typedName, setPlayerName } from './board.js';
 import { G, W, player } from './state.js';
 import { level } from './level.js';
 import { keys } from './input.js';
@@ -119,6 +120,7 @@ initInput();
 initUI({
   start: () => {                                   // first the difficulty: the last one played is lit and focused
     showScreen('mode');
+    const nb = document.getElementById('player-name'); if (nb) nb.placeholder = t('YOUR NAME (OPTIONAL)');
     document.querySelectorAll('#screen-mode [data-act^="mode-"]').forEach(b => b.classList.toggle('primary', b.dataset.act === 'mode-' + D.name));
     const cur = document.querySelector('#screen-mode [data-act="mode-' + D.name + '"]'); if (cur) cur.focus({ preventScroll: true });
   },
@@ -133,7 +135,7 @@ initUI({
   info: () => showScreen('info'),
   map: () => openMap('pause'),
   'map-close': closeMap,
-  'save-score': saveScore, 'hall-back': hallBack, 'replay-hard': () => { tryFullscreen(); stat('replay-hard'); replayHard(); },
+  'hall-back': hallBack, 'replay-hard': () => { tryFullscreen(); stat('replay-hard'); replayHard(); },
   back: () => showScreen('title'),
 });
 
@@ -213,9 +215,12 @@ if (codeBox) {
   codeBox.addEventListener('blur', () => { if (!pending) codeBox.value = ''; });
 }
 
-/* the name box in the hall: letters typed there must not move Saqer, and Enter saves */
-const nameBox = document.getElementById('save-name');
+/* the name box on the difficulty screen: the name for the top 10 (optional; kept for next time).
+   Letters typed there must not move Saqer. */
+const nameBox = document.getElementById('player-name');
 if (nameBox) {
-  nameBox.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') { saveScore(); nameBox.blur(); } });
+  nameBox.value = typedName();
+  nameBox.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') nameBox.blur(); });
   nameBox.addEventListener('keyup', e => e.stopPropagation());
+  nameBox.addEventListener('input', () => setPlayerName(nameBox.value));
 }

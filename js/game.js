@@ -22,7 +22,7 @@ import { spawnBoss, updateBoss } from './boss.js';
 import { loadSave, writeSave } from './storage.js';
 import { clamp } from './physics.js';
 import { tSound, tBest, tScore, t as tLine } from './lang.js';
-import { fetchTop, submitScore, topCached, online } from './board.js';
+import { fetchTop, submitScore, topCached, playerName } from './board.js';
 const DEBUG_RUN = /[?&]debug/.test(location.search);   // test runs never go on the top 10
 import { stat } from './stats.js';
 import { showScreen, hideScreens, uiOpen, uiScreen, uiConfirm, uiMove, showStory, setText, setHidden } from './ui.js';
@@ -62,7 +62,7 @@ function resetRun() {
   G.score = 0; G.coins = 0; G.lives = D.lives;
   G.mahr = 0; G.mahrStart = 0; G.liras = 0; G.lirasStart = 0;
   G.golden = false; G.hp = MAX_HP; G.keys = {}; G.gone = new Map(); player.star = 0; G.hinted = false; G.hasMap = false;
-  G.clockStop = false; G.saved = false; G.usedGod = false; G.hallSeen = false;
+  G.clockStop = false; G.saved = false; G.usedGod = false; G.hallSeen = false; G.savedAs = '';
   G.clock = 0; G.banner = null; G.cut = null; G.boss = null; G.cheer = 0; G.shake = 0;
   memory = new Map();
 }
@@ -495,7 +495,12 @@ function atDoor() {
 function enterHall() {
   enterArea('room', 4, 'ground');
   G.downPress = false;                                        // a ▼ from before must not use anything at once
-  if (!G.hallSeen) { G.hallSeen = true; sfx.goal(); say(['STAGE ONE COMPLETE!', 'PRESS ▼ BY ANYTHING THAT GLOWS.'], 420); }
+  if (!G.hallSeen) {
+    G.hallSeen = true; sfx.goal();
+    const saves = !G.saved && !G.usedGod && !DEBUG_RUN;
+    say(['STAGE ONE COMPLETE!', saves ? 'YOUR SCORE IS ON THE BOARD.' : 'NO SCORE WITH THE CHEAT ON.', 'PRESS ▼ BY ANYTHING THAT GLOWS.'], 460);
+    autoSave();
+  }
 }
 /* the thing in the hall Saqer is standing by (the room draws a ▼ over it), or null */
 export function hallThing() {
@@ -531,13 +536,20 @@ function openHall(name) {
 }
 export function hallBack() { resume(); }
 
-/* the top 10 screen: the list, and (once a run, without the cheat) saving this score */
+/* the score goes on the top 10 by itself when Saqer walks into the hall: once a run, never with the
+   cheat on (attar10x) or in a ?debug test run; under the name typed on the difficulty screen, or a default */
+async function autoSave() {
+  if (G.saved || G.usedGod || DEBUG_RUN) return;
+  G.saved = true;
+  const name = playerName();
+  const ok = await submitScore(name, G.score, D.name);
+  if (ok) stat('saved-score');
+  G.savedAs = ok ? name : '';
+}
+/* the top 10 screen (the book and the board) */
 async function fillTop() {
-  const can = !G.saved && !G.usedGod && !DEBUG_RUN;
-  setHidden('#save-row', !can);
-  const nb = document.getElementById('save-name'); if (nb) nb.placeholder = tLine('NAME');
-  setText('#save-score', String(G.score).padStart(6, '0'));
-  setText('#save-msg', G.saved ? tLine('SAVED!') : G.usedGod ? tLine('NOT WITH THE CHEAT ON.') : online() ? '' : tLine('SAVED ON THIS PHONE FOR NOW.'));
+  setText('#save-msg', G.savedAs ? tLine('SAVED AS') + ' ' + G.savedAs + ' · ' + String(G.score).padStart(6, '0')
+    : G.usedGod ? tLine('NOT WITH THE CHEAT ON.') : '');
   showTop(topCached());
   showTop(await fetchTop());
 }
@@ -549,19 +561,9 @@ function showTop(list) {
   for (const r of list.slice(0, 10)) {
     const li = document.createElement('li');
     li.textContent = r.name + (r.mode === 'hard' ? ' ★' : '') + ' ';
+    if (G.savedAs && r.name === G.savedAs) li.className = 'me';
     const s = document.createElement('span'); s.textContent = String(r.score).padStart(6, '0');
     li.appendChild(s); ol.appendChild(li);
   }
-}
-export async function saveScore() {
-  const box = document.getElementById('save-name');
-  const name = box ? box.value : '';
-  if (!name.trim() || G.saved) return;
-  setText('#save-msg', '…');
-  const ok = await submitScore(name, G.score, D.name);
-  if (ok) { G.saved = true; stat('saved-score'); }
-  setHidden('#save-row', G.saved);
-  setText('#save-msg', ok ? tLine('SAVED!') : tLine('COULD NOT SAVE. TRY AGAIN.'));
-  showTop(topCached());
 }
 export function replayHard() { newGame('hard', true); }

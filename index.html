@@ -25,7 +25,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Changa:wght@700;800&display=swap">
-<link rel="stylesheet" href="css/style.css?v=50">
+<link rel="stylesheet" href="css/style.css?v=51">
 </head>
 <body>
 <main id="stage">
@@ -53,7 +53,7 @@
         <button class="px-btn" id="btn-install" data-act="install" data-t hidden>INSTALL</button>
       </nav>
       <p id="hi-score" class="hint">BEST 000000</p>
-      <p class="hint" style="position:absolute;top:calc(var(--u) * 3);right:calc(var(--u) * 4);margin:0;opacity:.6">V50</p>
+      <p class="hint" style="position:absolute;top:calc(var(--u) * 3);right:calc(var(--u) * 4);margin:0;opacity:.6">V51</p>
       <p class="hint keys" data-t>←→ MOVE · Z JUMP · X RUN · P PAUSE · M SOUND</p>
       <a class="credit" href="https://www.instagram.com/attar10x/" target="_blank" rel="noopener"><span data-t>A GAME BY</span> @attar10x</a>
     </section>
@@ -62,6 +62,7 @@
     <section id="screen-mode" class="screen dim" aria-label="Difficulty">
       <div class="px-panel">
         <h2 data-t>CHOOSE DIFFICULTY</h2>
+        <input id="player-name" class="name-box" type="text" maxlength="12" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="YOUR NAME (OPTIONAL)">
         <nav class="menu">
           <button class="px-btn" data-act="mode-easy" data-t>NORMAL</button>
           <button class="px-btn" data-act="mode-hard" data-t>HARD</button>
@@ -134,11 +135,6 @@
       <div class="px-panel hall">
         <h2 data-t>TOP 10</h2>
         <ol id="top-list" class="top-list"></ol>
-        <div id="save-row" class="save-row">
-          <p class="hint"><span data-t>YOUR SCORE</span> <b id="save-score">0</b></p>
-          <input id="save-name" type="text" maxlength="12" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="NAME">
-          <button class="px-btn small primary" data-act="save-score" data-t>SAVE</button>
-        </div>
         <p id="save-msg" class="hint"></p>
         <nav class="menu"><button class="px-btn small" data-act="hall-back" data-t>BACK</button></nav>
       </div>
@@ -249,6 +245,6 @@
 })();
 </script>
 <script nomodule>window.__saqerOld();</script>
-<script type="module" src="js/main.js?v=50"></script>
+<script type="module" src="js/main.js?v=51"></script>
 </body>
 </html>

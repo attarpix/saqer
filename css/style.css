@@ -309,3 +309,8 @@ body.ar .top-list li span { float: left; }
 #save-score { color: var(--gold); }
 body.ar .px-panel.hall { direction: rtl; }
 body.ar .px-panel.hall .ig, body.ar #save-name { direction: ltr; }
+/* the name for the top 10, on the difficulty screen */
+.name-box { display: block; width: 100%; margin: 0 0 calc(var(--u) * 5) !important; font: inherit; font-size: 16px; text-align: center;
+  padding: calc(var(--u) * 3); background: var(--ink); color: #fff; border: 0; box-shadow: 0 0 0 var(--u) var(--gold); -webkit-user-select: text; user-select: text; }
+.name-box::placeholder { color: #9a8ab8; }
+body.ar .name-box { font-family: var(--font-ar); }

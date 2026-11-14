@@ -2,7 +2,9 @@
    THE TOP 10 — scores saved in the hall at the end of stage one.
 
    Shared by everyone through Supabase (supabase.com, free): put the project's
-   URL and its public "anon" key below to switch it on. Until then the board keeps
+   URL and its public "anon" key below to switch it on. The score goes on the board by itself when
+   the player walks into the hall, under the name typed on the difficulty screen (or a default one).
+   Until then the board keeps
    a local top 10 on this device only.
 
    The Supabase table (SQL editor):
@@ -66,3 +68,25 @@ export async function submitScore(name, score, mode) {
     return r.ok;
   } catch (_e) { return false; }
 }
+
+/* the player's name on the board: the one typed on the difficulty screen, or a default
+   (SAQER-1234, made once and kept on this device) */
+export function playerName() {
+  let s = {};
+  try { s = JSON.parse(localStorage.getItem('saqer.save.v1')) || {}; } catch (_e) { /* private window */ }
+  if (clean(s.name)) return clean(s.name);
+  if (!s.defaultName) {
+    s.defaultName = 'SAQER-' + String(1000 + Math.floor(Math.random() * 9000));
+    try { localStorage.setItem('saqer.save.v1', JSON.stringify(s)); } catch (_e) { /* private window */ }
+  }
+  return s.defaultName;
+}
+export function setPlayerName(name) {
+  let s = {};
+  try { s = JSON.parse(localStorage.getItem('saqer.save.v1')) || {}; } catch (_e) { /* private window */ }
+  s.name = clean(name);
+  try { localStorage.setItem('saqer.save.v1', JSON.stringify(s)); } catch (_e) { /* private window */ }
+}
+export const typedName = () => {
+  try { return clean((JSON.parse(localStorage.getItem('saqer.save.v1')) || {}).name); } catch (_e) { return ''; }
+};
