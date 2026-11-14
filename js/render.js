@@ -50,8 +50,13 @@ export function render() {
   if (z !== 1) {
     const span = VH - VH / z, want = Math.max(0, Math.min(span, player.y - 40));
     zoomY += (want - zoomY) * 0.1;
-    ctx.save(); ctx.scale(z, z); ctx.translate(-(VW - VW / z) / 2, -zoomY);
-    view.ox = (VW - VW / z) / 2; view.oy = zoomY;
+    // never past either end of the area: the zoom must not hide Saqer at an edge
+    const seen = VW / z, aw = level.w * TILE;
+    const maxCam = Math.max(0, aw - VW);         // the zoomed view slides slightly further than the camera, so it meets both ends exactly
+    const left = maxCam > 0 ? (Math.min(cam, maxCam) / maxCam) * Math.max(0, aw - seen) : Math.max(0, (aw - seen) / 2);
+    const ox = left - cam;
+    ctx.save(); ctx.scale(z, z); ctx.translate(-ox, -zoomY);
+    view.ox = ox; view.oy = zoomY;
   }
   const shook = G.shake > 0 && !G.mapShot;
   if (shook) { ctx.save(); ctx.translate(half((Math.random() - 0.5) * Math.min(4, G.shake * 0.4)), half((Math.random() - 0.5) * Math.min(4, G.shake * 0.4))); }
