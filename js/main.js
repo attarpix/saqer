@@ -165,25 +165,17 @@ function loop(t) {
   render();
 }
 
-/* ---------------- test codes ----------------
+/* ---------------- test code ----------------
    attar10x  Saqer cannot be hurt, and a fall puts him back on the last ground he stood on.
-   attar     the debug view: enemy numbers, killing spots (pits, thorns) and every death so far.
-             (it switches after a short pause, so typing on to attar10x does not trigger it)
-   Type a code again to switch it off. On a phone: tap the invisible box just above the pause
-   button and type it there. */
+   Type it again to switch it off. On a phone: tap the invisible box just above the pause button
+   and type it there. (The "attar" debug view was removed on 2026-11-15.) */
 function toggleGod() {
   G.god = !G.god;
   if (G.god) G.usedGod = true;            // a run with the cheat on cannot go on the top 10
   G.banner = { lines: [G.god ? 'ATTAR10X: UNKILLABLE' : 'ATTAR10X: OFF', G.god ? 'NOTHING CAN HURT SAQER NOW.' : 'BACK TO NORMAL.'], t: 200 };
 }
-function toggleDebug() {
-  G.dbg = !G.dbg;
-  G.banner = { lines: [G.dbg ? 'DEBUG: ON' : 'DEBUG: OFF', G.dbg ? '#N ENEMY  P PIT  T THORN  D DEATH' : 'BACK TO NORMAL.'], t: 200 };
-  if (G.dbg) console.log('[saqer] deaths so far', G.deaths);
-}
 const codeBox = document.getElementById('code-box');
-let typed = '', pending = null;
-const later = () => { clearTimeout(pending); pending = setTimeout(() => { pending = null; typed = ''; if (codeBox) { codeBox.value = ''; codeBox.blur(); } toggleDebug(); }, 800); };
+let typed = '';
 window.addEventListener('keydown', e => {
   if (e.target && e.target.tagName === 'INPUT') return;   // the phone code box reads its own text (below); the name box is just a name
   // read the physical keys (e.code), so it works whatever language the keyboard is set to (Arabic too)
@@ -191,28 +183,20 @@ window.addEventListener('keydown', e => {
   if (!m || e.repeat) return;
   const ch = m[1].toLowerCase();
   if (ch === 'r' && typed.endsWith('atta')) e.stopImmediatePropagation();   // the R in the word must not restart the stage
-  clearTimeout(pending); pending = null;
   typed = (typed + ch).slice(-8);
-  if (typed.endsWith('attar')) { later(); return; }
   if (typed !== 'attar10x') return;
   typed = '';
   toggleGod();
 }, true);
 if (codeBox) {
-  codeBox.addEventListener('keydown', e => {                       // letters must not move Saqer
-    e.stopPropagation();
-    if (e.key !== 'Enter') return;
-    if (pending) { clearTimeout(pending); pending = null; codeBox.value = ''; codeBox.blur(); toggleDebug(); }
-    else codeBox.blur();
-  });
+  codeBox.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') codeBox.blur(); });   // letters must not move Saqer
   codeBox.addEventListener('keyup', e => e.stopPropagation());
   codeBox.addEventListener('input', () => {
-    const v = codeBox.value.toLowerCase().replace(/\s/g, '');
-    clearTimeout(pending); pending = null;
-    if (v.includes('attar10x')) { codeBox.value = ''; codeBox.blur(); toggleGod(); return; }
-    if (v.endsWith('attar')) later();
+    if (!codeBox.value.toLowerCase().replace(/\s/g, '').includes('attar10x')) return;
+    codeBox.value = ''; codeBox.blur();
+    toggleGod();
   });
-  codeBox.addEventListener('blur', () => { if (!pending) codeBox.value = ''; });
+  codeBox.addEventListener('blur', () => { codeBox.value = ''; });
 }
 
 /* the name box on the difficulty screen: the name for the top 10 (optional; kept for next time).
