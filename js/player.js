@@ -61,7 +61,8 @@ export function growPlayer() {
   sfx.grow();
 }
 
-export function hurtPlayer() {
+export function hurtPlayer(by = '?') {        // by: what hurt him (enemy #n, thorn, Hercules), for the attar debug view
+  if (!(player.invuln > 0 || player.morph > 0 || G.state !== 'play' || G.god)) G.lastHurt = by;
   if (player.invuln > 0 || player.morph > 0 || G.state !== 'play' || G.god) return;
   if (G.golden) {                       // grown for good: a hit costs one bar, never his size
     G.hp--;
@@ -91,6 +92,7 @@ export function killPlayer(kind) {
     return;
   }
   G.state = 'dying'; G.stateTimer = 0;
+  logDeath(kind === 'pit' ? 'FALL' : G.lastHurt || 'HIT');
   player.deathKind = kind;
   player.riding = null;
   player.vx = 0;
@@ -147,7 +149,7 @@ export function updatePlayer() {
   if (player.onGround && Math.abs(player.vx) > 0.1) player.walkT += Math.abs(player.vx) * 0.11;
 
   collectCoins(player);
-  if (touchesThorn(player)) hurtPlayer();
+  if (touchesThorn(player)) hurtPlayer('THORN');
   tryBars(player);
   if (player.y > VH + 16 && !linkAt('down', player)) killPlayer('pit');
 }
@@ -169,4 +171,12 @@ export function makeBig() {
   if (player.big) return;
   player.big = true; player.wantBig = false;
   resize(true);
+}
+
+/* the attar debug view: every death is written down (where, and what did it), for this playthrough */
+function logDeath(cause) {
+  const d = { n: G.deaths.length + 1, area: G.area, x: player.x + player.w / 2, y: Math.min(player.y + player.h, 236), cause,
+              tx: Math.floor((player.x + player.w / 2) / 16) };
+  G.deaths.push(d);
+  console.log('[saqer] death D' + d.n + ' in ' + d.area + ' at column ' + d.tx + ': ' + cause);
 }

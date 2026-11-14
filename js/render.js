@@ -77,12 +77,14 @@ export function render() {
   drawParticles(cam);
   drawPlayer(cam);
   drawPopups(cam);
+  if (G.dbg) drawDebug(cam);
   if (shook) ctx.restore();
   if (z !== 1) ctx.restore();
   if (G.era === 'past' && !G.mapShot) drawPast();
   if (G.mapShot) return;                 // tools/map.html: the stage only, no HUD
   drawOverlays();
   drawHUD();
+  if (G.dbg) drawDebugPanel();
   if (G.state === 'dying' && G.stateTimer > 50 && player.deathKind === 'hit') centerText('AKH!', 96, '#ffffff', 16);
   if (G.state === 'victory') drawVictory();
   if (G.fade > 0) { ctx.fillStyle = 'rgba(11,7,16,' + (G.fade / 16).toFixed(2) + ')'; ctx.fillRect(0, 0, VW, VH); }
@@ -688,6 +690,7 @@ function drawTitleBackdrop() {
 function drawIntroCard() {
   ctx.fillStyle = '#140d1c'; ctx.fillRect(0, 0, VW, VH);
   drawHUD();
+  if (G.dbg) drawDebugPanel();
   const def = level.def;
   centerText(tStage(def.id), 62, '#ffd166', 8);
   if (isAr()) centerText(def.nameAr || def.name, 82, '#ffffff', 11);
@@ -882,6 +885,56 @@ function drawWarp(c) {
       ctx.globalAlpha = 1;
     } else { ctx.globalAlpha = c.white; ctx.fillRect(0, 0, VW, VH); ctx.globalAlpha = 1; }
   }
+}
+
+/* ---------------- the attar debug view (type attar) ----------------
+   Every enemy shows its number, every killing spot is marked (P = pit, T = thorns), and every death
+   this playthrough shows where it happened (D = death, with what did it). A panel sums it up. */
+function drawDebug(cam) {
+  for (const h of level.hazards) {
+    if (h.kind === 'pit') {
+      const x = h.a * TILE - cam, w = (h.b - h.a + 1) * TILE;
+      if (x > VW || x + w < 0) continue;
+      ctx.fillStyle = 'rgba(255,40,60,0.28)'; ctx.fillRect(x, GROUND_Y, w, VH - GROUND_Y);
+      ctx.fillStyle = '#ff2840'; ctx.fillRect(x, GROUND_Y, w, 1);
+      text('P' + h.n, x + w / 2, GROUND_Y + 4, '#ff6a7a', 6, 'center');
+    } else {
+      const x = h.x * TILE - cam;
+      if (x > VW || x + TILE < 0) continue;
+      ctx.strokeStyle = '#ff9a3c'; ctx.lineWidth = 1; ctx.strokeRect(x + 0.5, h.y * TILE + 0.5, TILE - 1, TILE - 1);
+      text('T' + h.n, x + 8, h.y * TILE - 8, '#ffb070', 6, 'center');
+    }
+  }
+  for (const e of W.entities) {
+    if (e.type !== 'naughty' || !e.active || !e.num) continue;
+    const x = e.x - cam;
+    if (x > VW || x + e.w < 0) continue;
+    ctx.strokeStyle = '#7dff8a'; ctx.lineWidth = 1; ctx.strokeRect(x + 0.5, e.y + 0.5, e.w - 1, e.h - 1);
+    text('#' + e.num, x + e.w / 2, e.y - 9, '#7dff8a', 6, 'center');
+  }
+  const seen = new Map();                               // deaths at the same spot stack upwards
+  for (const d of G.deaths) {
+    if (d.area !== G.area) continue;
+    const k = Math.round(d.x / 24), up = (seen.get(k) || 0) * 9; seen.set(k, (seen.get(k) || 0) + 1);
+    const y = Math.min(d.y, GROUND_Y);
+    const x = d.x - cam;
+    if (x < -20 || x > VW + 20) continue;
+    ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5;
+    if (!up) { ctx.beginPath(); ctx.moveTo(x - 4, y - 12); ctx.lineTo(x + 4, y - 4); ctx.moveTo(x + 4, y - 12); ctx.lineTo(x - 4, y - 4); ctx.stroke(); }
+    text('D' + d.n + ' ' + d.cause, x, y - 22 - up, '#ffffff', 6, 'center');
+  }
+}
+function drawDebugPanel() {
+  const here = G.deaths.filter(d => d.area === G.area);
+  const foes = W.entities.filter(e => e.type === 'naughty' && e.active && !e.squash && !e.flipped).length;
+  const lines = [
+    'DEBUG  ' + (G.area || '').toUpperCase() + '  COLUMN ' + Math.floor((player.x + player.w / 2) / TILE),
+    'ENEMIES LEFT ' + foes + '   DEATHS HERE ' + here.length + ' / ALL ' + G.deaths.length,
+  ].concat(G.deaths.slice(-3).map(d => 'D' + d.n + ' ' + d.area.toUpperCase() + ' COL ' + d.tx + ' ' + d.cause));
+  const top = 48;                                      // under the score bar, above the play
+  ctx.fillStyle = 'rgba(11,7,16,0.72)'; ctx.fillRect(4, top - 2, 236, lines.length * 9 + 3);
+  ctx.font = '6px ' + FONT; ctx.direction = 'ltr';
+  lines.forEach((s, i) => { ctx.textAlign = 'left'; ctx.textBaseline = 'top'; ctx.fillStyle = i ? '#ffffff' : '#7dff8a'; ctx.fillText(s, 7, top + i * 9); });
 }
 
 /* the year rolling back while the world whites out */

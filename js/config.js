@@ -12,10 +12,11 @@ export const LH = 15;             // level height in tiles
 export const GROUND_TOP = 13;     // first ground row
 export const STEP = 1000 / 60;    // fixed simulation step (ms)
 
-export const START_LIVES = 3;
+export const START_LIVES = 5;     // level 1 is the introduction: kept easy
 export const MAX_HP      = 3;     // hits Saqer can take once he has the golden jameed
-export const BOSS_HP     = 6;     // stomps it takes to bring Hercules down
+export const BOSS_HP     = 4;     // stomps it takes to bring Hercules down (level 1: kept easy)
 export const TIME_TICKS  = 24;    // frames per in-game second
+export const ENEMY_SPEED = 0.8;   // enemies walk and fly at 80% (level 1: kept easy)
 
 /* ---- the story's numbers ---- */
 /* The four stages hold 220 dinars and 12 gold liras (worth 10 each): 340 in all.

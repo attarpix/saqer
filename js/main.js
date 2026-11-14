@@ -154,16 +154,24 @@ function loop(t) {
   render();
 }
 
-/* ---------------- test cheat ----------------
-   Type  attar10x  while playing: Saqer cannot be hurt, and a fall puts him back
-   on the last ground he stood on. Type it again to switch it off.
-   On a phone: tap the invisible box just above the pause button and type it there. */
+/* ---------------- test codes ----------------
+   attar10x  Saqer cannot be hurt, and a fall puts him back on the last ground he stood on.
+   attar     the debug view: enemy numbers, killing spots (pits, thorns) and every death so far.
+             (it switches after a short pause, so typing on to attar10x does not trigger it)
+   Type a code again to switch it off. On a phone: tap the invisible box just above the pause
+   button and type it there. */
 function toggleGod() {
   G.god = !G.god;
   G.banner = { lines: [G.god ? 'ATTAR10X: UNKILLABLE' : 'ATTAR10X: OFF', G.god ? 'NOTHING CAN HURT SAQER NOW.' : 'BACK TO NORMAL.'], t: 200 };
 }
+function toggleDebug() {
+  G.dbg = !G.dbg;
+  G.banner = { lines: [G.dbg ? 'DEBUG: ON' : 'DEBUG: OFF', G.dbg ? '#N ENEMY  P PIT  T THORN  D DEATH' : 'BACK TO NORMAL.'], t: 200 };
+  if (G.dbg) console.log('[saqer] deaths so far', G.deaths);
+}
 const codeBox = document.getElementById('code-box');
-let typed = '';
+let typed = '', pending = null;
+const later = () => { clearTimeout(pending); pending = setTimeout(() => { pending = null; typed = ''; if (codeBox) { codeBox.value = ''; codeBox.blur(); } toggleDebug(); }, 800); };
 window.addEventListener('keydown', e => {
   if (e.target === codeBox) return;            // the phone box reads its own text (below)
   // read the physical keys (e.code), so it works whatever language the keyboard is set to (Arabic too)
@@ -171,18 +179,26 @@ window.addEventListener('keydown', e => {
   if (!m || e.repeat) return;
   const ch = m[1].toLowerCase();
   if (ch === 'r' && typed.endsWith('atta')) e.stopImmediatePropagation();   // the R in the word must not restart the stage
+  clearTimeout(pending); pending = null;
   typed = (typed + ch).slice(-8);
+  if (typed.endsWith('attar')) { later(); return; }
   if (typed !== 'attar10x') return;
   typed = '';
   toggleGod();
 }, true);
 if (codeBox) {
-  codeBox.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') codeBox.blur(); });   // letters must not move Saqer
+  codeBox.addEventListener('keydown', e => {                       // letters must not move Saqer
+    e.stopPropagation();
+    if (e.key !== 'Enter') return;
+    if (pending) { clearTimeout(pending); pending = null; codeBox.value = ''; codeBox.blur(); toggleDebug(); }
+    else codeBox.blur();
+  });
   codeBox.addEventListener('keyup', e => e.stopPropagation());
   codeBox.addEventListener('input', () => {
-    if (!codeBox.value.toLowerCase().replace(/\s/g, '').includes('attar10x')) return;
-    codeBox.value = ''; codeBox.blur();
-    toggleGod();
+    const v = codeBox.value.toLowerCase().replace(/\s/g, '');
+    clearTimeout(pending); pending = null;
+    if (v.includes('attar10x')) { codeBox.value = ''; codeBox.blur(); toggleGod(); return; }
+    if (v.endsWith('attar')) later();
   });
-  codeBox.addEventListener('blur', () => { codeBox.value = ''; });
+  codeBox.addEventListener('blur', () => { if (!pending) codeBox.value = ''; });
 }

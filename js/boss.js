@@ -28,7 +28,7 @@ export function spawnBoss() {
   };
 }
 
-export const bossPhase = b => (b.hp > BOSS_HP - 2 ? 1 : b.hp > 2 ? 2 : 3);
+export const bossPhase = b => (b.hp > BOSS_HP * 2 / 3 ? 1 : b.hp > BOSS_HP / 3 ? 2 : 3);   // three stages, whatever BOSS_HP is
 export const bossOpen = b => b.state === 'recover';          // can be hurt right now
 const set = (b, s) => { b.state = s; b.t = 0; };
 
@@ -113,7 +113,7 @@ function dust(x, y, n) {
 function smash(b, ph) {
   G.shake = 12; sfx.thud();
   const cx = b.facing > 0 ? b.x + b.w : b.x - 34;
-  if (overlap(player, { x: cx, y: GY - 34, w: 34, h: 34 })) hurtPlayer();
+  if (overlap(player, { x: cx, y: GY - 34, w: 34, h: 34 })) hurtPlayer('HERCULES');
   const x = b.facing > 0 ? b.x + b.w + 14 : b.x - 14;
   dust(x, GY - 2, 8);
   for (const d of [-1, 1]) b.shots.push({ kind: 'wave', x: x - 6, y: GY - 11, w: 12, h: 11, vx: d * (2.1 + ph * 0.2), life: 48 + ph * 14, t: 0 });
@@ -130,7 +130,7 @@ function updateShots(b) {
   for (const s of b.shots) {
     s.x += s.vx; s.t++; s.life--;
     if (s.kind === 'wave' && s.t % 5 === 0) dust(s.x + 6, GY - 1, 1);
-    if (G.state === 'play' && overlap(player, s)) hurtPlayer();
+    if (G.state === 'play' && overlap(player, s)) hurtPlayer('HERCULES');
   }
   b.shots = b.shots.filter(s => s.life > 0 && s.x > -40 && s.x < level.w * TILE + 40);
 }
@@ -154,6 +154,6 @@ function touch(b) {
       W.popups.push({ x: b.x - 6, y: b.y - 12, text: 'NOT YET!', t: 0 });
     }
   } else if (player.y + player.h > b.y + 14) {
-    hurtPlayer();
+    hurtPlayer('HERCULES');
   }
 }

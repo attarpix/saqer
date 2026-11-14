@@ -29,6 +29,9 @@ export const G = {
   golden: false,      // has the golden jameed: grown for good, with a 3-hit bar
   hp: 3,
   keys: {},           // keys carried: vault (bronze, from the vaults) and temple (from the Temple of Hercules)
+  dbg: false,         // the attar debug view: enemy numbers, killing spots, deaths
+  deaths: [],         // every death this playthrough: { n, area, x, y, tx, cause }
+  lastHurt: '',
   gone: new Map(),    // per playthrough: area → ("x,y" → tile left behind) for coins, liras and the golden jameed taken
   clock: 0,           // frames played (the clock counts up now)
   banner: null,       // { lines: [...], t } a message across the screen

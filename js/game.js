@@ -168,7 +168,7 @@ function respawn(loseLife) {
     enterArea(id, null, 'ground', true);
     return;
   }
-  placeAtEntry(false);
+  placeAtEntry(player.big && player.deathKind === 'pit');   // a fall does not take away the jameed: he comes back big
   G.state = 'play';
   G.fade = 16;
   if (level.def.boss) { spawnBoss(); G.cheer = 0; music.start(true, 'south'); }

@@ -17,6 +17,7 @@ export const level = {
   liraTotal: 0,       // gold liras hidden in this stage
   dinarTotal: 0,      // dinars available in this stage
   links: [],          // ways into other areas (shafts down, lifts up) — see quest.js
+  hazards: [],        // numbered killing spots (pits, thorns), for the attar debug view
 };
 
 export const key = (x, y) => x + ',' + y;
@@ -124,6 +125,19 @@ export function buildLevel(def) {
 
   // no gold liras for now: they belong to Dana's mahr, which starts in level 2 (set GOLD_LIRAS in config.js to bring them back)
   if (!GOLD_LIRAS) for (const row of level.tiles) for (let x = 0; x < row.length; x++) if (row[x] === T.LIRA || row[x] === T.HIDDEN_LIRA) row[x] = T.EMPTY;
+  // the killing spots, numbered for the attar debug view: pits (a fall with no way into another area) and thorns
+  level.hazards = [];
+  let pit = -1, np = 0, nt = 0;
+  const way = x => level.links.some(l => l.kind === 'down' && x >= l.a && x <= l.b);
+  for (let x = 0; x <= level.w; x++) {
+    let open = x < level.w && !way(x);
+    if (open) for (let y = GROUND_TOP; y < LH; y++) if (SOLID.has(level.tiles[y][x])) { open = false; break; }
+    if (open && pit < 0) pit = x;
+    if (!open && pit >= 0) { level.hazards.push({ kind: 'pit', n: ++np, a: pit, b: x - 1 }); pit = -1; }
+  }
+  for (let y = 0; y < LH; y++) for (let x = 0; x < level.w; x++) {
+    if (level.tiles[y][x] === T.THORN && (x === 0 || level.tiles[y][x - 1] !== T.THORN)) level.hazards.push({ kind: 'thorn', n: ++nt, x, y });
+  }
   level.liraTotal = 0; level.dinarTotal = 0;
   for (const row of level.tiles) for (const t of row) {
     if (t === T.LIRA || t === T.HIDDEN_LIRA) level.liraTotal++;
