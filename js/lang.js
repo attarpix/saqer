@@ -32,6 +32,7 @@ const AR = {
   'THE GATE IS OPEN.': 'البوابة انفتحت.', 'THE LIFT BEYOND IT CLIMBS TO THE THEATRE.': 'المصعد اللي وراها بطلع عالمدرّج.',
   'THE LIFT IS CHAINED.': 'المصعد مربوط بالجنازير.', 'THE BRONZE KEY IN THE VAULTS': 'المفتاح البرونزي اللي بالأقبية',
   'WILL FREE IT.': 'بفكّه.',
+  'THE GATE TO THE THEATRE.': 'بوابة المدرّج.', 'IT IS LOCKED: GET ITS KEY': 'مسكّرة: جيب مفتاحها', 'FROM THE TEMPLE IN THE SKY.': 'من المعبد اللي بالسما.',
   'THE CHAINS FALL AWAY.': 'الجنازير وقعت.', 'RIDE THE LIFT UP TO THE TEMPLE OF HERCULES.': 'اركب المصعد واطلع على معبد هرقل.',
   'THE BRONZE KEY!': 'المفتاح البرونزي!', 'IT FREES THE CHAINED LIFT': 'بفكّ المصعد المربوط',
   'AT THE WEST END OF THE STREET.': 'بآخر الشارع من الغرب.',

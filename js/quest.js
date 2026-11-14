@@ -58,7 +58,8 @@ export const AREAS = {
       L.giant(220, 3);                              // … and another stands beside the one that fell, closing the east end
       L.shaftDown(58, 60, 'under', 59);
       L.shaftDown(113, 115, 'under', 114);
-      L.shaftDown(150, 152, 'under', 151);
+      // the first drop from the new city lands at the theatre gate in the east vault: the end is shown early, with a hint
+      L.shaftDown(150, 152, 'under', 198, ['THE GATE TO THE THEATRE.', 'IT IS LOCKED: GET ITS KEY', 'FROM THE TEMPLE IN THE SKY.']);
 
       // the ruined gate (the fallen pillar is drawn over it)
       L.block(206, 12, 4, 1); L.block(210, 11, 3, 2); L.block(213, 12, 1, 1);
@@ -78,7 +79,7 @@ export const AREAS = {
       L.row(173, 5, 'g');                           // SECRET: bump the air above the lintel
       L.scorpions(182, 166, 162);
       L.flyer(180, 6, 3);
-      L.row(157, 9, 'BJB');
+      L.row(157, 9, 'BMB');                         // a mansaf, not a jameed: he already has the golden jameed by here
       L.row(158, 5, '?');
 
       // between the second and third shaft
@@ -270,10 +271,12 @@ export const AREAS = {
       L.row(183, 5, 'g');                           // SECRET: above the second pillar
       L.flyer(181, 5, 2);
       L.scorpions(190, 195);
-      L.row(192, 9, 'BJB');
+      // (the jameed box that stood here is behind the gate now, for health before the fight)
       L.block(200, 2, 1, 8);                        // the bronze gate
       L.bars(200, 12, 3);
       L.coins(203, 10, 5);
+      L.row(203, 7, 'BJB');                         // behind the gate: a jameed before the fight (outside, it would be taken before the key)
+      L.clear(197, 0, 3, 2);                        // the opening the first drop from the street comes through
       L.clear(209, 0, 3, 2);
       L.lift(209, 12, 3, { dy: -13, period: 500 }); // the lift into the theatre
       L.wayUp(208, 212, 'theater', 3);

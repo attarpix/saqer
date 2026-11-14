@@ -266,3 +266,10 @@ body.ar .credit span { font-family: var(--font-ar); font-size: calc(var(--u) * 9
 body.share .menu, body.share .hint { display: none !important; }
 body.share #screen-title { justify-content: center; padding-top: 0; }
 body.share .credit { font-size: calc(var(--u) * 7); }
+
+/* phone buttons in the colours of the Jordanian flag: ◀ ▶ black, ▲ (jump) red, ▼ green; gold while pressed */
+#touch .pad .tbtn { color: #fff; box-shadow: 0 0 0 calc(var(--u) * 1) rgba(255,255,255,.55), 0 calc(var(--u) * 1.5) 0 calc(var(--u) * 1) rgba(0,0,0,.45); }
+#touch .tbtn[data-key="left"], #touch .tbtn[data-key="right"] { background: rgba(17,17,17,.72); }
+#touch .tbtn[data-key="jump"] { background: rgba(206,17,38,.78); }
+#touch .tbtn[data-key="down"] { background: rgba(0,122,61,.78); }
+#touch .pad .tbtn.down { background: rgba(242,182,50,.9); color: #140d1c; filter: none; transform: translateY(calc(var(--u) * 1)); }

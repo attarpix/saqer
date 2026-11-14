@@ -59,7 +59,7 @@ export function toTitle() {
 function resetRun() {
   G.score = 0; G.coins = 0; G.lives = D.lives;
   G.mahr = 0; G.mahrStart = 0; G.liras = 0; G.lirasStart = 0;
-  G.golden = false; G.hp = MAX_HP; G.keys = {}; G.gone = new Map(); player.star = 0;
+  G.golden = false; G.hp = MAX_HP; G.keys = {}; G.gone = new Map(); player.star = 0; G.hinted = false;
   G.clock = 0; G.banner = null; G.cut = null; G.boss = null; G.cheer = 0; G.shake = 0;
   memory = new Map();
 }
@@ -245,7 +245,11 @@ export function update() {
   if (G.fade > 0) G.fade--;
   if (G.shake > 0) G.shake--;
   if (G.cheer > 0) G.cheer--;
-  if (G.banner && --G.banner.t <= 0) G.banner = null;
+  if (G.banner) {                         // a note goes when its time is up, or at the next press of anything
+    if (G.banner.at === undefined) { G.banner.at = G.presses; G.banner.age = 0; }
+    G.banner.age++;
+    if (--G.banner.t <= 0 || (G.presses > G.banner.at && G.banner.age > 12)) G.banner = null;
+  }
 
   if (takeAction('mute')) toggleSound();
   if (takeAction('blur') && (G.state === 'play' || G.state === 'goal')) pause();
@@ -300,7 +304,11 @@ function updatePlay() {
   }
   if (player.y > VH + 16) {
     const dn = linkAt('down', player);
-    if (dn) { enterArea(dn.to, dn.tx, 'fall'); return; }
+    if (dn) {
+      enterArea(dn.to, dn.tx, 'fall');
+      if (dn.hint && !G.keys.temple && !G.hinted) { G.hinted = true; say(dn.hint, 400); }
+      return;
+    }
   }
 
   if (level.flagX >= 0 && player.x + player.w >= level.flagX * TILE) startGoal();
