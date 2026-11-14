@@ -18,7 +18,7 @@ const CROWD_FRAMES = 9;                                   // frames pulled from 
 const IMAGES = {
   title:        'assets/bg/title_theater.png',
   amman:        'assets/bg/amman_sunset.jpg',     // today's Amman at sunset (after Hercules, and replays from the hall)
-  ammanDay:     'assets/bg/amman_day.jpg',        // … and by day (a first game) — art/new/background day.png
+  ammanDay:     'assets/bg/amman_day.png',        // … and by day (a first game): art/new/try this new day gigger size.png, square pixels on the 2-px grid (1 art px = 2 canvas px)
   phila:        'assets/bg/philadelphia.jpg',
   theaterCalm:  'assets/bg/theater_calm.jpg',
   theaterCheer: 'assets/bg/theater_cheer.jpg',
@@ -118,7 +118,7 @@ export async function loadAssets(onProgress = () => {}) {
     ART.naughty = TW.map(c => fitFigure(c, { k: kTW, flip: true }));   // the video walks right; the creatures face left
     const HT = cutMagentaSheet(IMG.herculesTalk)[0], idle = SPRITES.hercules.idle[0];
     const kH = idle.img.height / HT[0].height, refW = HT[0].width * kH, ax = idle.ax / idle.img.width * refW;
-    const talk = HT.slice(1).map(c => ({ img: fitFigure(c, { k: kH, grid: false }), ax }));
+    const talk = HT.slice(1).map(c => ({ img: fitFigure(c, { k: kH }), ax }));   // on the characters' pixel grid, like the rest of him
     SPRITES.hercules.talk = talk.concat(talk.slice(1, -1).reverse());
     // the owner's jameed (art/new/Make this jameed piece…nT3.png), 14 units wide; the golden one is the same piece in gold
     ART.jameed = fitFigure(cutMagentaSheet(IMG.jameedArt)[0][0], { w: 56 });

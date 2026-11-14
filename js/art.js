@@ -502,10 +502,25 @@ function flag(frame) {
       P(g, x + 2, y + 3 + off, col);
     }
   }
-  // seven-pointed star (simplified)
-  const sx = 2 + 7, sy = 3 + 9;
-  pmap(g, ['.w.', 'www', '.w.'], { w: '#ffffff' }, sx - 1, sy - 1);
-  P(g, sx - 2, sy - 2, '#ffffff'); P(g, sx + 2, sy - 2, '#ffffff'); P(g, sx - 2, sy + 2, '#ffffff'); P(g, sx + 2, sy + 2, '#ffffff');
+  // the seven-pointed white star of the Jordanian flag, drawn by hand on 9×9 pixels to its real
+  // geometry: one point straight up, two upper points, two side points just below the middle and
+  // two legs. It sits in the middle of the red triangle and waves with the cloth.
+  const STAR = [
+    '....#....',
+    '.#..#..#.',
+    '..#####..',
+    '..#####..',
+    '.#######.',
+    '#########',
+    '..#####..',
+    '..##.##..',
+    '..#...#..',
+  ];
+  STAR.forEach((row, sy) => [...row].forEach((ch, sx) => {
+    if (ch !== '#') return;
+    const x = 3 + sx, off = Math.round(Math.sin(x * 0.22 - frame * 2.1) * 1.6 * (x / FW));
+    P(g, x + 2, 6 + sy + 3 + off, '#ffffff');
+  }));
   return c;
 }
 

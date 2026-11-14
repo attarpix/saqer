@@ -133,10 +133,11 @@ function drawBackdrop(cam) {
 function paintPhoto(img, cam, levelPx, tile, pit, veilRgb = '40,20,70') {
   const h = GROUND_Y + 2, w = img.width * (h / img.height);
   ctx.fillStyle = pit; ctx.fillRect(0, 0, VW, VH);
-  ctx.imageSmoothingEnabled = true;
+  const crisp = img === IMG.ammanDay;                 // the day picture is real pixels on the tiles' 2-px grid: no blur, kept on the grid
+  ctx.imageSmoothingEnabled = !crisp;
   if (!tile) {
     const f = Math.min(0.25, (w - VW) / Math.max(1, levelPx - VW));
-    ctx.drawImage(img, -half(cam * f), 0, w, h);
+    ctx.drawImage(img, crisp ? -snapArt(cam * f) : -half(cam * f), 0, w, h);
   } else {
     const off = (cam * 0.3) % (w * 2);
     for (let i = 0, x = -off; x < VW; i++, x += w) {

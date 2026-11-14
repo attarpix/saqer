@@ -132,7 +132,8 @@ export function buildHercules(img) {
         .sort((a, b) => Math.abs(a.x + a.w / 2 - px) - Math.abs(b.x + b.w / 2 - px));
       if (!hits.length) throw new Error('Hercules frame not found: ' + name);
       const comp = hits[0];
-      return { img: cutOne(id, lab, comp, HERC_SCALE), ax: (foot - comp.x + 3) * HERC_SCALE };   // ax = his feet, in canvas px from the left
+      // on the same pixel grid as Saqer and the creatures (2026-11-15: he was smooth, which read as painted next to them)
+      return { img: coarser(cutOne(id, lab, comp, HERC_SCALE), SAQER_PX), ax: (foot - comp.x + 3) * HERC_SCALE };   // ax = his feet, in canvas px from the left
     });
   }
   return frames;
