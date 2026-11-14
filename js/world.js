@@ -346,6 +346,8 @@ function sparkle(x, y, n = 14) {
 /* from here on Saqer stays grown: three hits, refilled by any jameed or mansaf */
 function takeGolden(tx, ty) {
   G.golden = true;
+  G.lives = D.lives;                    // the owner's rule: lives only exist from here on. Whatever happened before (mansafs
+                                        // eaten, deaths) does not count: everyone starts the real game with the same 3
   heal();
   if (!player.big) growPlayer();
   G.score += 5000;
