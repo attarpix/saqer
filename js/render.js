@@ -1072,7 +1072,7 @@ function drawThings(cam) {
       list.forEach((r, i) => {
         const ly = y + 19 + i * 9;
         text(String(i + 1), x + 6, ly, '#cbb7e8', 6);
-        text(String(r.name).slice(0, 12), x + 18, ly, '#ffffff', 6);
+        text(String(r.name).slice(0, 12) + (r.cheat ? ' ✗' : ''), x + 18, ly, r.cheat ? '#ff6a6a' : '#ffffff', 6);   // a cheater's line is red, with a ✗
         text(String(r.score).padStart(6, '0'), x + w - 6, ly, '#ffd166', 6, 'right');
       });
     } else if (t.kind === 'plaque') {                // thanks for playing, and what is coming

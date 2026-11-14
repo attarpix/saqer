@@ -353,14 +353,20 @@ function updateDying() {
 
 /* ---------------- victory ---------------- */
 export const clockSeconds = () => Math.floor(G.clock / 60);
-export const timeBonus = () => Math.max(0, 900 - clockSeconds()) * 20;     // quicker than 15 minutes earns a bonus
+/* the final score, worked out when Saqer walks into the hall (the owner's rules, 2026-11-15):
+     base (everything collected) × 1.5 on hard (× 1 on normal) × lives left, minus 1% for every 30 seconds
+     the run took (never more than 90% off). GAME OVER before the hall keeps the base score only. */
+export function finalScore(base, mode, lives, seconds) {
+  const mult = mode === 'hard' ? 1.5 : 1;
+  const cut = Math.min(0.9, Math.floor(seconds / 30) * 0.01);
+  return { base, mult, lives, cut, total: Math.round(base * mult * Math.max(1, lives) * (1 - cut)) };
+}
 
 function victory() {
   G.state = 'victory'; G.stateTimer = 0; stat('hercules'); G.clockStop = true;
   music.stop();
   sfx.goal(); sfx.cheer();
-  G.bonus = timeBonus();
-  G.score += G.bonus;
+  G.bonus = 0;                            // (the old time bonus is gone: time now counts in the final score, in the hall)
   saveHi();
 }
 
@@ -500,8 +506,13 @@ function enterHall() {
   G.downPress = false;                                        // a ▼ from before must not use anything at once
   if (!G.hallSeen) {
     G.hallSeen = true; sfx.goal();
-    const saves = !G.saved && !G.usedGod && !DEBUG_RUN;
-    say(['STAGE ONE COMPLETE!', saves ? 'YOUR SCORE IS ON THE BOARD.' : 'NO SCORE WITH THE CHEAT ON.', 'PRESS ▼ BY ANYTHING THAT GLOWS.'], 460);
+    // the final score: base × difficulty × lives left − time (finalScore above); then it goes on the board
+    const f = finalScore(G.score, D.name, G.lives, clockSeconds());
+    G.score = f.total; G.final = f; saveHi();
+    say(['STAGE ONE COMPLETE!',
+         tLine('POINTS') + ' ' + f.base + '  ×' + f.mult + '  ×' + f.lives + '  −' + Math.round(f.cut * 100) + '%',
+         tLine('FINAL SCORE') + ' ' + f.total + (G.usedGod ? '  (' + tLine('CHEATER') + ')' : ''),
+         'PRESS ▼ BY ANYTHING THAT GLOWS.'], 600);
     autoSave();
   }
 }
@@ -542,17 +553,17 @@ export function hallBack() { resume(); }
 /* the score goes on the top 10 by itself at GAME OVER or when Saqer walks into the hall (whichever comes first): once a run, never with the
    cheat on (attar10x) or in a ?debug test run; under the name typed on the difficulty screen, or a default */
 async function autoSave() {
-  if (G.saved || G.usedGod || DEBUG_RUN) return;
+  if (G.saved || DEBUG_RUN) return;      // (a run with the cheat on is saved too, marked CHEATER on the board)
   G.saved = true;
   const name = playerName();
-  const ok = await submitScore(name, G.score, D.name);
+  const ok = await submitScore(name, G.score, D.name, G.usedGod);
   if (ok) stat('saved-score');
   G.savedAs = ok ? name : '';
 }
 /* the top 10 screen (the book and the board) */
 async function fillTop() {
-  setText('#save-msg', G.savedAs ? tLine('SAVED AS') + ' ' + G.savedAs + ' · ' + String(G.score).padStart(6, '0')
-    : G.usedGod ? tLine('NOT WITH THE CHEAT ON.') : '');
+  setText('#save-msg', G.savedAs ? tLine('SAVED AS') + ' ' + G.savedAs + ' · ' + String(G.score).padStart(6, '0') + (G.usedGod ? ' · ' + tLine('CHEATER') : '')
+    : '');
   showTop(topCached());
   showTop(await fetchTop());
 }
@@ -563,7 +574,8 @@ function showTop(list) {
   if (!list.length) { const li = document.createElement('li'); li.textContent = tLine('NO SCORES YET: BE THE FIRST!'); ol.appendChild(li); return; }
   for (const r of list.slice(0, 10)) {
     const li = document.createElement('li');
-    li.textContent = r.name + (r.mode === 'hard' ? ' ★' : '') + ' ';
+    li.textContent = r.name + (r.mode === 'hard' ? ' ★' : '') + (r.cheat ? ' · ' + tLine('CHEATER') : '') + ' ';
+    if (r.cheat) li.style.color = '#ff6a6a';
     if (G.savedAs && r.name === G.savedAs) li.className = 'me';
     const s = document.createElement('span'); s.textContent = String(r.score).padStart(6, '0');
     li.appendChild(s); ol.appendChild(li);

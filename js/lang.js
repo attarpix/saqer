@@ -60,7 +60,7 @@ const AR = {
   'STAGE 1': 'المرحلة 1', 'STAGE 2': 'المرحلة 2', 'OPENS ON 21.11.': 'بتفتح 21.11.', 'COMING SOON.': 'قريباً.',
   'THE GAME IS STILL BEING MADE.': 'اللعبة لسّا قيد التطوير.',
   'PLAY AGAIN': 'العب من جديد', 'SAVE SCORE': 'سجّل نتيجتك', 'THANK YOU': 'شكراً', 'TOP 10': 'أفضل 10', 'BE THE FIRST!': 'كون الأول!', 'SOON': 'قريباً',
-  'YOUR SCORE': 'نتيجتك', 'YOUR NAME (OPTIONAL)': 'اسمك (اختياري)', 'SAVED AS': 'انسجلت باسم', 'YOUR SCORE IS ON THE BOARD.': 'نتيجتك انسجلت عاللوحة.', 'NO SCORE WITH THE CHEAT ON.': 'ما في نتيجة مع الغش.', 'SAVE': 'سجّل', 'NAME': 'اسمك', 'SAVED!': 'انسجلت!', 'NOT WITH THE CHEAT ON.': 'ما بنسجّل مع الغش.',
+  'YOUR SCORE': 'نتيجتك', 'POINTS': 'النقاط', 'FINAL SCORE': 'النتيجة النهائية', 'CHEATER': 'غشاش', 'YOUR NAME (OPTIONAL)': 'اسمك (اختياري)', 'SAVED AS': 'انسجلت باسم', 'YOUR SCORE IS ON THE BOARD.': 'نتيجتك انسجلت عاللوحة.', 'NO SCORE WITH THE CHEAT ON.': 'ما في نتيجة مع الغش.', 'SAVE': 'سجّل', 'NAME': 'اسمك', 'SAVED!': 'انسجلت!', 'NOT WITH THE CHEAT ON.': 'ما بنسجّل مع الغش.',
   'SAVED ON THIS PHONE FOR NOW.': 'هلّق بتنحفظ على هالجهاز بس.', 'NO SCORES YET: BE THE FIRST!': 'لسّا ما في نتائج: كون الأول!',
   'COULD NOT SAVE. TRY AGAIN.': 'ما زبطت. جرّب كمان مرة.',
   'THANK YOU FOR PLAYING MY GAME!': 'شكراً إنك لعبت لعبتي!',
@@ -85,8 +85,8 @@ export const tScore = n => (lang === 'ar' ? 'النتيجة ' : 'SCORE ') + n;
 export const tStage = id => lang === 'ar' ? 'المرحلة ' + t(id) : 'STAGE ' + id;
 export const tLiras = n => lang === 'ar' ? n + ' ليرات ذهب مخبّاية هون' : n + ' GOLD LIRAS HIDDEN HERE';
 export const tVictory = (time, bonus, dinars, liras, score) => lang === 'ar'
-  ? ['الوقت ' + time + '   مكافأة ' + bonus, 'دنانير ' + dinars, 'النتيجة ' + score]
-  : ['TIME  ' + time + '   BONUS ' + bonus, 'DINARS  ' + dinars, 'SCORE  ' + score];
+  ? ['الوقت ' + time, 'دنانير ' + dinars, 'النقاط ' + score]
+  : ['TIME  ' + time, 'DINARS  ' + dinars, 'POINTS  ' + score];   // the final score comes in the hall
 
 /* the menus in index.html: every element marked data-t keeps its English in data-en */
 export function applyLang() {

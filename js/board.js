@@ -41,7 +41,7 @@ export const topCached = () => cache || localList();
 export async function fetchTop() {
   if (!online()) { cache = localList(); return cache; }
   try {
-    const r = await fetch(SUPABASE_URL + '/rest/v1/scores?select=name,score,mode&order=score.desc&limit=10', {
+    const r = await fetch(SUPABASE_URL + '/rest/v1/scores?select=name,score,mode,cheat&order=score.desc&limit=10', {
       headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY },
     });
     if (!r.ok) throw new Error('board ' + r.status);
@@ -51,10 +51,10 @@ export async function fetchTop() {
 }
 
 /** save one score; resolves to true when it is stored (online, or on this device) */
-export async function submitScore(name, score, mode) {
+export async function submitScore(name, score, mode, cheat = false) {   // cheat: the run had attar10x on (kept, marked CHEATER)
   name = clean(name);
   if (!name) return false;
-  const row = { name, score: Math.max(0, Math.floor(score)), mode: mode === 'easy' ? 'easy' : 'hard' };
+  const row = { name, score: Math.max(0, Math.floor(score)), mode: mode === 'easy' ? 'easy' : 'hard', cheat: !!cheat };
   const list = localList().concat(row).sort((a, b) => b.score - a.score);
   localSave(list);                                          // kept on this device either way
   if (!online()) { cache = list.slice(0, 10); return true; }

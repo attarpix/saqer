@@ -140,7 +140,8 @@ STORY.beforeBoss = [
   { speaker: 'SAQER', text: 'NOTHING YET. GIVE ME A MINUTE.', ar: 'ولا إشي لسّا. أعطيني دقيقة.' },
 ];
 STORY.afterBoss = [
-  { bg: 'theater', cast: ['saqer', 'hercules'], speaker: 'HERCULES',
+  { bg: 'theater', cast: ['saqer', 'hercules'], speaker: 'HERCULES', text: 'GG BRO.', ar: 'GG BRO.' },   // the owner's line: the first thing he says, beaten
+  { speaker: 'HERCULES',
     text: 'ENOUGH. THE CROWD HAS CHOSEN. THE CITY IS YOURS TO WALK, SAQER OF AMMAN.',
     ar: 'بكفّي. الناس اختاروا. المدينة إلك تمشي فيها يا صقر عمّان.' },
 ];
