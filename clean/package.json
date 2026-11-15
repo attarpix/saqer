@@ -1,0 +1,11 @@
+{
+  "name": "saqer",
+  "private": true,
+  "description": "Saqer · صقر — the game. npm run build makes dist/ (what ships).",
+  "scripts": {
+    "build": "node tools/build.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.10"
+  }
+}

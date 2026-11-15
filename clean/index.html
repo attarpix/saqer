@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="description" content="Saqer: a Jordanian pixel-art platformer. From downtown Amman back to Roman Philadelphia.">
+<meta name="theme-color" content="#2b1a4a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Saqer">
+<title>Saqer · صقر</title>
+<!-- link previews when the game is shared (Instagram, WhatsApp, X …): picture made with ?share -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://attarpix.github.io/saqer/">
+<meta property="og:title" content="Saqer · صقر — a game by @attar10x">
+<meta property="og:description" content="رحلة عبر الزمن من وسط البلد إلى فيلادلفيا الرومانية. A pixel-art journey from downtown Amman back to Roman Philadelphia.">
+<meta property="og:image" content="https://attarpix.github.io/saqer/assets/share.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Changa:wght@700;800&display=swap">
+<link rel="stylesheet" href="css/style.css?v=67">
+</head>
+<body>
+<main id="stage">
+  <div id="frame">
+    <canvas id="game" aria-label="Saqer game screen"></canvas>
+
+    <!-- loading -->
+    <div id="loading" class="screen open">
+      <div class="px-panel">
+        <p class="logo-sm">SAQER</p>
+        <div class="load-track"><div id="load-bar"></div></div>
+        <p id="load-msg" class="hint" data-t>LOADING…</p>
+      </div>
+    </div>
+
+    <!-- title -->
+    <section id="screen-title" class="screen" aria-label="Title">
+      <h1 class="logo"><span class="logo-en">SAQER</span><span class="logo-ar" lang="ar" dir="rtl">صقر</span></h1>
+      <p class="tagline" data-t>A JOURNEY BACK IN TIME</p>
+      <nav class="menu">
+        <button class="px-btn primary" data-act="start" data-t>START</button>
+        <div class="menu-row">
+          <button class="px-btn top" data-act="top"><span data-t>TOP 10</span></button>
+          <button class="px-btn share" data-act="share"><svg class="share-ico" viewBox="0 0 8 8" aria-hidden="true"><path d="M6 0h2v2H6zM0 3h2v2H0zM6 6h2v2H6zM2 3h1v1H2zM3 2h1v1H3zM4 1h2v1H4zM2 4h1v1H2zM3 5h1v1H3zM4 6h2v1H4z" fill="currentColor"/></svg> <span data-t>SHARE THE GAME</span></button>
+        </div>
+        <div class="menu-row">
+          <button class="px-btn small" data-act="sound">SOUND: ON</button>
+          <button class="px-btn small" data-act="lang">ENGLISH</button>
+          <button class="px-btn small" data-act="info" data-t>INFO</button>
+          <button class="px-btn small" id="btn-install" data-act="install" data-t hidden>INSTALL</button>
+        </div>
+      </nav>
+      <p id="hi-score" class="hint">BEST 000000</p>
+      <p class="hint" style="position:absolute;top:calc(var(--u) * 3);right:calc(var(--u) * 4);margin:0;opacity:.6">V67</p>
+      <p class="hint keys" data-t>←→ MOVE · Z JUMP · X RUN · P PAUSE · M SOUND</p>
+      <a class="credit" href="https://www.instagram.com/attar10x/" target="_blank" rel="noopener"><span data-t>A GAME BY</span> @attar10x</a>
+    </section>
+
+    <!-- difficulty: chosen after START (config.js MODES) -->
+    <section id="screen-mode" class="screen dim" aria-label="Difficulty">
+      <div class="px-panel">
+        <h2 data-t>CHOOSE DIFFICULTY</h2>
+        <input id="player-name" class="name-box" type="text" maxlength="12" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="YOUR NAME (OPTIONAL)">
+        <nav class="menu">
+          <button class="px-btn" data-act="mode-easy" data-t>NORMAL</button>
+          <button class="px-btn" data-act="mode-hard" data-t>HARD</button>
+          <button class="px-btn small" data-act="back" data-t>BACK</button>
+        </nav>
+      </div>
+    </section>
+
+    <!-- the map of the game (normal mode: found in a bonus box in the east vault; then in the pause menu).
+         An old hand-drawn map: the temple in the sky, the theatre with Hercules, the street, the three vaults,
+         two keys and the way, in red ink. Almost no words. -->
+    <section id="screen-map" class="screen dim" aria-label="Map">
+      <div class="old-map">
+        <svg class="map-svg" viewBox="0 0 300 170" aria-hidden="true">
+          <defs>
+            <filter id="ink" x="-5%" y="-5%" width="110%" height="110%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="7"/>
+              <feDisplacementMap in="SourceGraphic" scale="2.4"/>
+            </filter>
+            <radialGradient id="age" cx="50%" cy="50%" r="70%">
+              <stop offset="55%" stop-color="#ead6a6"/><stop offset="100%" stop-color="#c9a46a"/>
+            </radialGradient>
+            <g id="key"><circle cx="0" cy="0" r="3.2"/><path d="M3 0 H12 M9 0 V3.5 M11.5 0 V2.5"/></g>
+          </defs>
+          <!-- the parchment, with torn edges and stains -->
+          <path d="M8 10 L40 6 L70 9 L110 5 L150 8 L190 4 L230 8 L262 5 L292 9 L295 40 L291 80 L296 120 L292 162 L250 166 L210 162 L170 167 L130 163 L90 167 L50 163 L10 166 L5 130 L9 90 L4 50 Z" fill="url(#age)" stroke="#7a4a1e" stroke-width="1.2"/>
+          <circle cx="60" cy="130" r="14" fill="#a87a40" opacity=".12"/><circle cx="240" cy="70" r="18" fill="#a87a40" opacity=".1"/><circle cx="160" cy="28" r="9" fill="#7a4a1e" opacity=".08"/>
+          <g filter="url(#ink)" fill="none" stroke="#3b2410" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <!-- the temple on a cloud (top left) -->
+            <path d="M28 44 q6 -7 14 -2 q6 -8 15 -1 q8 -6 16 1 q7 -3 10 3 q-30 6 -55 -1 Z"/>
+            <path d="M36 40 V26 M44 40 V26 M52 40 V26 M60 40 V26 M68 40 V26 M33 26 H71 M32 26 L52 15 L72 26"/>
+            <!-- the theatre (top right): rows of seats in a half bowl, and Hercules -->
+            <path d="M218 46 A34 30 0 0 1 286 46 M226 46 A26 22 0 0 1 278 46 M234 46 A18 14 0 0 1 270 46 M214 46 H290"/>
+            <!-- the street (middle): a long road with columns -->
+            <path d="M14 82 Q80 78 150 82 T288 81"/><path d="M14 92 Q80 88 150 92 T288 91"/>
+            <path d="M30 82 V72 M50 82 V72 M95 82 V72 M115 82 V72 M180 82 V72 M200 82 V72 M245 82 V72 M265 82 V72"/>
+            <!-- shafts down into the vaults -->
+            <path d="M82 92 V118 M96 92 V118 M150 92 V118 M164 92 V118" stroke-dasharray="2 3"/>
+            <!-- the three vaults: arches -->
+            <path d="M16 150 V126 Q50 104 84 126 V150 Z M112 150 V126 Q146 104 180 126 V150 Z M208 150 V126 Q242 104 276 126 V150 Z"/>
+            <!-- the gate in the east vault -->
+            <path d="M250 150 V128 M255 150 V128 M260 150 V128 M247 128 H263"/>
+            <!-- the lifts: up from the west end of the street to the temple, and up from the east vault to the theatre -->
+            <path d="M22 70 V50 M18 55 L22 49 L26 55"/><path d="M270 126 V52 M266 57 L270 51 L274 57"/>
+          </g>
+          <!-- Hercules: a lion's mane round a face, and his club -->
+          <g filter="url(#ink)" stroke="#3b2410" stroke-width="1.3" stroke-linejoin="round">
+            <path d="M252 24 l3 -5 l2 5 l5 -3 l-1 6 l6 0 l-4 4 l5 3 l-6 2 l3 5 l-6 -1 l-1 6 l-4 -4 l-4 4 l-1 -6 l-6 1 l3 -5 l-6 -2 l5 -3 l-4 -4 l6 0 l-1 -6 l5 3 Z" fill="#c98a3a"/>
+            <circle cx="252" cy="31" r="5" fill="#ead6a6"/>
+            <circle cx="250" cy="30" r=".8" fill="#3b2410"/><circle cx="254" cy="30" r=".8" fill="#3b2410"/>
+            <path d="M266 22 l9 -9" stroke-width="3" stroke-linecap="round"/>
+          </g>
+          <!-- the two keys: bronze in the middle vault, pale gold at the temple door -->
+          <g filter="url(#ink)" stroke-width="1.6" fill="none" stroke-linecap="round">
+            <use href="#key" x="140" y="140" stroke="#b5651d"/>
+            <use href="#key" x="78" y="34" stroke="#b8902a"/>
+          </g>
+          <!-- the way, in red ink: in at the east end of the street, down, the bronze key, back up, the lift at the
+               west end to the temple, its key, down again to the gate in the east vault, up to Hercules -->
+          <path filter="url(#ink)" fill="none" stroke="#b3202a" stroke-width="1.4" stroke-dasharray="3 3" stroke-linecap="round"
+                d="M282 86 Q220 84 157 100 Q152 128 144 136 Q100 128 89 104 Q60 84 26 74 Q20 60 30 50 Q55 34 76 34 Q120 60 157 98 Q200 120 245 140 Q262 120 266 80 Q262 60 258 44"/>
+          <text x="284" y="100" class="m-x">✕</text>
+        </svg>
+        <nav class="menu"><button class="px-btn primary" data-act="map-close" data-t>BACK</button></nav>
+      </div>
+    </section>
+
+    <!-- the hall at the end of stage one: save your score / the top 10 -->
+    <section id="screen-save" class="screen dim" aria-label="Top 10">
+      <div class="px-panel hall">
+        <h2 data-t>TOP 10</h2>
+        <ol id="top-list" class="top-list"></ol>
+        <p id="save-msg" class="hint"></p>
+        <nav class="menu"><button class="px-btn small" data-act="hall-back" data-t>BACK</button></nav>
+      </div>
+    </section>
+
+    <!-- the plaque: thanks, and what is coming -->
+    <section id="screen-future" class="screen dim" aria-label="Coming next">
+      <div class="px-panel hall">
+        <h2 data-t>THANK YOU FOR PLAYING MY GAME!</h2>
+        <p class="info-text" data-t>STAGE 2 OPENS ON 21.11. STAGES 3, 4 AND 5 ARE COMING SOON: THE GAME IS STILL BEING MADE.</p>
+        <p class="info-text" data-t>WANT TO HELP DESIGN THE NEXT STAGES, OR BECOME A CHARACTER IN THE GAME? TALK TO ATTAR.</p>
+        <nav class="menu">
+          <button class="px-btn share" data-act="share"><svg class="share-ico" viewBox="0 0 8 8" aria-hidden="true"><path d="M6 0h2v2H6zM0 3h2v2H0zM6 6h2v2H6zM2 3h1v1H2zM3 2h1v1H3zM4 1h2v1H4zM2 4h1v1H2zM3 5h1v1H3zM4 6h2v1H4z" fill="currentColor"/></svg> <span data-t>SHARE THE GAME</span></button>
+          <a class="px-btn primary ig" href="https://www.instagram.com/attar10x/" target="_blank" rel="noopener">INSTAGRAM @attar10x</a>
+          <button class="px-btn small" data-act="hall-back" data-t>BACK</button>
+        </nav>
+      </div>
+    </section>
+
+    <!-- the time portal: play stage one again, on hard -->
+    <section id="screen-replay" class="screen dim" aria-label="Play again">
+      <div class="px-panel hall">
+        <h2 data-t>PLAY STAGE 1 AGAIN?</h2>
+        <p class="info-text" data-t>ON HARD: ALL THE ENEMIES, AND THE THORNS. AMMAN AT SUNSET.</p>
+        <nav class="menu">
+          <button class="px-btn primary" data-act="replay-hard" data-t>YES, ON HARD</button>
+          <button class="px-btn small" data-act="hall-back" data-t>BACK</button>
+        </nav>
+      </div>
+    </section>
+
+    <!-- info: who made the game, and why -->
+    <section id="screen-info" class="screen dim" aria-label="Info">
+      <div class="px-panel info">
+        <h2 data-t>ABOUT SAQER</h2>
+        <p class="info-text" data-t>SAQER IS A GAME DESIGNED BY ATTAR10X TO RAISE AWARENESS OF JORDAN'S HISTORIC SITES, AND OF WHY THEY ARE WORTH PROTECTING.</p>
+        <nav class="menu">
+          <a class="px-btn primary ig" href="https://www.instagram.com/attar10x/" target="_blank" rel="noopener">INSTAGRAM @attar10x</a>
+          <button class="px-btn" data-act="back" data-t>BACK</button>
+        </nav>
+      </div>
+    </section>
+
+    <!-- story -->
+    <section id="screen-story" class="screen" aria-label="Story">
+      <div class="px-panel story">
+        <p id="story-speaker" class="speaker"></p>
+        <p id="story-text" class="story-text"></p>
+        <p id="story-ar" class="story-ar" lang="ar" dir="rtl" hidden></p>
+        <div class="story-foot">
+          <span id="story-page" class="hint"></span>
+          <span>
+            <button class="px-btn small" data-act="story-skip" data-t>SKIP</button>
+            <button class="px-btn small primary" data-act="story-next" data-t>NEXT ▶</button>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- pause -->
+    <section id="screen-pause" class="screen dim" aria-label="Paused">
+      <div class="px-panel">
+        <h2 data-t>PAUSED</h2>
+        <nav class="menu">
+          <button class="px-btn primary" data-act="resume" data-t>RESUME</button>
+          <button class="px-btn" data-act="map" data-t hidden>THE MAP</button>
+          <button class="px-btn" data-act="restart" data-t>RESTART STAGE</button>
+          <button class="px-btn" data-act="sound">SOUND: ON</button>
+        <button class="px-btn" data-act="lang">ENGLISH</button>
+          <button class="px-btn" data-act="quit" data-t>QUIT TO TITLE</button>
+        </nav>
+      </div>
+    </section>
+
+    <!-- game over -->
+    <section id="screen-over" class="screen" aria-label="Game over">
+      <div class="px-panel">
+        <h2 class="red" data-t>GAME OVER</h2>
+        <p id="over-score">SCORE 000000</p>
+        <p id="over-hi" class="hint">BEST 000000</p>
+        <p id="over-saved" class="hint" style="color:#ffe08a"></p>
+        <nav class="menu">
+          <button class="px-btn primary" data-act="retry" data-t>TRY THIS STAGE AGAIN</button>
+          <button class="px-btn share" data-act="share"><svg class="share-ico" viewBox="0 0 8 8" aria-hidden="true"><path d="M6 0h2v2H6zM0 3h2v2H0zM6 6h2v2H6zM2 3h1v1H2zM3 2h1v1H3zM4 1h2v1H4zM2 4h1v1H2zM3 5h1v1H3zM4 6h2v1H4z" fill="currentColor"/></svg> <span data-t>SHARE THE GAME</span></button>
+          <button class="px-btn" data-act="quit" data-t>TITLE</button>
+        </nav>
+      </div>
+    </section>
+
+    <!-- on-screen controls (touch devices), over the bottom corners of the game picture -->
+    <div id="touch" aria-hidden="true">
+      <!-- left side: back and forward. right side: up (jump, like Space) and down. Hold a button to keep going. -->
+      <div class="pad pad-left row"><span class="tbtn" data-key="left">◀</span><span class="tbtn" data-key="right">▶</span></div>
+      <div class="pad pad-right col"><span class="tbtn" data-key="jump">▲</span><span class="tbtn" data-key="down">▼</span></div>
+      <span class="tbtn pause" data-action="pause">❚❚</span>
+      <!-- invisible: tap just above pause and type the test code (main.js) -->
+      <input id="code-box" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="code">
+    </div>
+  </div>
+</main>
+
+
+<!-- old or limited browsers (some cars, old phones): say what went wrong instead of sitting on LOADING… -->
+<script>
+(function () {
+  function say(t) { var m = document.getElementById('load-msg'); if (m) { m.textContent = t; m.style.fontSize = '10px'; m.style.lineHeight = '1.8'; } }
+  var old = 'THE GAME CANNOT START HERE. THIS BROWSER IS PROBABLY TOO OLD. ' + navigator.userAgent;
+  window.addEventListener('error', function (e) { if (!window.__saqerUp) say('ERROR: ' + (e.message || 'script failed') + ' · ' + navigator.userAgent); });
+  setTimeout(function () { if (!window.__saqerUp) say(old); }, 12000);
+  window.__saqerOld = function () { say(old); };
+})();
+</script>
+<script nomodule>window.__saqerOld();</script>
+<script type="module" src="js/main.js?v=67"></script>
+</body>
+</html>
